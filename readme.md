@@ -78,9 +78,29 @@ As an open-source project, erugo can be tailored to your needs:
 - Modify URL structures and authentication methods
 - Extend functionality through code modifications
 
+## Build it yourself
+
+To build erugo yourself, you will need to have Go installed.
+
+```sh
+git clone https://github.com/DeanWard/erugo.git
+cd erugo
+make build
+```
+
+This will build both the front end and the backend, merged into a single binary which will be placed in the root of the repo.
+By default the binary will be built for the current platform, but you can specify a different platform with the `GOOS` and `GOARCH` variables.
+
+## Run the dev servers
+
+```sh
+make run
+```
+This will start the backend server on port 9199 and the frontend server on port ~ 5173 using vite.
+
 ## Roadmap
 
-We're actively developing erugo with the following features planned:
+I'm actively developing erugo with the following features planned:
 
 - **UI-Based White-Labeling**: Brand customization through the web interface
 - **Enhanced File Access**: Optional direct file downloads without ZIP packaging
