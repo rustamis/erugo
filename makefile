@@ -6,7 +6,7 @@ GOARCH ?= $(shell go env GOARCH)
 build:
 	cd frontend && npm run build
 	echo "Building for GOOS=$(GOOS) GOARCH=$(GOARCH)"
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o build/erugo-$(GOOS)-$(GOARCH)
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o erugo-$(GOOS)-$(GOARCH)
 
 run:
 	cd frontend && npm run dev &
