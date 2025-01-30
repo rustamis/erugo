@@ -32,7 +32,7 @@ func handleLogin(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	//try to find the user in the database, then check if the password is correct using the auth.CheckPassword function
-	user := db.GetUserByUsername(database, req.Username)
+	user := db.UserByName(database, req.Username)
 	if user == nil {
 		json_response.New(json_response.ErrorStatus, "Invalid username or password", nil, http.StatusUnauthorized).Send(w)
 		log.Printf("Failed to find user %s in the database", req.Username)
@@ -112,7 +112,7 @@ func handleRefreshToken(database *sql.DB, w http.ResponseWriter, r *http.Request
 	}
 
 	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
-		user := db.GetUserByUsername(database, claims["sub"].(string))
+		user := db.UserByName(database, claims["sub"].(string))
 		if user == nil {
 			json_response.New(json_response.ErrorStatus, "User not found", nil, http.StatusUnauthorized).Send(w)
 			return

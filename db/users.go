@@ -7,7 +7,7 @@ import (
 	"github.com/DeanWard/erugo/models"
 )
 
-func GetUsers(database *sql.DB) ([]models.User, error) {
+func UserList(database *sql.DB) ([]models.User, error) {
 	users := []models.User{}
 	rows, err := database.Query("SELECT * FROM users")
 	if err != nil {
@@ -26,4 +26,15 @@ func GetUsers(database *sql.DB) ([]models.User, error) {
 	}
 
 	return users, nil
+}
+
+func UserByName(database *sql.DB, username string) *models.User {
+	log.Printf("Getting user by username: %s", username)
+	row := database.QueryRow("SELECT id, username, password_hash, admin FROM users WHERE username = ?", username)
+	var user models.User
+	err := row.Scan(&user.ID, &user.Username, &user.PasswordHash, &user.Admin)
+	if err != nil {
+		return nil
+	}
+	return &user
 }

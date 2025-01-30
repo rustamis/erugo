@@ -61,7 +61,7 @@ func main() {
 
 func runSetupIfNeeded(database *sql.DB) {
 	//are there any users in the database?
-	users, err := db.GetUsers(database)
+	users, err := db.UserList(database)
 	if err != nil {
 		log.Fatalf("Failed to get users: %v", err)
 	}

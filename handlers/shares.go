@@ -108,7 +108,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 		Files:          fileNames,
 		UserId:         userID,
 	}
-	savedShare, err := db.CreateShare(database, share)
+	savedShare, err := db.ShareCreate(database, share)
 	if err != nil {
 		json_response.New(json_response.ErrorStatus, "Failed to create share", nil, http.StatusInternalServerError).Send(w)
 		utils.Log("Failed to create share", utils.ColorRed)
@@ -121,7 +121,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 }
 
 func handleGetShare(database *sql.DB, w http.ResponseWriter, longId string) {
-	share := db.GetShareByLongId(database, longId)
+	share := db.ShareByLongId(database, longId)
 	if share == nil {
 		json_response.New(json_response.ErrorStatus, "Share not found", nil, http.StatusNotFound).Send(w)
 		return
@@ -140,14 +140,14 @@ func handleGetShare(database *sql.DB, w http.ResponseWriter, longId string) {
 func generateUniqueLongId(database *sql.DB) string {
 	haikunator := haikunator.New(time.Now().UnixNano())
 	longId := haikunator.Haikunate() + "-" + haikunator.Haikunate()
-	for db.GetShareByLongId(database, longId) != nil {
+	for db.ShareByLongId(database, longId) != nil {
 		longId = haikunator.Haikunate() + "-" + haikunator.Haikunate()
 	}
 	return longId
 }
 
 func handleDownloadShare(database *sql.DB, w http.ResponseWriter, r *http.Request, longId string) {
-	share := db.GetShareByLongId(database, longId)
+	share := db.ShareByLongId(database, longId)
 	if share == nil {
 		json_response.New(json_response.ErrorStatus, "Share not found", nil, http.StatusNotFound).Send(w)
 		utils.Log("Share not found", utils.ColorRed)

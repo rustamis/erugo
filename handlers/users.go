@@ -11,12 +11,12 @@ import (
 
 func GetUsersHandler(database *sql.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handleGetUsers(database, w, r)
+		handleGetUsers(database, w)
 	})
 }
 
-func handleGetUsers(database *sql.DB, w http.ResponseWriter, r *http.Request) {
-	users, err := db.GetUsers(database)
+func handleGetUsers(database *sql.DB, w http.ResponseWriter) {
+	users, err := db.UserList(database)
 	if err != nil {
 		json_response.New(json_response.ErrorStatus, "Failed to get users", nil, http.StatusInternalServerError).Send(w)
 		return
