@@ -6,13 +6,13 @@ erugo is a secure, self-hosted alternative to WeTransfer, built with Go and Vue.
 
 ## Screenshots
 
-![Upload Interface](.github/images/upload.png)
+![Upload Interface](.github/images/erugo-uploader-screenshot.jpg)
 *A clean, intuitive upload interface showing file selection and progress*
 
-![Share Details](.github/images/share.png)
+![Share Details](.github/images/erugo-downloader-screenshot.jpg)
 *Share details view with file listing and expiration information*
 
-![Share URL](.github/images/share-url.png)
+![Share URL](.github/images/erugo-uploader-shareurl-screenshot.jpg)
 *Simple one-click share URL copying*
 
 
