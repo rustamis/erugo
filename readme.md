@@ -4,10 +4,22 @@
 
 erugo is a secure, self-hosted alternative to WeTransfer, built with Go and Vue.js. It combines powerful file-sharing capabilities with a sleek user interface, all packaged in a single, easy-to-deploy binary.
 
-## Key Features
+## Screenshots
+
+![Upload Interface](.github/images/upload.png)
+*A clean, intuitive upload interface showing file selection and progress*
+
+![Share Details](.github/images/share.png)
+*Share details view with file listing and expiration information*
+
+![Share URL](.github/images/share-url.png)
+*Simple one-click share URL copying*
+
+
+# Key Features
 
 - **Effortless Deployment**: Single binary contains both backend and frontend
-- **Human-Friendly Share Links**: Easy-to-read URLs like `https://site.com/shares/patient-haze-tiny-term`
+- **Human-Friendly Share Links**: Easy-to-read URLs like `https://yourdomains.com/shares/patient-haze-tiny-term`
 - **Secure Access Control**: Only authorized users can create shares, while anyone with a share link can download
 - **Simple Data Management**: SQLite database for efficient metadata storage
 - **Flexible Configuration**: Customizable storage paths and share size limits
