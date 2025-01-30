@@ -1,0 +1,194 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build for ${{ matrix.goos }} - ${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64 # Exclude Windows ARM64
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: node-modules-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: go-modules-${{ hashFiles('**/go.sum') }}
+          restore-keys: go-modules-
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Build Go Backend
+        run: |
+          echo "Removing package-lock.json and node_modules from frontend"
+          rm -rf frontend/package-lock.json frontend/node_modules
+
+          echo "running npm i again in frontend "
+          cd frontend
+          npm i
+          cd ..
+
+          BIN_NAME="erugo-${{ matrix.goos }}-${{ matrix.goarch }}-$(date +%Y%m%d)"
+          make build GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }}
+
+          # Debugging output
+          ls -lh erugo-* 
+
+          # Ensure the binary exists before renaming
+          if [ -f "erugo-${{ matrix.goos }}-${{ matrix.goarch }}" ]; then
+            mv erugo-${{ matrix.goos }}-${{ matrix.goarch }} "$BIN_NAME"
+          else
+            echo "Error: Binary not found!"
+            exit 1
+          fi
+
+          # Only zip non-macOS binaries here
+          if [ "${{ matrix.goos }}" != "darwin" ]; then
+            zip "${BIN_NAME}.zip" "$BIN_NAME"
+          else
+            # For macOS, just upload the binary for signing
+            cp "$BIN_NAME" "$BIN_NAME.unsigned"
+          fi
+
+      # Upload Build Artifacts
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            erugo-${{ matrix.goos }}-${{ matrix.goarch }}-*.zip
+            erugo-${{ matrix.goos }}-${{ matrix.goarch }}-*.unsigned
+
+  sign:
+    name: Sign Apple Apps
+    needs: build
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        goos: [darwin]
+        goarch: [amd64, arm64]
+    
+    steps:
+      - name: Download Built Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}
+          path: build/
+
+      - name: Prepare Binary
+        run: |
+          UNSIGNED=$(find build/ -name "*.unsigned" | head -n 1)
+          if [[ -f "$UNSIGNED" ]]; then
+            mv "$UNSIGNED" "$(basename "$UNSIGNED" .unsigned)"
+          else
+            echo "No unsigned binary found. Cannot continue."
+            exit 1
+          fi
+
+      - name: Codesign binary
+        env: 
+          MACOS_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          MACOS_CERTIFICATE_NAME: ${{ secrets.APPLE_CERTIFICATE_NAME }}
+          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.CI_KEYCHAIN_PWD }}
+          MACOS_CI_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MACOS_CI_APPLE_ID: ${{ secrets.APPLE_ID }}
+          MACOS_ID_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+        run: |
+          BINARY=$(find . -type f -not -name "*.zip" -not -name "*.unsigned" -not -name "certificate.p12" | head -n 1)
+          
+          if [[ -z "$BINARY" ]]; then
+            echo "Error: No binary found for signing. Cannot continue."
+            exit 1
+          fi
+
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+
+          echo "Signing $BINARY"
+          /usr/bin/codesign -s "$MACOS_CI_TEAM_ID" -f -o runtime "$BINARY" -v
+
+          echo "Creating ZIP to send to notarization"
+          zip "notarization.zip" "$BINARY"
+
+          echo "Sending to notarization"
+          xcrun notarytool submit "notarization.zip" --apple-id "$MACOS_CI_APPLE_ID" --team-id "$MACOS_CI_TEAM_ID" --password "$MACOS_ID_PASSWORD" --wait
+
+          # After notarization, create the final zip for release
+          zip "$(basename "$BINARY").zip" "$BINARY"
+
+      - name: Upload Signed Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}-signed
+          path: ./*.zip
+  
+  release:
+    name: Create GitHub Release
+    needs: [build, sign]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download All Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare Release Files
+        run: |
+          mkdir release_files
+          # Move signed macOS binaries
+          find artifacts -name "*darwin*.zip" -path "*/darwin-*-signed/*" -exec cp {} release_files/ \;
+          # Move other platform binaries
+          find artifacts -name "*.zip" ! -path "*/darwin-*-signed/*" -exec cp {} release_files/ \;
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_files/*.zip
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## Latest Release
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

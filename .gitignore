@@ -1,0 +1,6 @@
+.DS_Store
+storage/
+erugo.db
+frontend/node_modules
+frontend/dist
+build/*
