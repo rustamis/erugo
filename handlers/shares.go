@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -166,24 +167,23 @@ func handleDownloadShare(database *sql.DB, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	userEmail := r.FormValue("user_email")
 	db.CreateShareAccessLogEntry(database, &models.ShareAccessLogEntry{
 		ShareId:    share.Id,
-		UserEmail:  userEmail,
+		UserEmail:  "not-collected",
 		UserIp:     r.RemoteAddr,
 		UserAgent:  r.UserAgent(),
 		AccessDate: time.Now().Format(time.RFC3339),
 	})
 
 	//now we know the folder exists, let's put them in a zip file and serve that
-	zipFilePath, err := store.CreateZipFile(share.FilePath)
+	downloadFilePath, err := store.CreateDownload(share.FilePath)
 	if err != nil {
-		json_response.New(json_response.ErrorStatus, "Failed to create zip file: "+err.Error(), nil, http.StatusInternalServerError).Send(w)
-		utils.Log("Failed to create zip file: "+err.Error(), utils.ColorRed)
+		json_response.New(json_response.ErrorStatus, "Failed to create download file: "+err.Error(), nil, http.StatusInternalServerError).Send(w)
+		utils.Log("Failed to create download file: "+err.Error(), utils.ColorRed)
 		return
 	}
-	fileName := fmt.Sprintf("%s.zip", share.LongId)
-	file_response.New(zipFilePath, fileName).Send(w, r)
+	fileName := filepath.Base(downloadFilePath)
+	file_response.New(downloadFilePath, fileName).Send(w, r)
 }
 
 func extractValidationErrors(err error) map[string]string {

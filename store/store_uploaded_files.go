@@ -38,7 +38,7 @@ func StoreUploadedFiles(baseStoragePath string, files []*multipart.FileHeader, l
 }
 
 // CreateZipFile creates a zip file containing the contents of the given folder
-func CreateZipFile(folderPath string) (string, error) {
+func CreateDownload(folderPath string) (string, error) {
 
 	//check that the folder exists and isn't above the base storage path
 	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
@@ -48,6 +48,16 @@ func CreateZipFile(folderPath string) (string, error) {
 		return "", fmt.Errorf("folder is above the base storage path: %s / %s", folderPath, config.AppConfig.BaseStoragePath)
 	}
 
+	//if there is only one file in the folder, return the path to the file
+	files, err := os.ReadDir(folderPath)
+	if err != nil {
+		return "", err
+	}
+
+	if len(files) == 1 {
+		fileName := files[0].Name()
+		return filepath.Join(folderPath, fileName), nil
+	}
 	// Name of the zip file to be created
 	zipFilePath := folderPath + ".zip"
 
