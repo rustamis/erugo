@@ -15,14 +15,17 @@ func CreateShare(db *sql.DB, share *models.Share) (*models.Share, error) {
 		log.Printf("Error marshalling files: %v", err)
 		return nil, err
 	}
-	_, err = db.Exec("INSERT INTO shares (file_path, expiration_date, long_id, num_files, total_size, files) VALUES (?, ?, ?, ?, ?, ?)", share.FilePath, share.ExpirationDate, share.LongId, share.NumFiles, share.TotalSize, filesJson)
+	_, err = db.Exec(
+		"INSERT INTO shares (file_path, expiration_date, long_id, num_files, total_size, files, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		share.FilePath, share.ExpirationDate, share.LongId, share.NumFiles, share.TotalSize, filesJson, share.UserId,
+	)
 	if err != nil {
 		log.Printf("Error creating share: %v", err)
 		return nil, err
 	}
 	//get the share we just created using LAST_INSERT_ROWID()
 	row := db.QueryRow("SELECT * FROM shares WHERE id = LAST_INSERT_ROWID()")
-	err = row.Scan(&share.Id, &share.FilePath, &share.ExpirationDate, &share.LongId, &share.NumFiles, &share.TotalSize, &filesJson)
+	err = row.Scan(&share.Id, &share.FilePath, &share.ExpirationDate, &share.LongId, &share.NumFiles, &share.TotalSize, &filesJson, &share.UserId)
 	if err != nil {
 		log.Printf("Error getting share: %v", err)
 		return nil, err

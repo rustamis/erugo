@@ -150,7 +150,7 @@ func createUser(db *sql.DB, username, password string) error {
 		return err
 	}
 
-	_, err = db.Exec("INSERT INTO users (username, password_hash) VALUES (?, ?)", username, hashedPassword)
+	_, err = db.Exec("INSERT INTO users (username, password_hash, admin) VALUES (?, ?, ?)", username, hashedPassword, true)
 	if err != nil {
 		log.Println("Error inserting user into database:", err) // Log error
 		return err

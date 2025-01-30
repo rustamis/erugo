@@ -22,7 +22,7 @@
   })
 
   const fetchShare = async () => {
-    const response = await fetch(`${apiUrl}/api/shares/${props.downloadShareCode}/`, {
+    const response = await fetch(`${apiUrl}/api/shares/${props.downloadShareCode}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -38,7 +38,7 @@
   }
 
   const downloadFiles = () => {
-    const downloadUrl = `${apiUrl}/api/shares/${props.downloadShareCode}/download/`
+    const downloadUrl = `${apiUrl}/api/shares/${props.downloadShareCode}/download`
     window.open(downloadUrl, '_blank')
   }
 </script>

@@ -16,7 +16,7 @@
   })
 
   const attemptRefresh = () => {
-    fetch(`${apiUrl}/api/auth/refresh/`, {
+    fetch(`${apiUrl}/api/auth/refresh`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -37,7 +37,7 @@
   }
 
   const login = () => {
-    fetch(`${apiUrl}/api/auth/login/`, {
+    fetch(`${apiUrl}/api/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -57,7 +57,7 @@
   }
 
   const logout = () => {
-    fetch(`${apiUrl}/api/auth/logout/`, {
+    fetch(`${apiUrl}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     }).then(response => {

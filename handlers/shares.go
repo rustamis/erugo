@@ -10,6 +10,7 @@ import (
 
 	"github.com/DeanWard/erugo/config"
 	"github.com/DeanWard/erugo/db"
+	"github.com/DeanWard/erugo/middleware"
 	"github.com/DeanWard/erugo/models"
 	"github.com/DeanWard/erugo/responses/file_response"
 	"github.com/DeanWard/erugo/responses/json_response"
@@ -46,6 +47,9 @@ func DownloadShareHandler(database *sql.DB) http.Handler {
 func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	utils.Log("Creating share", utils.ColorGreen)
+
+	userID := r.Context().Value(middleware.ContextKey("userID")).(int)
+	utils.Log(fmt.Sprintf("User ID: %d", userID), utils.ColorGreen)
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		http.Error(w, "Failed to parse form", http.StatusBadRequest)
@@ -102,6 +106,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 		NumFiles:       len(files),
 		TotalSize:      totalSize,
 		Files:          fileNames,
+		UserId:         userID,
 	}
 	savedShare, err := db.CreateShare(database, share)
 	if err != nil {
@@ -110,7 +115,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 		return
 	}
 	payload := map[string]interface{}{
-		"share": savedShare,
+		"share": savedShare.ToShareResponse(),
 	}
 	json_response.New(json_response.SuccessStatus, "Share created", payload, http.StatusOK).Send(w)
 }
@@ -127,7 +132,7 @@ func handleGetShare(database *sql.DB, w http.ResponseWriter, longId string) {
 		return
 	}
 	payload := map[string]interface{}{
-		"share": share,
+		"share": share.ToShareResponse(),
 	}
 	json_response.New(json_response.SuccessStatus, "Share found", payload, http.StatusOK).Send(w)
 }

@@ -21,7 +21,7 @@
   const maxShareSize = ref(0)
 
   onMounted(async () => {
-    const response = await fetch(`${apiUrl}/api/health/`)
+    const response = await fetch(`${apiUrl}/api/health`)
     const data = await response.json()
     maxShareSize.value = data.data.max_share_size
   })
@@ -81,7 +81,7 @@
     formData.append('description', 'test')
 
     currentlyUploading.value = true
-    const response = await fetch(`${apiUrl}/api/shares/`, {
+    const response = await fetch(`${apiUrl}/api/shares`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${props.jwt}`

@@ -12,8 +12,8 @@ import (
 
 	"github.com/DeanWard/erugo/config"
 	"github.com/DeanWard/erugo/db"
-	"github.com/DeanWard/erugo/handlers"
 	"github.com/DeanWard/erugo/middleware"
+	"github.com/DeanWard/erugo/routes"
 	"github.com/DeanWard/erugo/setup"
 	"github.com/DeanWard/erugo/utils"
 	"github.com/gorilla/mux"
@@ -61,7 +61,10 @@ func main() {
 
 func runSetupIfNeeded(database *sql.DB) {
 	//are there any users in the database?
-	users := db.GetUsers(database)
+	users, err := db.GetUsers(database)
+	if err != nil {
+		log.Fatalf("Failed to get users: %v", err)
+	}
 	if len(users) == 0 {
 		//run the setup
 		log.Println("No users found, running setup")
@@ -74,27 +77,10 @@ func runSetupIfNeeded(database *sql.DB) {
 func bringUpServer(database *sql.DB, embeddedFS fs.FS) {
 	// Initialize the gorilla/mux router
 	router := mux.NewRouter()
-	router.StrictSlash(false)
+	router.StrictSlash(true)
 
-	// Define API routes
-
-	//POST /api/auth/login - login
-	router.Handle("/api/auth/login/", handlers.LoginHandler(database)).Methods("POST")
-	//POST /api/auth/refresh - refresh a token
-	router.Handle("/api/auth/refresh/", handlers.RefreshTokenHandler(database)).Methods("POST")
-	//POST /api/auth/logout - logout
-	router.Handle("/api/auth/logout/", handlers.LogoutHandler(database)).Methods("POST")
-	//POST /api/shares - create a new share
-	router.Handle("/api/shares/", middleware.JwtMiddleware(handlers.CreateShareHandler(database))).Methods("POST")
-	//GET /api/shares/{longId} - get a share by its longId
-	router.Handle("/api/shares/{longId}/", handlers.GetShareHandler(database)).Methods("GET")
-	//POST /api/shares/{longId}/download - download a share by its longId
-	router.Handle("/api/shares/{longId}/download/", handlers.DownloadShareHandler(database)).Methods("GET")
-	//GET /api/health - health check
-	router.Handle("/api/health/", handlers.HealthCheckHandler()).Methods("GET")
-
-	// Serve the frontend (static files)
-	router.PathPrefix("/").Handler(handlers.ServeFrontendHandler(embeddedFS))
+	// Register all routes
+	routes.RegisterRoutes(router, database, embeddedFS)
 
 	// Apply CORS middleware
 	handlerWithCORS := middleware.CorsMiddleware(router)

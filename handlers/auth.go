@@ -39,7 +39,7 @@ func handleLogin(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !auth.CheckPassword(user.Password, req.Password) {
+	if !auth.CheckPassword(user.PasswordHash, req.Password) {
 		json_response.New(json_response.ErrorStatus, "Invalid username or password", nil, http.StatusUnauthorized).Send(w)
 		log.Printf("Failed to verify password for user %s", req.Username)
 		return
@@ -47,13 +47,15 @@ func handleLogin(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	//create a jwt token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.Username,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"sub":   user.ID,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		"admin": user.Admin,
 	})
 
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.Username,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"sub":   user.ID,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		"admin": user.Admin,
 	})
 
 	tokenString, err := token.SignedString([]byte(config.AppConfig.JwtSecret))
@@ -118,8 +120,9 @@ func handleRefreshToken(database *sql.DB, w http.ResponseWriter, r *http.Request
 
 		//create a new jwt token
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"sub": user.Username,
-			"exp": time.Now().Add(time.Minute * 15).Unix(),
+			"sub":   user.ID,
+			"exp":   time.Now().Add(time.Minute * 15).Unix(),
+			"admin": user.Admin,
 		})
 
 		tokenString, err := token.SignedString([]byte(config.AppConfig.JwtSecret))
