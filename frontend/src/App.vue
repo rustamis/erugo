@@ -1,20 +1,16 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
-  import { CircleSlash2, FilePlus, FolderPlus, GithubIcon, Upload, Trash, Copy, X, Loader, LogOut } from 'lucide-vue-next'
+  import { GithubIcon, LogOut, Settings as SettingsIcon } from 'lucide-vue-next'
   import Uploader from './components/uploader.vue'
   import Downloader from './components/downloader.vue'
   import Auth from './components/auth.vue'
+  import Settings  from './components/settings.vue' 
   import { unsplashImages } from './unsplashImages'
   import { getApiUrl } from './utils'
+  import { store } from './store'
 
   const auth = ref(null)
-
-  const apiUrl = getApiUrl()
-
-  const mode = ref('upload')
   const downloadShareCode = ref('')
-  const loggedIn = ref(false)
-  const jwt = ref('')
 
   onMounted(() => {
     setMode()
@@ -24,20 +20,13 @@
 
   const setMode = () => {
     if (window.location.pathname.includes('shares')) {
-      mode.value = 'download'
+      store.setMode('download')
       downloadShareCode.value = window.location.pathname.split('/').pop()
       setPageTitle('Download Share')
     } else {
-      mode.value = 'upload'
+      store.setMode('upload')
       setPageTitle('Create Share')
     }
-  }
-
-  const authSuccess = (data) => {
-    loggedIn.value = true
-    jwt.value = data.data.token
-    console.log(jwt.value)
-    console.log(data)
   }
 
   const setPageTitle = (title) => {
@@ -48,11 +37,6 @@
     auth.value.logout()
   }
 
-  const loggedout = () => {
-    loggedIn.value = false
-    jwt.value = ''
-  }
-
   const changeBackground = async () => {
     let backgrounds = document.querySelectorAll('.backgrounds-item')
     backgrounds.forEach(background => {
@@ -60,15 +44,21 @@
     })
     backgrounds[Math.floor(Math.random() * backgrounds.length)].classList.add('active')
   }
+
+  const openSettings = () => {
+    store.setSettingsOpen(true)
+  }
 </script>
 
 <template>
+  
   <div class="backgrounds">
     <div class="backgrounds-item" v-for="image in unsplashImages" :key="image" :style="{ backgroundImage: `url(https://images.unsplash.com/${image.id}?q=80)` }">
       <div class="backgrounds-item-credit" v-html="image.credit"></div>
     </div>
   </div>
-  <button class="logout" @click="logout"><LogOut /></button>
+  <button class="logout" @click="logout" v-if="store.isLoggedIn()"><LogOut /></button>
+  <button class="settings-button" @click="openSettings" v-if="store.isAdmin()"><SettingsIcon /></button>
   <div class="wrapper">
     <div class="left-panel">
       <div class="logo-container">
@@ -76,11 +66,11 @@
       </div>
 
       <div class="ui-container">
-        <template v-if="mode === 'upload'">
-          <Uploader v-if="loggedIn" :jwt="jwt" />
-          <Auth v-show="!loggedIn" @auth-success="authSuccess" @logout="loggedout" ref="auth"/>
+        <template v-if="store.mode === 'upload'">
+          <Uploader v-if="store.isLoggedIn()"/>
+          <Auth v-show="!store.isLoggedIn()" ref="auth"/>
         </template>
-        <Downloader v-if="mode === 'download'" :downloadShareCode="downloadShareCode" />
+        <Downloader v-if="store.mode === 'download'" :downloadShareCode="downloadShareCode" />
       </div>
     </div>
   </div>
@@ -93,19 +83,5 @@
       </a>
     </div>
   </div>
+  <Settings />
 </template>
-
-<style scoped>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-  }
-</style>

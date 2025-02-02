@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/DeanWard/erugo/utils"
@@ -58,7 +59,16 @@ func applyMigration(db *sql.DB, migration fs.FS, filename string) {
 	if err != nil {
 		utils.Log("Failed to read migration file: %v", utils.ColorRed, err)
 	}
-	db.Exec(string(sql))
+
+	//split the sql into multiple statements
+	statements := strings.Split(string(sql), ";")
+	for _, statement := range statements {
+		statement = strings.TrimSpace(statement)
+		if statement == "" {
+			continue
+		}
+		db.Exec(statement)
+	}
 }
 
 func logMigration(db *sql.DB, filename string) {

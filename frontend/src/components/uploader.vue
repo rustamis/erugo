@@ -1,15 +1,10 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
-  import { CircleSlash2, FilePlus, FolderPlus, GithubIcon, Upload, Trash, Copy, X, Loader, Check } from 'lucide-vue-next'
+  import { CircleSlash2, FilePlus, FolderPlus, Upload, Trash, Copy, X, Loader, Check } from 'lucide-vue-next'
   import { niceFileSize, niceFileType, getApiUrl } from '../utils'
+  import { store } from '../store'
 
 
-  const props = defineProps({
-    jwt: {
-      type: String,
-      required: true
-    }
-  })
 
   const apiUrl = getApiUrl()
   
@@ -84,7 +79,7 @@
     const response = await fetch(`${apiUrl}/api/shares`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${props.jwt}`
+        'Authorization': `Bearer ${store.jwt}`
       },
       body: formData
     })

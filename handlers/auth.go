@@ -39,7 +39,7 @@ func handleLogin(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !auth.CheckPassword(user.PasswordHash, req.Password) {
+	if !auth.CheckPassword(user.Password, req.Password) {
 		json_response.New(json_response.ErrorStatus, "Invalid username or password", nil, http.StatusUnauthorized).Send(w)
 		log.Printf("Failed to verify password for user %s", req.Username)
 		return
@@ -112,7 +112,7 @@ func handleRefreshToken(database *sql.DB, w http.ResponseWriter, r *http.Request
 	}
 
 	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
-		user := db.UserByName(database, claims["sub"].(string))
+		user := db.UserByID(database, int(claims["sub"].(float64)))
 		if user == nil {
 			json_response.New(json_response.ErrorStatus, "User not found", nil, http.StatusUnauthorized).Send(w)
 			return

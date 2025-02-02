@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 body {
@@ -442,7 +444,8 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
   }
-  .total-size, .share-expires {
+  .total-size,
+  .share-expires {
     margin-top: 10px;
     color: #4e4e4e;
     font-size: 0.8rem;
@@ -530,8 +533,6 @@ body {
 }
 
 .auth-container {
-
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -551,29 +552,60 @@ body {
     h1 {
       margin-bottom: 20px;
     }
+  }
+}
 
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      background-color: white;
-      color: #222222;
-      margin-bottom: 10px;
+button {
+  background-color: #eec154;
+  color: #222222;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  transition: all 0.1s ease-in-out;
 
-      &:focus {
-        //nice yellow outline
-        outline: 2px solid #eec154;
-      }
+  &:last-child {
+    margin-right: 0;
+  }
+  &:hover {
+    background-color: #222222;
+    color: #eec154;
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    margin-top: -3px;
+  }
+
+  &:disabled {
+    background-color: #eec05444;
+    color: #22222248;
+    cursor: not-allowed;
+  }
+
+  &.secondary {
+    background-color: #5481EE;
+    color: #fff;
+    &:hover {
+      background-color: #222222;
+      color: #5481EE;
     }
   }
 }
 
-button.logout {
+button.logout,
+button.settings-button,
+button.close-settings-button {
+  display: flex;
   position: absolute;
   bottom: 20px;
-  right: 20px;
-  background-color: #eec154;  
+  background-color: #eec154;
   color: #222222;
   border: none;
   cursor: pointer;
@@ -583,6 +615,32 @@ button.logout {
   svg {
     width: 20px;
     height: 20px;
+    margin-right: 0px;
+    margin-top: 0px;
+  }
+  &:hover {
+    background-color: #222222;
+    color: #eec154;
+  }
+}
+
+button.logout {
+  right: 20px;
+}
+
+button.settings-button {
+  right: 70px;
+}
+
+button.close-settings-button {
+  right: 20px;
+  top: 20px;
+  bottom: unset;
+  background-color: #222222;
+  color: #eec154;
+  &:hover {
+    background-color: #eec154;
+    color: #222222;
   }
 }
 
@@ -590,4 +648,143 @@ button {
   &:focus {
     outline: 2px solid #4b4b4b;
   }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    color: #222222;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    th {
+      background-color: #eec154;
+      padding: 10px;
+      text-align: left;
+    }
+  }
+  tbody {
+    background-color: #eeeeee;
+    tr {
+      background-color: #eeeeee;
+      &:nth-child(even) {
+        background-color: color.adjust(#eeeeee, $lightness: 1%);
+      }
+    }
+    td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid rgba(175, 175, 175, 0.2);
+    }
+  }
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: white;
+  color: #222222;
+  margin-bottom: 10px;
+  border: 1px solid white;
+  transition: all 0.3s ease-in-out;
+
+  &:focus {
+    //nice yellow outline
+    outline: 2px solid #eec154;
+  }
+  &.error {
+    border: 1px solid red;
+  }
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  .error-message {
+    position: absolute;
+    color: rgb(169, 86, 86);
+    font-size: 0.8rem;
+    top: 12px;
+    right: 10px;
+  }
+}
+
+.checkbox-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  padding-right: 20px;
+  input {
+    display: none;
+  }
+  label {
+    font-size: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    &::before {
+      font-family: 'Material Icons';
+      content: "";
+      width: 20px;
+      height: 20px;
+      background-color: #eec0544a;
+      color: #222222;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+  }
+  input:checked + label {
+    &::before {
+      font-family: 'Material Icons';
+      content: "check";
+      width: 20px;
+      height: 20px;
+      background-color: #eec154;
+      color: #222222;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+  p.help-text {
+    margin-left: 30px;
+    width: 100%;
+    font-size: 0.8rem;
+    color: #d4d4d4;
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      margin-top: -2px;
+    }
+  }
+}
+
+
+.button-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+ 
 }

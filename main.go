@@ -77,7 +77,7 @@ func runSetupIfNeeded(database *sql.DB) {
 func bringUpServer(database *sql.DB, embeddedFS fs.FS) {
 	// Initialize the gorilla/mux router
 	router := mux.NewRouter()
-	router.StrictSlash(true)
+	router.StrictSlash(false)
 
 	// Register all routes
 	routes.RegisterRoutes(router, database, embeddedFS)

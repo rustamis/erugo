@@ -1,15 +1,13 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { getApiUrl } from '../utils'
-
+  import { jwtDecode } from 'jwt-decode'
+  import { store } from '../store'
   const apiUrl = getApiUrl()
 
   const username = ref('')
   const password = ref('')
-  const loggedIn = ref(false)
   const passwordInput = ref(null)
-
-  const emit = defineEmits(['auth-success', 'logout'])
 
   onMounted(() => {
     attemptRefresh()
@@ -32,8 +30,15 @@
   }
 
   const authSuccess = (data) => {
-    emit('auth-success', data)
-    loggedIn.value = true
+    const decoded = jwtDecode(data.data.token)
+    store.setMultiple({
+      userId: decoded.sub,
+      admin: decoded.admin,
+      loggedIn: true,
+      jwtExpires: decoded.exp,
+      jwt: data.data.token
+    })
+    store.logState()
   }
 
   const login = () => {
@@ -61,8 +66,16 @@
       method: 'POST',
       credentials: 'include',
     }).then(response => {
+      username.value = ''
+      password.value = ''
+
       if (response.ok) {
-        emit('logout')
+        store.setMultiple({
+          admin: false,
+          loggedIn: false,
+          jwt: '',
+          jwtExpires: null
+        })
       }
     })
   }
