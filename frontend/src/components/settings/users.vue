@@ -85,6 +85,7 @@
           <td width="1" style="white-space: nowrap">{{ user.id }}</td>
           <td>
             <span v-if="user.id === store.userId" class="you-tag">You</span>
+            <span v-if="user.admin" class="admin-tag">Admin</span>
             {{ user.username }}
           </td>
           <td>{{ user.full_name }}</td>
@@ -98,19 +99,6 @@
             <button :disabled="user.id === store.userId" @click="deleteUser(user.id)">
               <Trash />
               Delete
-            </button>
-          </td>
-        </tr>
-        <tr v-for="index in 20" :key="index">
-          <td>x</td>
-          <td>fakseuser{{ index }}</td>
-          <td>Fake user {{ index }}</td>
-          <td>fake-email-{{ index }}@example.com</td>
-          <td>No</td>
-          <td>
-            <button>
-              <UserPen />
-              Edit
             </button>
           </td>
         </tr>
@@ -180,6 +168,17 @@
   .you-tag {
     display: inline-block;
     background-color: #eec154;
+    color: #222222;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    transform: translateY(-1px);
+  }
+
+  .admin-tag {
+    display: inline-block;
+    background-color: #ee9254;
     color: #222222;
     font-size: 12px;
     padding: 2px 5px;

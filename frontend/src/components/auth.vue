@@ -30,13 +30,13 @@
   }
 
   const authSuccess = (data) => {
-    const decoded = jwtDecode(data.data.token)
+    const decoded = jwtDecode(data.data.access_token)
     store.setMultiple({
       userId: decoded.sub,
       admin: decoded.admin,
       loggedIn: true,
       jwtExpires: decoded.exp,
-      jwt: data.data.token
+      jwt: data.data.access_token
     })
     store.logState()
   }

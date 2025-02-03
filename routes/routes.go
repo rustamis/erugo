@@ -40,7 +40,7 @@ func registerAuthRoutes(router *mux.Router, database *sql.DB) {
 
 	//POST /api/auth/logout - logout a user
 	router.Handle("/api/auth/logout",
-		handlers.LogoutHandler(database),
+		handlers.LogoutHandler(),
 	).Methods("POST")
 }
 
@@ -82,6 +82,23 @@ func registerUserRoutes(router *mux.Router, database *sql.DB) {
 		),
 	).Methods("POST")
 
+	//PUT /api/users/{id} - update a user
+	router.Handle("/api/users/{id}",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.UpdateUserHandler(database),
+			),
+		),
+	).Methods("PUT")
+
+	//DELETE /api/users/{id} - delete a user
+	router.Handle("/api/users/{id}",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.DeleteUserHandler(database),
+			),
+		),
+	).Methods("DELETE")
 }
 
 func registerHealthRoutes(router *mux.Router) {
