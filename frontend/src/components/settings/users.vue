@@ -181,8 +181,8 @@
   }
   .you-tag {
     display: inline-block;
-    background-color: #eec154;
-    color: #222222;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
@@ -191,7 +191,7 @@
 
   .admin-tag {
     display: inline-block;
-    background-color: #5e80e7;
+    background-color: var(--accent-color);
     color: #fff;
     font-size: 12px;
     padding: 2px 5px;

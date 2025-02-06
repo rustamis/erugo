@@ -134,7 +134,7 @@
   }
 
   .settings-header {
-    background-color: #eec154;
+    background-color: var(--primary-color);
     border-radius: 5px 5px 0 0;
     display: flex;
     justify-content: space-between;
@@ -144,7 +144,7 @@
     h1 {
       font-size: 20px;
       font-weight: 600;
-      color: #222222;
+      color: var(--secondary-color);
       padding-left: 20px;
       display: flex;
       align-items: center;
@@ -173,7 +173,7 @@
     background-color: #e2e2e2;
     width: 100%;
     .settings-tab {
-      background-color: #222222;
+      background-color: var(--secondary-color);
       margin-top: 10px;
       padding: 10px;
       border-radius: 5px 5px 0 0;
@@ -196,9 +196,9 @@
       }
 
       &.active {
-        background-color: #eec154;
+        background-color: var(--primary-color);
         h2 {
-          color: #222222;
+          color: var(--secondary-color);
         }
       }
     }
@@ -231,7 +231,7 @@
         width: 100%;
         h2 {
           font-size: 1.4rem;
-          color: #222222;
+          color: var(--secondary-color);
           margin: 0;
           display: flex;
           align-items: center;
@@ -243,7 +243,7 @@
         }
         p {
           font-size: 1.2rem;
-          color: #222222;
+          color: var(--secondary-color);
           margin: 0;
         }
       }
