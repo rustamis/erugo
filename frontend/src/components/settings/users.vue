@@ -1,6 +1,6 @@
 <script setup>
   import { ref, onMounted } from 'vue'
-  import { getUsers, createUser } from '../../api'
+  import { getUsers, createUser, deleteUser } from '../../api'
   import { UserPen, Trash, UserPlus, CircleX } from 'lucide-vue-next'
   import { store } from '../../store'
   const users = ref([])
@@ -19,8 +19,16 @@
     })
   }
 
-  const deleteUser = id => {
-    console.log(id)
+  const handleDeleteUserClick = id => {
+    if (id === store.userId) {
+      alert('You cannot delete yourself.')
+      // return
+    }
+    if (confirm(`Are you sure you want to delete user ${id}?`)) {
+      deleteUser(id).then(data => {
+        loadUsers()
+      })
+    }
   }
 
   const addUser = () => {
@@ -64,7 +72,6 @@
       must_change_password: true
     }
   }
-    
 </script>
 
 <template>
@@ -84,9 +91,11 @@
         <tr v-for="user in users" :key="user.id">
           <td width="1" style="white-space: nowrap">{{ user.id }}</td>
           <td>
-            <span v-if="user.id === store.userId" class="you-tag">You</span>
-            <span v-if="user.admin" class="admin-tag">Admin</span>
             {{ user.username }}
+            <div class="tags" v-if="user.id === store.userId || user.admin">
+              <span v-if="user.id === store.userId" class="you-tag">You</span>
+              <span v-if="user.admin" class="admin-tag">Admin</span>
+            </div>
           </td>
           <td>{{ user.full_name }}</td>
           <td>{{ user.email }}</td>
@@ -96,7 +105,7 @@
               <UserPen />
               Edit
             </button>
-            <button :disabled="user.id === store.userId" @click="deleteUser(user.id)">
+            <button :disabled="user.id === store.userId" @click="handleDeleteUserClick(user.id)">
               <Trash />
               Delete
             </button>
@@ -165,6 +174,11 @@
 </template>
 
 <style lang="scss" scoped>
+  .tags {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+  }
   .you-tag {
     display: inline-block;
     background-color: #eec154;
@@ -172,18 +186,16 @@
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
-    margin-left: 10px;
     transform: translateY(-1px);
   }
 
   .admin-tag {
     display: inline-block;
-    background-color: #ee9254;
-    color: #222222;
+    background-color: #5e80e7;
+    color: #fff;
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
-    margin-left: 10px;
     transform: translateY(-1px);
   }
 

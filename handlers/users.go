@@ -8,7 +8,9 @@ import (
 	"strconv"
 
 	"github.com/DeanWard/erugo/db"
+	"github.com/DeanWard/erugo/middleware"
 	"github.com/DeanWard/erugo/models"
+	"github.com/DeanWard/erugo/validation"
 	"github.com/gorilla/mux"
 )
 
@@ -67,7 +69,10 @@ func GetUsersHandler(database *sql.DB) http.HandlerFunc {
 }
 
 // CreateUserHandler creates a new user
+
 func CreateUserHandler(database *sql.DB) http.HandlerFunc {
+	validator := validation.NewUserValidator(database)
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var createReq models.UserCreateRequest
 		if err := json.NewDecoder(r.Body).Decode(&createReq); err != nil {
@@ -75,9 +80,11 @@ func CreateUserHandler(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Validate the request
-		if err := createReq.Validate(); err != nil {
-			sendResponse(w, StatusError, err.Error(), nil, http.StatusBadRequest)
+		// Validate including uniqueness checks
+		if validationErrors := validator.ValidateCreate(&createReq); validationErrors.HasErrors() {
+			sendResponse(w, StatusError, "Validation failed",
+				map[string]interface{}{"errors": validationErrors},
+				http.StatusBadRequest)
 			return
 		}
 
@@ -99,15 +106,17 @@ func CreateUserHandler(database *sql.DB) http.HandlerFunc {
 
 // UpdateUserHandler updates an existing user
 func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
+	validator := validation.NewUserValidator(database)
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Parse and validate the user ID
+		// Parse and validate the user ID from URL
 		userID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
 			sendResponse(w, StatusError, "Invalid user ID", nil, http.StatusBadRequest)
 			return
 		}
 
-		// Parse the update request
+		// Parse the update request body
 		var updateReq models.UserUpdateRequest
 		if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
 			sendResponse(w, StatusError, "Invalid request format", nil, http.StatusBadRequest)
@@ -125,15 +134,25 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// Apply updates to the existing user
-		if updateReq.Username != nil {
-			existingUser.Username = *updateReq.Username
+		// Validate updates including uniqueness checks
+		if validationErrors := validator.ValidateUpdate(existingUser, &updateReq); validationErrors.HasErrors() {
+			sendResponse(w, StatusError, "Validation failed",
+				map[string]interface{}{"errors": validationErrors},
+				http.StatusBadRequest)
+			return
 		}
+
+		// Update password if provided
 		if updateReq.Password != nil {
 			if err := db.UserSetPassword(database, userID, *updateReq.Password); err != nil {
 				sendResponse(w, StatusError, "Failed to update password", nil, http.StatusInternalServerError)
 				return
 			}
+		}
+
+		// Apply updates to the existing user
+		if updateReq.Username != nil {
+			existingUser.Username = *updateReq.Username
 		}
 		if updateReq.Admin != nil {
 			existingUser.Admin = *updateReq.Admin
@@ -157,6 +176,10 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 		// Update the user in the database
 		updatedUser, err := db.UserUpdate(database, *existingUser)
 		if err != nil {
+			if errors.Is(err, db.ErrUserNotFound) {
+				sendResponse(w, StatusError, "User not found", nil, http.StatusNotFound)
+				return
+			}
 			sendResponse(w, StatusError, "Failed to update user", nil, http.StatusInternalServerError)
 			return
 		}
@@ -170,10 +193,20 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 // DeleteUserHandler removes a user
 func DeleteUserHandler(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		//this user id is in the context
+		CurrentUserID := r.Context().Value(middleware.ContextKey("userID")).(int)
+
 		// Parse and validate the user ID
 		userID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
 			sendResponse(w, StatusError, "Invalid user ID", nil, http.StatusBadRequest)
+			return
+		}
+
+		// Check if the user is the current user
+		if userID == CurrentUserID {
+			sendResponse(w, StatusError, "You cannot delete yourself", nil, http.StatusForbidden)
 			return
 		}
 

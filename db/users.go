@@ -102,6 +102,10 @@ func UserByID(db *sql.DB, id int) (*models.User, error) {
 
 // UserCreate creates a new user in the database
 func UserCreate(db *sql.DB, user models.User) (*models.User, error) {
+
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(user.PasswordHash),
 		bcrypt.DefaultCost,
@@ -209,4 +213,48 @@ func UserDelete(db *sql.DB, userID int) error {
 	}
 
 	return nil
+}
+
+// UserExistsByUsername checks if a user exists with the given username
+func UserExistsByUsername(db *sql.DB, username string) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)`
+	err := db.QueryRow(query, username).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	return exists, nil
+}
+
+// UserExistsByUsernameExcept checks if any user except the one with the given ID has this username
+func UserExistsByUsernameExcept(db *sql.DB, username string, exceptUserID int) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE username = ? AND id != ?)`
+	err := db.QueryRow(query, username, exceptUserID).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	return exists, nil
+}
+
+// UserExistsByEmail checks if a user exists with the given email
+func UserExistsByEmail(db *sql.DB, email string) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)`
+	err := db.QueryRow(query, email).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	return exists, nil
+}
+
+// UserExistsByEmailExcept checks if any user except the one with the given ID has this email
+func UserExistsByEmailExcept(db *sql.DB, email string, exceptUserID int) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM users WHERE email = ? AND id != ?)`
+	err := db.QueryRow(query, email, exceptUserID).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	return exists, nil
 }

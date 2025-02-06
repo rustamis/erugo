@@ -57,6 +57,13 @@ export const store = reactive({
     return this.loggedIn
   },
 
+  authSuccess(data) {
+    this.setMultiple({
+      ...data,
+    })
+    this.logState()
+  },
+
   logState() {
     console.group('Displaying current state')
     console.table({

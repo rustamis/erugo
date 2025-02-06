@@ -6,8 +6,9 @@
   import Auth from './components/auth.vue'
   import Settings  from './components/settings.vue' 
   import { unsplashImages } from './unsplashImages'
-  import { getApiUrl } from './utils'
+
   import { store } from './store'
+  import { logout } from './api'
 
   const auth = ref(null)
   const downloadShareCode = ref('')
@@ -33,8 +34,8 @@
     document.title = `erugo shares - ${title}`
   }
 
-  const logout = () => {
-    auth.value.logout()
+  const handleLogoutClick = () => {
+    logout()
   }
 
   const changeBackground = async () => {
@@ -57,7 +58,7 @@
       <div class="backgrounds-item-credit" v-html="image.credit"></div>
     </div>
   </div>
-  <button class="logout" @click="logout" v-if="store.isLoggedIn()"><LogOut /></button>
+  <button class="logout" @click="handleLogoutClick" v-if="store.isLoggedIn()"><LogOut /></button>
   <button class="settings-button" @click="openSettings" v-if="store.isAdmin()"><SettingsIcon /></button>
   <div class="wrapper">
     <div class="left-panel">
