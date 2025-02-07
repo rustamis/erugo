@@ -31,28 +31,28 @@ VALUES
   (
     'css_primary_color',
     'rgb(238, 193, 84)',
-    'ui',
+    'ui.css',
     DATETIME('now'),
     DATETIME('now')
   ),
   (
     'css_secondary_color',
     'rgb(34, 34, 34)',
-    'ui',
+    'ui.css',
     DATETIME('now'),
     DATETIME('now')
   ),
   (
     'css_accent_color',
     'rgb(84, 129, 238)',
-    'ui',
+    'ui.css',
     DATETIME('now'),
     DATETIME('now')
   ),
   (
     'css_accent_color_light',
     'rgb(238, 238, 238)',
-    'ui',
+    'ui.css',
     DATETIME('now'),
     DATETIME('now')
   ),

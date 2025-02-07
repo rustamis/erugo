@@ -28,7 +28,7 @@ func RegisterRoutes(router *mux.Router, database *sql.DB, embeddedFS fs.FS) {
 	registerSettingsRoutes(router, database)
 
 	// Frontend routes
-	registerFrontendRoutes(router, embeddedFS)
+	registerFrontendRoutes(router, embeddedFS, database)
 
 }
 
@@ -146,7 +146,7 @@ func registerSettingsRoutes(router *mux.Router, database *sql.DB) {
 	).Methods("PUT")
 }
 
-func registerFrontendRoutes(router *mux.Router, embeddedFS fs.FS) {
+func registerFrontendRoutes(router *mux.Router, embeddedFS fs.FS, database *sql.DB) {
 	log.Println("registering frontend routes")
-	router.PathPrefix("/").Handler(handlers.ServeFrontendHandler(embeddedFS))
+	router.PathPrefix("/").Handler(handlers.ServeFrontendHandler(embeddedFS, database))
 }

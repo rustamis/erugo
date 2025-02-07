@@ -1,19 +1,18 @@
 <script setup>
   import { store } from '../store'
-  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save } from 'lucide-vue-next'
+  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save, Palette } from 'lucide-vue-next'
   import { ref, onMounted } from 'vue'
   import Users from './settings/users.vue'
 
   //settins panels
   const usersPanel = ref(null)
 
-
   // Track active tab
-  const activeTab = ref('general')
+  const activeTab = ref('branding')
 
   // Create refs for the tab contents
   const tabContents = ref({
-    general: ref(null),
+    branding: ref(null),
     users: ref(null)
   })
 
@@ -44,29 +43,48 @@
       </div>
       <div class="settings-tabs-wrapper">
         <div class="settings-tabs-container">
-          <div class="settings-tab" :class="{ active: activeTab === 'general' }" @click="setActiveTab('general')">
-            <h2><SlidersHorizontal /> General</h2>
+          <div class="settings-tab" :class="{ active: activeTab === 'branding' }" @click="setActiveTab('branding')">
+            <h2>
+              <Palette />
+              Branding
+            </h2>
           </div>
           <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')">
-            <h2><UsersIcon /> Users</h2>
+            <h2>
+              <UsersIcon />
+              Users
+            </h2>
           </div>
         </div>
         <div class="settings-tabs-content-container">
           <Transition name="fade">
-            <div v-if="activeTab === 'general'" class="settings-tab-content" ref="tabContents.general" key="general">
+            <div v-if="activeTab === 'branding'" class="settings-tab-content" ref="tabContents.branding" key="branding">
               <div class="tab-content-header">
-                <h2><SlidersHorizontal /> General</h2>
+                <h2>
+                  <Palette />
+                  <span>
+                    Branding
+                    <small>Customize the branding of your erugo instance.</small>
+                  </span>
+                </h2>
                 <div class="user-actions">
                   <button>
                     <Save />
-                    Save General Settings
+                    Save Branding Settings
                   </button>
                 </div>
               </div>
+              <div class="tab-content-body">Branding Settings</div>
             </div>
             <div v-else-if="activeTab === 'users'" class="settings-tab-content" ref="tabContents.users" key="users">
               <div class="tab-content-header">
-                <h2><UsersIcon /> Users</h2>
+                <h2>
+                  <UsersIcon />
+                  <span>
+                    Users
+                    <small>Manage your users.</small>
+                  </span>
+                </h2>
                 <div class="user-actions">
                   <button @click="usersPanel.addUser">
                     <UserPlus />
@@ -123,7 +141,6 @@
       pointer-events: auto;
       transition-delay: 0s;
       backdrop-filter: blur(10px);
-      
 
       .settings-container {
         transform: translateX(calc(50vw - var(--settings-width) / 2)) translateY(0);
@@ -240,9 +257,15 @@
             width: 20px;
             height: 20px;
           }
+          small {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            margin: 0;
+          }
         }
         p {
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: var(--secondary-color);
           margin: 0;
         }

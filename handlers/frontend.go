@@ -1,7 +1,11 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
+
+	"github.com/DeanWard/erugo/db"
+
 	"io"
 	"io/fs"
 	"log"
@@ -9,29 +13,23 @@ import (
 	"strings"
 )
 
-// CSS variables to inject
-const cssVariables = `
-<style>
-:root {
-  --primary-color: rgb(238, 193, 84);
-  --secondary-color: rgb(34, 34, 34);
-  --accent-color: rgb(84, 129, 238);
-  --accent-color-light: rgb(238, 238, 238);
-}
-</style>
-`
-
 // ServeFrontendHandler returns an http.Handler wrapping ServeFrontend with embeddedFS.
-func ServeFrontendHandler(embeddedFS fs.FS) http.Handler {
+func ServeFrontendHandler(embeddedFS fs.FS, database *sql.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ServeFrontend(w, r, embeddedFS)
+		ServeFrontend(w, r, embeddedFS, database)
 	})
 }
 
-func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS) {
+func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS, database *sql.DB) {
 	log.Printf("Serving frontend for %s", r.URL.Path)
 	if wantsAsset(r.URL.Path) {
 		http.FileServer(http.FS(embeddedFS)).ServeHTTP(w, r)
+		return
+	}
+
+	cssVariables, err := getCssVariables(database)
+	if err != nil {
+		http.Error(w, "failed to get css variables", http.StatusInternalServerError)
 		return
 	}
 
@@ -81,4 +79,33 @@ func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS) {
 
 func wantsAsset(path string) bool {
 	return strings.HasPrefix(path, "/assets/") || strings.Contains(path, ".")
+}
+
+func getCssVariables(database *sql.DB) (string, error) {
+	settings, err := db.SettingsByGroup(database, "ui.css")
+	if err != nil {
+		return "", err
+	}
+
+	// Create map for easier access
+	settingsMap := make(map[string]string)
+	for _, setting := range settings {
+		settingsMap[setting.Id] = setting.Value
+	}
+
+	cssVariables := fmt.Sprintf(`
+	<style>
+	:root {
+			--primary-color: %s;
+			--secondary-color: %s;
+			--accent-color: %s;
+			--accent-color-light: %s;
+	}
+	</style>`,
+		settingsMap["css_primary_color"],
+		settingsMap["css_secondary_color"],
+		settingsMap["css_accent_color"],
+		settingsMap["css_accent_color_light"])
+
+	return cssVariables, nil
 }
