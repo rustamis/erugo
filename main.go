@@ -26,6 +26,9 @@ var staticFiles embed.FS
 //go:embed migrations/*
 var migrations embed.FS
 
+//go:embed swagger.html
+var docsHTML string
+
 func main() {
 
 	// Load configuration
@@ -78,6 +81,11 @@ func bringUpServer(database *sql.DB, embeddedFS fs.FS) {
 	// Initialize the gorilla/mux router
 	router := mux.NewRouter()
 	router.StrictSlash(false)
+
+	router.Handle("/api-docs", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(docsHTML))
+	}))
 
 	// Register all routes
 	routes.RegisterRoutes(router, database, embeddedFS)

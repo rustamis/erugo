@@ -119,7 +119,7 @@
     }
 
     &.active {
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: var(--accent-color-light-transparent-2);
       pointer-events: auto;
       transition-delay: 0s;
       backdrop-filter: blur(10px);
@@ -170,7 +170,7 @@
     gap: 5px;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: #e2e2e2;
+    background-color: color-mix(in srgb, var(--accent-color-light-transparent) 85%, var(--primary-color));
     width: 100%;
     .settings-tab {
       background-color: var(--secondary-color);
@@ -208,7 +208,7 @@
     position: relative;
     flex-grow: 1;
     width: 100%;
-    background-color: #eaeaea;
+    background-color: var(--accent-color-light-transparent);
     border-radius: 5px;
 
     .settings-tab-content {
@@ -226,7 +226,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #f4f4f4;
+        background-color: color-mix(in srgb, var(--accent-color-light-transparent) 70%, var(--primary-color));
         padding: 20px;
         width: 100%;
         h2 {

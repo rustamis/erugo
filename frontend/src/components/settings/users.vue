@@ -206,7 +206,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: var(--accent-color-light-transparent-2);
     backdrop-filter: blur(10px);
     z-index: 9999999999999;
     opacity: 0;
@@ -216,7 +216,7 @@
     h2 {
       margin-bottom: 10px;
       font-size: 24px;
-      color: #ffffff;
+      color: var(--secondary-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -233,8 +233,8 @@
       left: 50%;
       transform: translate(-50%, 100%);
       width: 500px;
-      background-color: #222222;
-      color: #ffffff;
+      background-color: var(--accent-color-light-transparent);
+      color: var(--secondary-color);
       padding: 20px;
       border-radius: 10px 10px 0 0;
       box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);

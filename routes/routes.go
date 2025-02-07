@@ -3,6 +3,7 @@ package routes
 import (
 	"database/sql"
 	"io/fs"
+	"log"
 
 	"github.com/DeanWard/erugo/handlers"
 	"github.com/DeanWard/erugo/middleware"
@@ -23,11 +24,16 @@ func RegisterRoutes(router *mux.Router, database *sql.DB, embeddedFS fs.FS) {
 	// Health check
 	registerHealthRoutes(router)
 
+	// Settings routes
+	registerSettingsRoutes(router, database)
+
 	// Frontend routes
 	registerFrontendRoutes(router, embeddedFS)
+
 }
 
 func registerAuthRoutes(router *mux.Router, database *sql.DB) {
+	log.Println("registering auth routes")
 	//POST /api/auth/login - login a user
 	router.Handle("/api/auth/login",
 		handlers.LoginHandler(database),
@@ -45,6 +51,7 @@ func registerAuthRoutes(router *mux.Router, database *sql.DB) {
 }
 
 func registerShareRoutes(router *mux.Router, database *sql.DB) {
+	log.Println("registering share routes")
 	//POST /api/shares - create a new share
 	router.Handle("/api/shares",
 		middleware.JwtMiddleware(
@@ -64,6 +71,7 @@ func registerShareRoutes(router *mux.Router, database *sql.DB) {
 }
 
 func registerUserRoutes(router *mux.Router, database *sql.DB) {
+	log.Println("registering user routes")
 	//GET /api/users - get all users
 	router.Handle("/api/users",
 		middleware.JwtMiddleware(
@@ -102,11 +110,43 @@ func registerUserRoutes(router *mux.Router, database *sql.DB) {
 }
 
 func registerHealthRoutes(router *mux.Router) {
+	log.Println("registering health routes")
 	router.Handle("/api/health",
 		handlers.HealthCheckHandler(),
 	).Methods("GET")
 }
 
+func registerSettingsRoutes(router *mux.Router, database *sql.DB) {
+	log.Println("registering settings routes")
+	//GET /api/settings - get settings by group
+	router.Handle("/api/settings",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.GetSettingsByGroupHandler(database),
+			),
+		),
+	).Methods("GET")
+
+	//GET /api/settings/{id} - get setting by id
+	router.Handle("/api/settings/{id}",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.GetSettingByIdHandler(database),
+			),
+		),
+	).Methods("GET")
+
+	//PUT /api/settings - update setting value
+	router.Handle("/api/settings",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.SetSettingByIdHandler(database),
+			),
+		),
+	).Methods("PUT")
+}
+
 func registerFrontendRoutes(router *mux.Router, embeddedFS fs.FS) {
+	log.Println("registering frontend routes")
 	router.PathPrefix("/").Handler(handlers.ServeFrontendHandler(embeddedFS))
 }

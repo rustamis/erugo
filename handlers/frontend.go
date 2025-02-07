@@ -1,13 +1,25 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"strings"
-
-	"io/fs"
 )
+
+// CSS variables to inject
+const cssVariables = `
+<style>
+:root {
+  --primary-color: rgb(238, 193, 84);
+  --secondary-color: rgb(34, 34, 34);
+  --accent-color: rgb(84, 129, 238);
+  --accent-color-light: rgb(238, 238, 238);
+}
+</style>
+`
 
 // ServeFrontendHandler returns an http.Handler wrapping ServeFrontend with embeddedFS.
 func ServeFrontendHandler(embeddedFS fs.FS) http.Handler {
@@ -38,9 +50,31 @@ func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS) {
 	}
 	defer indexFile.Close()
 
-	// Set content type and serve the file
+	// Read the entire file into memory
+	content, err := io.ReadAll(indexFile)
+	if err != nil {
+		http.Error(w, "failed to read index.html", http.StatusInternalServerError)
+		return
+	}
+
+	// Convert content to string for manipulation
+	htmlContent := string(content)
+
+	// Inject CSS variables just before the closing head tag
+	if idx := strings.Index(htmlContent, "</head>"); idx != -1 {
+		htmlContent = fmt.Sprintf("%s%s%s",
+			htmlContent[:idx], // Everything before </head>
+			cssVariables,
+			htmlContent[idx:], // From </head> to end
+		) // Closing the fmt.Sprintf function call
+	} else {
+		// If no <head> tag is found, inject at the beginning of the file
+		htmlContent = cssVariables + htmlContent
+	}
+
+	// Set content type and serve the modified file
 	w.Header().Set("Content-Type", "text/html")
-	if _, err := io.Copy(w, indexFile); err != nil {
+	if _, err := io.Copy(w, strings.NewReader(htmlContent)); err != nil {
 		http.Error(w, "failed to serve index.html", http.StatusInternalServerError)
 	}
 }

@@ -2,19 +2,20 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-
-
-body {
-
+:root {
   --primary-color: rgb(238, 193, 84);
   --secondary-color: rgb(34, 34, 34);
   --accent-color: rgb(84, 129, 238);
   --accent-color-light: rgb(238, 238, 238);
+  
+  --accent-color-light-transparent: color-mix(in srgb, var(--accent-color-light) 90%, rgba(255, 255, 255, 0) 10%);
+  --accent-color-light-transparent-2: color-mix(in srgb, var(--accent-color-light) 70%, rgba(255, 255, 255, 0) 30%);
+}
 
-
+body {
   font-family: "Inter", sans-serif;
   background-color: var(--accent-color-light);
-
+  
 }
 
 #logo {
@@ -93,7 +94,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--accent-color-light-transparent);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 10px;
@@ -110,7 +111,7 @@ body {
 
   .max-size-label {
     margin-top: 10px;
-    color: #4e4e4e;
+    color: var(--secondary-color);
     font-size: 0.8rem;
     &.under-limit {
       color: #0dac25;
@@ -122,7 +123,7 @@ body {
 }
 
 .upload-basket {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--accent-color-light-transparent);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   width: 400px;
@@ -138,7 +139,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--accent-color-light-transparent);
     padding: 10px 20px;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -155,7 +156,7 @@ body {
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      color: #3e3e3e;
+      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
       font-size: 0.8rem;
     }
     .hover-actions {
@@ -173,26 +174,29 @@ body {
       transition: opacity 0.3s ease-in-out;
       pointer-events: none;
       padding-right: 10px;
-      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8));
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, var(--accent-color-light-transparent));
       border-radius: 0 5px 5px 0;
       button {
         background-color: transparent;
         border: none;
         cursor: pointer;
-        background-color: white;
+        background-color: var(--accent-color-light);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 30px;
         height: 30px;
+        padding: 0 ;
         &:hover {
-          background-color: var(--primary-color);
+          color: var(--secondary-color);
+          background-color:  var(--primary-color);
         }
         svg {
           color: var(--secondary-color);
           width: 16px;
           height: 16px;
+          margin:0;
         }
       }
     }
@@ -229,8 +233,6 @@ body {
 }
 
 .upload-button-container {
-  // background-color: rgba(255, 255, 255, 0.8);
-  // backdrop-filter: blur(10px);
   border-radius: 10px;
   width: 400px;
   display: flex;
@@ -337,7 +339,7 @@ body {
       position: fixed;
       top: 20px;
       right: 0px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: var(--accent-color-light);
       backdrop-filter: blur(10px);
       padding: 10px;
       border-radius: 5px 0 0 5px;
@@ -375,7 +377,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--accent-color-light-transparent-2);
   backdrop-filter: blur(10px);
   z-index: 99999999999;
   opacity: 0;
@@ -386,7 +388,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: var(--accent-color-light-transparent-2);
     padding: 20px;
     border-radius: 10px;
 
@@ -401,7 +403,7 @@ body {
       font-size: 0.8rem;
       padding: 10px;
       border-radius: 5px;
-      background-color: #eeeeee;
+      background-color: var(--accent-color-light);
       width: 100%;
     }
     .sharePanel-copy-button {
@@ -414,6 +416,7 @@ body {
       svg {
         width: 16px;
         height: 16px;
+        margin:0!important;
       }
     }
     .sharePanel-close {
@@ -421,9 +424,12 @@ body {
       top: 10px;
       right: 10px;
       cursor: pointer;
+      color: var(--secondary-color);
+      padding: 0;
       svg {
         width: 20px;
         height: 20px;
+        margin:0!important;
       }
     }
   }
@@ -457,7 +463,7 @@ body {
   .total-size,
   .share-expires {
     margin-top: 10px;
-    color: #4e4e4e;
+    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
     font-size: 0.8rem;
     margin-bottom: 10px;
     &.share-expires {
@@ -478,14 +484,14 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    background-color: #eeeeee;
+    background-color: var(--accent-color-light);
     padding: 10px;
     border-radius: 5px;
     width: 100%;
     margin-bottom: 4px;
     &.more-files {
       margin-top: 10px;
-      background-color: #eeeeee9e;
+      background-color: color-mix(in srgb, var(--accent-color-light) 90%, white 10%);
     }
     .file-name {
       color: var(--secondary-color);
@@ -502,7 +508,7 @@ body {
       max-width: 100%;
       width: 100%;
       &.more-files {
-        color: #4e4e4e;
+        color: var(--secondary-color);
         font-size: 0.8rem;
       }
       svg {
@@ -676,17 +682,18 @@ table {
     }
   }
   tbody {
-    background-color: #eeeeee;
+    background-color: var(--accent-color-light-transparent);
     tr {
-      background-color: #eeeeee;
+      background-color: var(--accent-color-light-transparent);
       &:nth-child(even) {
-        background-color: color.adjust(#eeeeee, $lightness: 1%);
+        background-color: var(--accent-color-light-transparent-2);
       }
     }
     td {
       padding: 10px;
       text-align: left;
       border: 1px solid rgba(175, 175, 175, 0.2);
+      color: var(--secondary-color);
     }
   }
 }
@@ -696,15 +703,21 @@ input {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: white;
+  background-color: var(--primary-color);
   color: var(--secondary-color);
   margin-bottom: 10px;
-  border: 1px solid white;
+  border: 1px solid var(--accent-color-light-transparent);
   transition: all 0.3s ease-in-out;
+  outline: 2px solid var(--primary-color);
+
+  //placeholder
+  &::placeholder {
+    color: color-mix(in srgb, var(--secondary-color) 60%, rgba(255, 255, 255, 0) 40%);
+  }
 
   &:focus {
     //nice yellow outline
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--secondary-color);
   }
   &.error {
     border: 1px solid red;
@@ -740,11 +753,11 @@ input {
     align-items: center;
     justify-content: flex-start;
     &::before {
-      font-family: 'Material Icons';
+      font-family: "Material Icons";
       content: "";
       width: 20px;
       height: 20px;
-      background-color: #eec0544a;
+      background-color: color-mix(in srgb, var(--primary-color) 50%, rgba(255, 255, 255, 0) 50%);
       color: var(--secondary-color);
       border-radius: 5px;
       display: inline-flex;
@@ -759,7 +772,7 @@ input {
   }
   input:checked + label {
     &::before {
-      font-family: 'Material Icons';
+      font-family: "Material Icons";
       content: "check";
       width: 20px;
       height: 20px;
@@ -778,7 +791,7 @@ input {
     margin-left: 30px;
     width: 100%;
     font-size: 0.8rem;
-    color: #d4d4d4;
+    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
     svg {
       width: 16px;
       height: 16px;
@@ -788,7 +801,6 @@ input {
   }
 }
 
-
 .button-bar {
   width: 100%;
   display: flex;
@@ -796,5 +808,4 @@ input {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
- 
 }
