@@ -140,7 +140,16 @@ func registerSettingsRoutes(router *mux.Router, database *sql.DB) {
 	router.Handle("/api/settings",
 		middleware.JwtMiddleware(
 			middleware.AdminMiddleware(
-				handlers.SetSettingByIdHandler(database),
+				handlers.SetSettingsByIdHandler(database),
+			),
+		),
+	).Methods("PUT")
+
+	//PUT /api/settings/logo - update the logo
+	router.Handle("/api/settings/logo",
+		middleware.JwtMiddleware(
+			middleware.AdminMiddleware(
+				handlers.SetLogoHandler(),
 			),
 		),
 	).Methods("PUT")
@@ -148,5 +157,9 @@ func registerSettingsRoutes(router *mux.Router, database *sql.DB) {
 
 func registerFrontendRoutes(router *mux.Router, embeddedFS fs.FS, database *sql.DB) {
 	log.Println("registering frontend routes")
+	//GET /api/settings/logo - get the logo
+	router.Handle("/logo",
+		handlers.GetLogoHandler(),
+	).Methods("GET")
 	router.PathPrefix("/").Handler(handlers.ServeFrontendHandler(embeddedFS, database))
 }

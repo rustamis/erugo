@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
+
+	"golang.org/x/net/html"
 
 	"github.com/DeanWard/erugo/db"
 
@@ -30,6 +33,19 @@ func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS, dat
 	cssVariables, err := getCssVariables(database)
 	if err != nil {
 		http.Error(w, "failed to get css variables", http.StatusInternalServerError)
+		return
+	}
+
+	applicationName, err := getApplicationName(database)
+	if err != nil {
+		http.Error(w, "failed to get application name", http.StatusInternalServerError)
+		return
+	}
+
+	htmlDataAtributeSettings, err := db.SettingsByIds(database, []string{"logo_width", "application_name", "css_primary_color", "css_secondary_color", "css_accent_color", "css_accent_color_light"})
+	if err != nil {
+		log.Printf("failed to get settings: %v", err)
+		http.Error(w, "failed to get settings", http.StatusInternalServerError)
 		return
 	}
 
@@ -70,6 +86,23 @@ func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS, dat
 		htmlContent = cssVariables + htmlContent
 	}
 
+	if idx := strings.Index(htmlContent, "<title>"); idx != -1 {
+		endIdx := strings.Index(htmlContent, "</title>")
+		if endIdx != -1 {
+			htmlContent = fmt.Sprintf("%s<title>%s</title>%s",
+				htmlContent[:idx],      // Everything before <title>
+				applicationName,        // New title
+				htmlContent[endIdx+8:], // Everything after </title>
+			)
+		}
+	}
+
+	htmlDataAttributeSettings := []Setting{}
+	for _, setting := range htmlDataAtributeSettings {
+		htmlDataAttributeSettings = append(htmlDataAttributeSettings, Setting{Id: setting.Id, Value: setting.Value})
+	}
+	htmlContent = injectSettings(htmlContent, htmlDataAttributeSettings)
+
 	// Set content type and serve the modified file
 	w.Header().Set("Content-Type", "text/html")
 	if _, err := io.Copy(w, strings.NewReader(htmlContent)); err != nil {
@@ -94,7 +127,7 @@ func getCssVariables(database *sql.DB) (string, error) {
 	}
 
 	cssVariables := fmt.Sprintf(`
-	<style>
+	<style id="erugo-css-variables">
 	:root {
 			--primary-color: %s;
 			--secondary-color: %s;
@@ -108,4 +141,63 @@ func getCssVariables(database *sql.DB) (string, error) {
 		settingsMap["css_accent_color_light"])
 
 	return cssVariables, nil
+}
+
+func getApplicationName(database *sql.DB) (string, error) {
+	setting, err := db.SettingById(database, "application_name")
+	if err != nil {
+		return "", err
+	}
+	return setting.Value, nil
+}
+
+func injectSettings(htmlContent string, htmlDataAttributeSettings []Setting) string {
+	// Find elements with data-settings="" and process each one
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return htmlContent
+	}
+
+	var processNode func(*html.Node)
+	processNode = func(n *html.Node) {
+		if n.Type == html.ElementNode {
+			// Check if node has data-settings attribute
+			for i, attr := range n.Attr {
+				if attr.Key == "data-settings" && attr.Val == "" {
+					// Remove the data-settings attribute
+					n.Attr = append(n.Attr[:i], n.Attr[i+1:]...)
+
+					// Add individual setting attributes
+					for _, setting := range htmlDataAttributeSettings {
+						n.Attr = append(n.Attr, html.Attribute{
+							Key: fmt.Sprintf("data-setting-%s", setting.Id),
+							Val: setting.Value,
+						})
+					}
+					break
+				}
+			}
+		}
+
+		// Process child nodes
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			processNode(c)
+		}
+	}
+
+	processNode(doc)
+
+	// Convert back to string
+	var buf bytes.Buffer
+	if err := html.Render(&buf, doc); err != nil {
+		return htmlContent
+	}
+
+	return buf.String()
+}
+
+// Setting represents a single data attribute setting
+type Setting struct {
+	Id    string
+	Value string
 }

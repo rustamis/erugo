@@ -3,6 +3,7 @@ package validation
 import (
 	"database/sql"
 
+	"github.com/DeanWard/erugo/db"
 	"github.com/DeanWard/erugo/models"
 )
 
@@ -19,18 +20,27 @@ func (v *SettingValidator) ValidateSet(id string, value string, group string) mo
 
 	if id == "" {
 		errors.Add("id", "Setting ID is required")
+		return errors
 	}
 
 	if value == "" {
 		errors.Add("value", "Value is required")
+		return errors
 	}
 
-	if group == "" {
-		errors.Add("group", "Setting group is required")
+	// Check if the setting exists
+	existing, err := db.SettingById(v.db, id)
+	if err != nil {
+		// For new settings, we need a group
+		if group == "" {
+			errors.Add("group", "Setting group is required for new settings")
+		}
+	} else {
+		// For existing settings, we ignore the group parameter as it will use the existing group
+		if group != "" && group != existing.SettingGroup {
+			errors.Add("group", "Cannot change setting group for existing settings")
+		}
 	}
-
-	// Add any specific validation rules for different setting types
-	// For example, if you have boolean settings, numeric settings, etc.
 
 	return errors
 }

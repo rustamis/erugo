@@ -44,7 +44,7 @@ VALUES
   ),
   (
     'css_accent_color',
-    'rgb(84, 129, 238)',
+    'rgb(27, 199, 177)',
     'ui.css',
     DATETIME('now'),
     DATETIME('now')
@@ -67,6 +67,13 @@ VALUES
     'application_name',
     'erugo File Sharing',
     'general',
+    DATETIME('now'),
+    DATETIME('now')
+  ),
+  (
+    'logo_width',
+    '100',
+    'ui',
     DATETIME('now'),
     DATETIME('now')
   );

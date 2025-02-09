@@ -4,7 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 
@@ -72,59 +76,118 @@ func GetSettingByIdHandler(database *sql.DB) http.HandlerFunc {
 	}
 }
 
-func SetSettingByIdHandler(database *sql.DB) http.HandlerFunc {
+func SetSettingsByIdHandler(database *sql.DB) http.HandlerFunc {
 	validator := validation.NewSettingValidator(database)
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Parse the request body
-		var settingReq models.SettingRequest
-		if err := json.NewDecoder(r.Body).Decode(&settingReq); err != nil {
+
+		var settingsReq []models.SettingRequest
+		if err := json.NewDecoder(r.Body).Decode(&settingsReq); err != nil {
 			sendResponse(w, StatusError, "Invalid request format", nil, http.StatusBadRequest)
 			return
 		}
 
-		// Validate the input
-		if validationErrors := validator.ValidateSet(settingReq.Id, settingReq.Value, settingReq.SettingGroup); validationErrors.HasErrors() {
+		// Validate all settings first
+		allErrors := make(models.ValidationErrors)
+		for i, settingReq := range settingsReq {
+			if errors := validator.ValidateSet(settingReq.Id, settingReq.Value, settingReq.SettingGroup); len(errors) > 0 {
+				// Add index prefix to error keys to identify which setting had the error
+				for field, msgs := range errors {
+					key := fmt.Sprintf("%d.%s", i, field)
+					allErrors[key] = msgs
+				}
+			}
+		}
+
+		if len(allErrors) > 0 {
 			sendResponse(w, StatusError, "Validation failed",
-				map[string]interface{}{"errors": validationErrors},
+				map[string]interface{}{"errors": allErrors},
 				http.StatusBadRequest)
 			return
 		}
 
-		// Get the group from the request or try to get existing setting's group
-		group := settingReq.SettingGroup
-		if group == "" {
-			// If no group provided, try to get existing setting's group
-			existing, err := db.SettingById(database, settingReq.Id)
-			if err != nil && !errors.Is(err, db.ErrSettingNotFound) {
-				sendResponse(w, StatusError, "Failed to check existing setting", nil, http.StatusInternalServerError)
-				return
-			}
-			if existing != nil {
+		// Process each setting
+		updatedSettings := make([]models.SettingResponse, 0, len(settingsReq))
+		for _, settingReq := range settingsReq {
+			// Get the group from the request or try to get existing setting's group
+			group := settingReq.SettingGroup
+			if group == "" {
+				// If no group provided, try to get existing setting's group
+				existing, err := db.SettingById(database, settingReq.Id)
+				if err != nil {
+					if errors.Is(err, db.ErrSettingNotFound) {
+						sendResponse(w, StatusError, fmt.Sprintf("Setting %s not found", settingReq.Id), nil, http.StatusNotFound)
+						return
+					}
+					sendResponse(w, StatusError, "Failed to check existing setting", nil, http.StatusInternalServerError)
+					return
+				}
 				group = existing.SettingGroup
-			} else {
-				sendResponse(w, StatusError, "Setting group is required for new settings", nil, http.StatusBadRequest)
+			}
+
+			// Update or create the setting
+			err := db.SettingSetById(database, settingReq.Id, settingReq.Value, group)
+			if err != nil {
+				if errors.Is(err, db.ErrSettingNotFound) {
+					sendResponse(w, StatusError, fmt.Sprintf("Setting %s not found", settingReq.Id), nil, http.StatusNotFound)
+					return
+				}
+				sendResponse(w, StatusError, "Failed to set setting", nil, http.StatusInternalServerError)
 				return
 			}
+
+			// Fetch the updated setting
+			setting, err := db.SettingById(database, settingReq.Id)
+			if err != nil {
+				sendResponse(w, StatusError, "Failed to fetch updated setting", nil, http.StatusInternalServerError)
+				return
+			}
+			updatedSettings = append(updatedSettings, setting.ToResponse())
 		}
 
-		err := db.SettingSetById(database, settingReq.Id, settingReq.Value, group)
+		sendResponse(w, StatusSuccess, "Settings updated successfully", updatedSettings, http.StatusOK)
+	}
+}
+
+func SetLogoHandler() http.HandlerFunc {
+	privateDir := "./private"
+	return func(w http.ResponseWriter, r *http.Request) {
+		//we're going to receive a file from the request. We'll store the file in the private directory as logo.<ext>
+		file, _, err := r.FormFile("logo")
 		if err != nil {
-			if errors.Is(err, db.ErrSettingNotFound) {
-				sendResponse(w, StatusError, "Setting not found", nil, http.StatusNotFound)
-				return
-			}
-			sendResponse(w, StatusError, "Failed to set setting", nil, http.StatusInternalServerError)
+			sendResponse(w, StatusError, "Failed to get logo file", nil, http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		//create the private directory if it doesn't exist
+		os.MkdirAll(privateDir, 0755)
+
+		//create the logo file
+		logoFile, err := os.Create(filepath.Join(privateDir, "logo.png"))
+		if err != nil {
+			sendResponse(w, StatusError, "Failed to create logo file", nil, http.StatusInternalServerError)
+			return
+		}
+		defer logoFile.Close()
+
+		//copy the file to the logo file
+		io.Copy(logoFile, file)
+
+		sendResponse(w, StatusSuccess, "Logo updated successfully", nil, http.StatusOK)
+	}
+}
+
+func GetLogoHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//read the logo file
+		logoFile, err := os.ReadFile(filepath.Join("./private", "logo.png"))
+		if err != nil {
+			sendResponse(w, StatusError, "Failed to read logo file", nil, http.StatusInternalServerError)
 			return
 		}
 
-		// Fetch the updated setting to return in response
-		setting, err := db.SettingById(database, settingReq.Id)
-		if err != nil {
-			sendResponse(w, StatusError, "Failed to fetch updated setting", nil, http.StatusInternalServerError)
-			return
-		}
-
-		sendResponse(w, StatusSuccess, "Setting updated successfully", setting.ToResponse(), http.StatusOK)
+		w.Header().Set("Content-Type", "image/png")
+		w.Write(logoFile)
 	}
 }

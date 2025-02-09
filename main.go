@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"embed"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -56,10 +57,54 @@ func main() {
 		log.Fatalf("Failed to create embedded filesystem: %v", embeddedErr)
 	}
 
+	createLogoFile(embeddedFS)
+
 	runSetupIfNeeded(database)
 
 	// Bring up the server
 	bringUpServer(database, embeddedFS)
+}
+
+func createLogoFile(embeddedFS fs.FS) {
+	//check if the logo file and private directory exist
+	if _, err := os.Stat("./private/logo.png"); os.IsNotExist(err) {
+		//create the private directory if it doesn't exist
+		os.MkdirAll("./private", 0755)
+
+		//the logo file is in the embeddedFS at frontend/dist/erugo.png
+		logoFile, err := embeddedFS.Open("erugo.png")
+		if err != nil {
+			log.Fatalf("Failed to open logo file: %v", err)
+		}
+		defer logoFile.Close()
+
+		//create the logo file
+		logoFile, err = os.Create("./private/logo.png")
+		if err != nil {
+			log.Fatalf("Failed to create logo file: %v", err)
+		}
+		defer logoFile.Close()
+		//copy the logo file to the private directory
+		srcFile, err := embeddedFS.Open("erugo.png")
+		if err != nil {
+			log.Fatalf("Failed to open source logo file: %v", err)
+		}
+		defer srcFile.Close()
+
+		destFile, err := os.Create("./private/logo.png")
+		if err != nil {
+			log.Fatalf("Failed to create destination logo file: %v", err)
+		}
+		defer destFile.Close()
+
+		_, err = io.Copy(destFile, srcFile)
+		if err != nil {
+			log.Fatalf("Failed to copy logo file: %v", err)
+		}
+		log.Println("Logo file created")
+	} else {
+		log.Println("Logo file already exists")
+	}
 }
 
 func runSetupIfNeeded(database *sql.DB) {

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/DeanWard/erugo/models"
@@ -72,6 +73,56 @@ func SettingById(db *sql.DB, id string) (*models.Setting, error) {
 	}
 
 	return &setting, nil
+}
+
+func SettingsByIds(db *sql.DB, ids []string) ([]models.Setting, error) {
+	// Handle empty ids case
+	if len(ids) == 0 {
+		return []models.Setting{}, nil
+	}
+
+	// Create the placeholder string for the IN clause
+	placeholders := make([]string, len(ids))
+	for i := range ids {
+		placeholders[i] = "?"
+	}
+
+	// Build the query with the correct number of placeholders
+	query := fmt.Sprintf(`
+		SELECT id, value, previous_value, setting_group 
+		FROM settings 
+		WHERE id IN (%s)
+		ORDER BY id`, strings.Join(placeholders, ","))
+
+	// Convert []string to []interface{} for Query arguments
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+
+	// Execute the query
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	defer rows.Close()
+
+	var settings []models.Setting
+	for rows.Next() {
+		var setting models.Setting
+		err := rows.Scan(&setting.Id, &setting.Value, &setting.PreviousValue, &setting.SettingGroup)
+		if err != nil {
+			return nil, fmt.Errorf("%w: %v", ErrDBOperation, err)
+		}
+		settings = append(settings, setting)
+	}
+
+	// Check for errors from iterating over rows
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+
+	return settings, nil
 }
 
 func SettingSetById(db *sql.DB, id string, newValue string, group string) error {
