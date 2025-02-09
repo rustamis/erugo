@@ -144,12 +144,13 @@ func UserUpdate(db *sql.DB, user models.User) (*models.User, error) {
 	query := `
 		UPDATE users 
 		SET username = ?, admin = ?, full_name = ?, 
-		    email = ?, active = ?, updated_at = ? 
+		    email = ?, active = ?, updated_at = ?,
+			must_change_pw = ?
 		WHERE id = ?`
 
 	result, err := db.Exec(query,
 		user.Username, user.Admin, user.FullName,
-		user.Email, user.Active, user.UpdatedAt, user.ID,
+		user.Email, user.Active, user.UpdatedAt, user.MustChangePassword, user.ID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrDBOperation, err)

@@ -4,6 +4,10 @@
   import { ColorPicker } from 'vue-color-kit'
   import { getSettingsByGroup, saveSettingsById, saveLogo, getSettingById } from '../../api'
   import FileInput from '../fileInput.vue'
+  import { useToast } from 'vue-toastification'
+
+  const toast = useToast()
+
   //These are the variables that will be updated and sent to the backend
   const primaryColor = ref('#000000')
   const secondaryColor = ref('#000000')
@@ -88,40 +92,46 @@
 
   const saveSettings = async () => {
     saving.value = true
-    await saveSettingsById([
-      {
-        id: 'css_primary_color',
-        value: primaryColor.value
-      },
-      {
-        id: 'css_secondary_color',
-        value: secondaryColor.value
-      },
-      {
-        id: 'css_accent_color',
-        value: accentColor.value
-      },
-      {
-        id: 'css_accent_color_light',
-        value: accentColorLight.value
-      },
-      {
-        id: 'application_name',
-        value: applicationName.value
-      },
-      {
-        id: 'logo_width',
-        value: logoWidth.value + ''
+    try {
+      await saveSettingsById([
+        {
+          id: 'css_primary_color',
+          value: primaryColor.value
+        },
+        {
+          id: 'css_secondary_color',
+          value: secondaryColor.value
+        },
+        {
+          id: 'css_accent_color',
+          value: accentColor.value
+        },
+        {
+          id: 'css_accent_color_light',
+          value: accentColorLight.value
+        },
+        {
+          id: 'application_name',
+          value: applicationName.value
+        },
+        {
+          id: 'logo_width',
+          value: logoWidth.value + ''
+        }
+      ])
+      applySettingsWithoutRefresh()
+
+      //if the user has changed the logo, save the new logo
+      if (logoFile.value) {
+        saveLogo(logoFile.value)
       }
-    ])
-    applySettingsWithoutRefresh()
 
-    //if the user has changed the logo, save the new logo
-    if (logoFile.value) {
-      saveLogo(logoFile.value)
+      saving.value = false
+      toast.success('Settings saved successfully')
+    } catch (error) {
+      saving.value = false
+      toast.error('Failed to save settings')
     }
-
-    saving.value = false
   }
 
   const applySettingsWithoutRefresh = () => {
@@ -211,7 +221,10 @@
         </div>
         <div class="setting-group-body mt-3">
           <div class="setting-group-body-item">
-            <h6>Select Logo <small>(Supports png only)</small></h6>
+            <h6>
+              Select Logo
+              <small>(Supports png only)</small>
+            </h6>
             <FileInput v-model="logoFile" accept="image/png" />
           </div>
         </div>
@@ -229,7 +242,10 @@
         </div>
         <div class="setting-group-body mt-3">
           <div class="setting-group-body-item">
-            <h6>Logo Width <small>(px)</small></h6>
+            <h6>
+              Logo Width
+              <small>(px)</small>
+            </h6>
             <input type="number" v-model="logoWidth" />
           </div>
         </div>

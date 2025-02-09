@@ -11,6 +11,7 @@ import (
 	"github.com/DeanWard/erugo/auth"
 	"github.com/DeanWard/erugo/config"
 	"github.com/DeanWard/erugo/db"
+	"github.com/DeanWard/erugo/responses"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -37,14 +38,15 @@ type TokenResponse struct {
 
 // Claims extends jwt.MapClaims to add type safety
 type Claims struct {
-	UserID    int       `json:"sub"`
-	TokenType TokenType `json:"type"`
-	IsAdmin   bool      `json:"admin"`
+	UserID             int       `json:"sub"`
+	TokenType          TokenType `json:"type"`
+	IsAdmin            bool      `json:"admin"`
+	MustChangePassword bool      `json:"must_change_password"`
 	jwt.RegisteredClaims
 }
 
 // createToken generates a new JWT token with appropriate claims
-func createToken(userID int, isAdmin bool, tokenType TokenType) (*jwt.Token, error) {
+func createToken(userID int, isAdmin bool, tokenType TokenType, mustChangePassword bool) (*jwt.Token, error) {
 	var expirationTime time.Time
 	switch tokenType {
 	case AccessToken:
@@ -56,9 +58,10 @@ func createToken(userID int, isAdmin bool, tokenType TokenType) (*jwt.Token, err
 	}
 
 	claims := Claims{
-		UserID:    userID,
-		TokenType: tokenType,
-		IsAdmin:   isAdmin,
+		UserID:             userID,
+		TokenType:          tokenType,
+		IsAdmin:            isAdmin,
+		MustChangePassword: mustChangePassword,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -86,13 +89,13 @@ func LoginHandler(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req AuthRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			sendResponse(w, StatusError, "Invalid request format", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Invalid request format", nil, http.StatusBadRequest)
 			return
 		}
 
 		// Validate input
 		if req.Username == "" || req.Password == "" {
-			sendResponse(w, StatusError, "Username and password are required", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Username and password are required", nil, http.StatusBadRequest)
 			return
 		}
 
@@ -100,33 +103,33 @@ func LoginHandler(database *sql.DB) http.HandlerFunc {
 		user, err := db.UserByName(database, req.Username)
 		if err != nil || !auth.CheckPassword(user.PasswordHash, req.Password) {
 			// Use a generic error message to avoid user enumeration
-			sendResponse(w, StatusError, "Invalid credentials", nil, http.StatusUnauthorized)
+			responses.SendResponse(w, responses.StatusError, "Invalid credentials", nil, http.StatusUnauthorized)
 			return
 		}
 
 		// Generate access token
-		accessToken, err := createToken(user.ID, user.Admin, AccessToken)
+		accessToken, err := createToken(user.ID, user.Admin, AccessToken, user.MustChangePassword)
 		if err != nil {
-			sendResponse(w, StatusError, "Authentication failed", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Authentication failed", nil, http.StatusInternalServerError)
 			return
 		}
 
 		accessTokenString, err := accessToken.SignedString([]byte(config.AppConfig.JwtSecret))
 		if err != nil {
-			sendResponse(w, StatusError, "Authentication failed", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Authentication failed", nil, http.StatusInternalServerError)
 			return
 		}
 
 		// Generate refresh token
-		refreshToken, err := createToken(user.ID, user.Admin, RefreshToken)
+		refreshToken, err := createToken(user.ID, user.Admin, RefreshToken, user.MustChangePassword)
 		if err != nil {
-			sendResponse(w, StatusError, "Authentication failed", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Authentication failed", nil, http.StatusInternalServerError)
 			return
 		}
 
 		refreshTokenString, err := refreshToken.SignedString([]byte(config.AppConfig.JwtSecret))
 		if err != nil {
-			sendResponse(w, StatusError, "Authentication failed", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Authentication failed", nil, http.StatusInternalServerError)
 			return
 		}
 
@@ -140,7 +143,7 @@ func LoginHandler(database *sql.DB) http.HandlerFunc {
 			ExpiresIn:   15 * 60, // 15 minutes in seconds
 		}
 
-		sendResponse(w, StatusSuccess, "Login successful", response, http.StatusOK)
+		responses.SendResponse(w, responses.StatusSuccess, "Login successful", response, http.StatusOK)
 	}
 }
 
@@ -150,7 +153,7 @@ func RefreshTokenHandler(database *sql.DB) http.HandlerFunc {
 		// Get refresh token from cookie
 		cookie, err := r.Cookie("refresh_token")
 		if err != nil {
-			sendResponse(w, StatusError, "No refresh token provided", nil, http.StatusUnauthorized)
+			responses.SendResponse(w, responses.StatusError, "No refresh token provided", nil, http.StatusUnauthorized)
 			return
 		}
 
@@ -163,13 +166,13 @@ func RefreshTokenHandler(database *sql.DB) http.HandlerFunc {
 		})
 
 		if err != nil {
-			sendResponse(w, StatusError, "Invalid refresh token", nil, http.StatusUnauthorized)
+			responses.SendResponse(w, responses.StatusError, "Invalid refresh token", nil, http.StatusUnauthorized)
 			return
 		}
 
 		claims, ok := token.Claims.(*Claims)
 		if !ok || !token.Valid || claims.TokenType != RefreshToken {
-			sendResponse(w, StatusError, "Invalid refresh token", nil, http.StatusUnauthorized)
+			responses.SendResponse(w, responses.StatusError, "Invalid refresh token", nil, http.StatusUnauthorized)
 			return
 		}
 
@@ -177,23 +180,23 @@ func RefreshTokenHandler(database *sql.DB) http.HandlerFunc {
 		user, err := db.UserByID(database, claims.UserID)
 		if err != nil {
 			if errors.Is(err, db.ErrUserNotFound) {
-				sendResponse(w, StatusError, "User not found", nil, http.StatusUnauthorized)
+				responses.SendResponse(w, responses.StatusError, "User not found", nil, http.StatusUnauthorized)
 				return
 			}
-			sendResponse(w, StatusError, "Authentication failed", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Authentication failed", nil, http.StatusInternalServerError)
 			return
 		}
 
 		// Generate new access token
-		newAccessToken, err := createToken(user.ID, user.Admin, AccessToken)
+		newAccessToken, err := createToken(user.ID, user.Admin, AccessToken, user.MustChangePassword)
 		if err != nil {
-			sendResponse(w, StatusError, "Failed to create access token", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to create access token", nil, http.StatusInternalServerError)
 			return
 		}
 
 		accessTokenString, err := newAccessToken.SignedString([]byte(config.AppConfig.JwtSecret))
 		if err != nil {
-			sendResponse(w, StatusError, "Failed to create access token", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to create access token", nil, http.StatusInternalServerError)
 			return
 		}
 
@@ -203,7 +206,7 @@ func RefreshTokenHandler(database *sql.DB) http.HandlerFunc {
 			ExpiresIn:   15 * 60,
 		}
 
-		sendResponse(w, StatusSuccess, "Token refreshed successfully", response, http.StatusOK)
+		responses.SendResponse(w, responses.StatusSuccess, "Token refreshed successfully", response, http.StatusOK)
 	}
 }
 
@@ -221,6 +224,6 @@ func LogoutHandler() http.HandlerFunc {
 			MaxAge:   -1,
 		})
 
-		sendResponse(w, StatusSuccess, "Logout successful", nil, http.StatusOK)
+		responses.SendResponse(w, responses.StatusSuccess, "Logout successful", nil, http.StatusOK)
 	}
 }

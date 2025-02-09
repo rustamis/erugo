@@ -72,6 +72,21 @@ func registerShareRoutes(router *mux.Router, database *sql.DB) {
 
 func registerUserRoutes(router *mux.Router, database *sql.DB) {
 	log.Println("registering user routes")
+	//GET /api/users/me - get the current user
+
+	router.Handle("/api/users/me",
+		middleware.JwtMiddlewareNoReset(
+			handlers.GetMyProfileHandler(database),
+		),
+	).Methods("GET")
+
+	//PUT /api/users/me - update the current user
+	router.Handle("/api/users/me",
+		middleware.JwtMiddlewareNoReset(
+			handlers.UpdateMyProfileHandler(database),
+		),
+	).Methods("PUT")
+
 	//GET /api/users - get all users
 	router.Handle("/api/users",
 		middleware.JwtMiddleware(
@@ -107,6 +122,7 @@ func registerUserRoutes(router *mux.Router, database *sql.DB) {
 			),
 		),
 	).Methods("DELETE")
+
 }
 
 func registerHealthRoutes(router *mux.Router) {

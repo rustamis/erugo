@@ -63,12 +63,15 @@ type UserCreateRequest struct {
 
 // UserUpdateRequest represents the expected input for user updates
 type UserUpdateRequest struct {
-	Username *string `json:"username,omitempty"`
-	Password *string `json:"password,omitempty"`
-	Admin    *bool   `json:"admin,omitempty"`
-	FullName *string `json:"full_name,omitempty"`
-	Email    *string `json:"email,omitempty"`
-	Active   *bool   `json:"active,omitempty"`
+	Username             *string `json:"username,omitempty"`
+	CurrentPassword      *string `json:"current_password,omitempty"`
+	Password             *string `json:"password,omitempty"`
+	PasswordConfirmation *string `json:"password_confirmation,omitempty"`
+	Admin                *bool   `json:"admin,omitempty"`
+	FullName             *string `json:"full_name,omitempty"`
+	Email                *string `json:"email,omitempty"`
+	Active               *bool   `json:"active,omitempty"`
+	MustChangePassword   *bool   `json:"must_change_password,omitempty"`
 }
 
 // Validate performs basic validation on the create request

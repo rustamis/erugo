@@ -10,44 +10,19 @@ import (
 	"github.com/DeanWard/erugo/db"
 	"github.com/DeanWard/erugo/middleware"
 	"github.com/DeanWard/erugo/models"
+	"github.com/DeanWard/erugo/responses"
 	"github.com/DeanWard/erugo/validation"
 	"github.com/gorilla/mux"
 )
 
 // Response is a standardized API response structure
-type Response struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-}
-
-const (
-	StatusSuccess = "success"
-	StatusError   = "error"
-)
-
-// sendResponse is a helper function to send JSON responses
-func sendResponse(w http.ResponseWriter, status string, message string, data interface{}, code int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	response := Response{
-		Status:  status,
-		Message: message,
-		Data:    data,
-	}
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		// If we fail to encode the response, we've already set the header status,
-		// so we'll just log the error and return
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
-}
 
 // GetUsersHandler returns all users
 func GetUsersHandler(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		users, err := db.UserList(database)
 		if err != nil {
-			sendResponse(w, StatusError, "Failed to fetch users", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to fetch users", nil, http.StatusInternalServerError)
 			return
 		}
 
@@ -64,7 +39,7 @@ func GetUsersHandler(database *sql.DB) http.HandlerFunc {
 			},
 		}
 
-		sendResponse(w, StatusSuccess, "Users retrieved successfully", data, http.StatusOK)
+		responses.SendResponse(w, responses.StatusSuccess, "Users retrieved successfully", data, http.StatusOK)
 	}
 }
 
@@ -76,13 +51,13 @@ func CreateUserHandler(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var createReq models.UserCreateRequest
 		if err := json.NewDecoder(r.Body).Decode(&createReq); err != nil {
-			sendResponse(w, StatusError, "Invalid request format", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Invalid request format", nil, http.StatusBadRequest)
 			return
 		}
 
 		// Validate including uniqueness checks
 		if validationErrors := validator.ValidateCreate(&createReq); validationErrors.HasErrors() {
-			sendResponse(w, StatusError, "Validation failed",
+			responses.SendResponse(w, responses.StatusError, "Validation failed",
 				map[string]interface{}{"errors": validationErrors},
 				http.StatusBadRequest)
 			return
@@ -94,11 +69,11 @@ func CreateUserHandler(database *sql.DB) http.HandlerFunc {
 		// Create the user in the database
 		createdUser, err := db.UserCreate(database, user)
 		if err != nil {
-			sendResponse(w, StatusError, "Failed to create user", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to create user", nil, http.StatusInternalServerError)
 			return
 		}
 
-		sendResponse(w, StatusSuccess, "User created successfully",
+		responses.SendResponse(w, responses.StatusSuccess, "User created successfully",
 			map[string]interface{}{"user": createdUser.ToResponse()},
 			http.StatusCreated)
 	}
@@ -112,14 +87,14 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 		// Parse and validate the user ID from URL
 		userID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
-			sendResponse(w, StatusError, "Invalid user ID", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Invalid user ID", nil, http.StatusBadRequest)
 			return
 		}
 
 		// Parse the update request body
 		var updateReq models.UserUpdateRequest
 		if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
-			sendResponse(w, StatusError, "Invalid request format", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Invalid request format", nil, http.StatusBadRequest)
 			return
 		}
 
@@ -127,16 +102,16 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 		existingUser, err := db.UserByID(database, userID)
 		if err != nil {
 			if errors.Is(err, db.ErrUserNotFound) {
-				sendResponse(w, StatusError, "User not found", nil, http.StatusNotFound)
+				responses.SendResponse(w, responses.StatusError, "User not found", nil, http.StatusNotFound)
 				return
 			}
-			sendResponse(w, StatusError, "Failed to fetch user", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to fetch user", nil, http.StatusInternalServerError)
 			return
 		}
 
 		// Validate updates including uniqueness checks
-		if validationErrors := validator.ValidateUpdate(existingUser, &updateReq); validationErrors.HasErrors() {
-			sendResponse(w, StatusError, "Validation failed",
+		if validationErrors := validator.ValidateUpdate(existingUser, &updateReq, false, false); validationErrors.HasErrors() {
+			responses.SendResponse(w, responses.StatusError, "Validation failed",
 				map[string]interface{}{"errors": validationErrors},
 				http.StatusBadRequest)
 			return
@@ -145,7 +120,7 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 		// Update password if provided
 		if updateReq.Password != nil {
 			if err := db.UserSetPassword(database, userID, *updateReq.Password); err != nil {
-				sendResponse(w, StatusError, "Failed to update password", nil, http.StatusInternalServerError)
+				responses.SendResponse(w, responses.StatusError, "Failed to update password", nil, http.StatusInternalServerError)
 				return
 			}
 		}
@@ -169,6 +144,10 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 				Valid:  *updateReq.Email != "",
 			}
 		}
+		if updateReq.MustChangePassword != nil {
+			existingUser.MustChangePassword = *updateReq.MustChangePassword
+		}
+
 		if updateReq.Active != nil {
 			existingUser.Active = *updateReq.Active
 		}
@@ -177,14 +156,14 @@ func UpdateUserHandler(database *sql.DB) http.HandlerFunc {
 		updatedUser, err := db.UserUpdate(database, *existingUser)
 		if err != nil {
 			if errors.Is(err, db.ErrUserNotFound) {
-				sendResponse(w, StatusError, "User not found", nil, http.StatusNotFound)
+				responses.SendResponse(w, responses.StatusError, "User not found", nil, http.StatusNotFound)
 				return
 			}
-			sendResponse(w, StatusError, "Failed to update user", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to update user", nil, http.StatusInternalServerError)
 			return
 		}
 
-		sendResponse(w, StatusSuccess, "User updated successfully",
+		responses.SendResponse(w, responses.StatusSuccess, "User updated successfully",
 			map[string]interface{}{"user": updatedUser.ToResponse()},
 			http.StatusOK)
 	}
@@ -200,13 +179,13 @@ func DeleteUserHandler(database *sql.DB) http.HandlerFunc {
 		// Parse and validate the user ID
 		userID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
-			sendResponse(w, StatusError, "Invalid user ID", nil, http.StatusBadRequest)
+			responses.SendResponse(w, responses.StatusError, "Invalid user ID", nil, http.StatusBadRequest)
 			return
 		}
 
 		// Check if the user is the current user
 		if userID == CurrentUserID {
-			sendResponse(w, StatusError, "You cannot delete yourself", nil, http.StatusForbidden)
+			responses.SendResponse(w, responses.StatusError, "You cannot delete yourself", nil, http.StatusForbidden)
 			return
 		}
 
@@ -214,13 +193,87 @@ func DeleteUserHandler(database *sql.DB) http.HandlerFunc {
 		err = db.UserDelete(database, userID)
 		if err != nil {
 			if errors.Is(err, db.ErrUserNotFound) {
-				sendResponse(w, StatusError, "User not found", nil, http.StatusNotFound)
+				responses.SendResponse(w, responses.StatusError, "User not found", nil, http.StatusNotFound)
 				return
 			}
-			sendResponse(w, StatusError, "Failed to delete user", nil, http.StatusInternalServerError)
+			responses.SendResponse(w, responses.StatusError, "Failed to delete user", nil, http.StatusInternalServerError)
 			return
 		}
 
-		sendResponse(w, StatusSuccess, "User deleted successfully", nil, http.StatusOK)
+		responses.SendResponse(w, responses.StatusSuccess, "User deleted successfully", nil, http.StatusOK)
+	}
+}
+
+// GetMyProfileHandler returns the current user
+func GetMyProfileHandler(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		CurrentUserID := r.Context().Value(middleware.ContextKey("userID")).(int)
+		user, err := db.UserByID(database, CurrentUserID)
+		if err != nil {
+			responses.SendResponse(w, responses.StatusError, "Failed to fetch user", nil, http.StatusInternalServerError)
+			return
+		}
+
+		responses.SendResponse(w, responses.StatusSuccess, "User retrieved successfully", user.ToResponse(), http.StatusOK)
+	}
+}
+
+// UpdateMyProfileHandler updates the current user
+func UpdateMyProfileHandler(database *sql.DB) http.HandlerFunc {
+	validator := validation.NewUserValidator(database)
+	return func(w http.ResponseWriter, r *http.Request) {
+		CurrentUserID := r.Context().Value(middleware.ContextKey("userID")).(int)
+		user, err := db.UserByID(database, CurrentUserID)
+		if err != nil {
+			responses.SendResponse(w, responses.StatusError, "Failed to fetch user", nil, http.StatusInternalServerError)
+			return
+		}
+
+		// Parse the update request body
+		var updateReq models.UserUpdateRequest
+		if err := json.NewDecoder(r.Body).Decode(&updateReq); err != nil {
+			responses.SendResponse(w, responses.StatusError, "Invalid request format", nil, http.StatusBadRequest)
+			return
+		}
+
+		// Validate updates including uniqueness checks
+		if validationErrors := validator.ValidateUpdate(user, &updateReq, true, true); validationErrors.HasErrors() {
+			responses.SendResponse(w, responses.StatusError, "Validation failed",
+				map[string]interface{}{"errors": validationErrors},
+				http.StatusBadRequest)
+			return
+		}
+
+		if updateReq.Username != nil {
+			user.Username = *updateReq.Username
+		}
+		if updateReq.FullName != nil {
+			user.FullName = sql.NullString{
+				String: *updateReq.FullName,
+				Valid:  *updateReq.FullName != "",
+			}
+		}
+		if updateReq.Email != nil {
+			user.Email = sql.NullString{
+				String: *updateReq.Email,
+				Valid:  *updateReq.Email != "",
+			}
+		}
+		if updateReq.Password != nil {
+
+			if err := db.UserSetPassword(database, CurrentUserID, *updateReq.Password); err != nil {
+				responses.SendResponse(w, responses.StatusError, "Failed to update password", nil, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		// Update the user in the database
+		updatedUser, err := db.UserUpdate(database, *user)
+		if err != nil {
+			responses.SendResponse(w, responses.StatusError, "Failed to update user", nil, http.StatusInternalServerError)
+			return
+		}
+
+		responses.SendResponse(w, responses.StatusSuccess, "User updated successfully", updatedUser.ToResponse(), http.StatusOK)
 	}
 }

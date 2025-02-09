@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "jwt-decode": "^4.0.0",
     "lucide-vue-next": "^0.474.0",
+    "mitt": "^3.0.1",
     "vue": "^3.5.13",
-    "vue-color-kit": "^1.0.6"
+    "vue-color-kit": "^1.0.6",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",

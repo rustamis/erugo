@@ -13,8 +13,8 @@ import (
 	"github.com/DeanWard/erugo/db"
 	"github.com/DeanWard/erugo/middleware"
 	"github.com/DeanWard/erugo/models"
+	"github.com/DeanWard/erugo/responses"
 	"github.com/DeanWard/erugo/responses/file_response"
-	"github.com/DeanWard/erugo/responses/json_response"
 	"github.com/DeanWard/erugo/store"
 	"github.com/DeanWard/erugo/utils"
 	"github.com/go-playground/validator/v10"
@@ -67,7 +67,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 		payload := map[string]interface{}{
 			"errors": extractValidationErrors(err),
 		}
-		json_response.New(json_response.ErrorStatus, "Validation error", payload, http.StatusBadRequest).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Validation error", payload, http.StatusBadRequest)
 		//log the error
 		utils.Log(fmt.Sprintf("Validation error: %v", payload), utils.ColorRed)
 		return
@@ -76,7 +76,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 	maxShareSize := config.GetMaxShareSize()
 	utils.Log(fmt.Sprintf("Max share size: %d", maxShareSize), utils.ColorGreen)
 	if maxShareSize == 0 {
-		json_response.New(json_response.ErrorStatus, "Max share size not set", nil, http.StatusInternalServerError).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Max share size not set", nil, http.StatusInternalServerError)
 		utils.Log("Max share size not set", utils.ColorRed)
 		return
 	}
@@ -84,7 +84,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 	//check if the total size of the files in the request is greater than the max share size
 	totalRequestSize := r.ContentLength
 	if totalRequestSize > maxShareSize {
-		json_response.New(json_response.ErrorStatus, "Total size of files is greater than the max share size", nil, http.StatusBadRequest).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Total size of files is greater than the max share size", nil, http.StatusBadRequest)
 		utils.Log("Total size of files is greater than the max share size", utils.ColorRed)
 		return
 	}
@@ -92,7 +92,7 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 	longId := generateUniqueLongId(database)
 	folderPath := store.StoreUploadedFiles(config.AppConfig.BaseStoragePath, files, longId)
 	if folderPath == "" {
-		json_response.New(json_response.ErrorStatus, "There was an error saving your files.", nil, http.StatusBadRequest).Send(w)
+		responses.SendResponse(w, responses.StatusError, "There was an error saving your files.", nil, http.StatusBadRequest)
 		utils.Log("There was an error saving users files.", utils.ColorRed)
 		return
 	}
@@ -111,31 +111,31 @@ func handleCreateShare(database *sql.DB, w http.ResponseWriter, r *http.Request)
 	}
 	savedShare, err := db.ShareCreate(database, share)
 	if err != nil {
-		json_response.New(json_response.ErrorStatus, "Failed to create share", nil, http.StatusInternalServerError).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Failed to create share", nil, http.StatusInternalServerError)
 		utils.Log("Failed to create share", utils.ColorRed)
 		return
 	}
 	payload := map[string]interface{}{
 		"share": savedShare.ToShareResponse(),
 	}
-	json_response.New(json_response.SuccessStatus, "Share created", payload, http.StatusOK).Send(w)
+	responses.SendResponse(w, responses.StatusSuccess, "Share created", payload, http.StatusOK)
 }
 
 func handleGetShare(database *sql.DB, w http.ResponseWriter, longId string) {
 	share := db.ShareByLongId(database, longId)
 	if share == nil {
-		json_response.New(json_response.ErrorStatus, "Share not found", nil, http.StatusNotFound).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Share not found", nil, http.StatusNotFound)
 		return
 	}
 
 	if IsShareExpired(share) {
-		json_response.New(json_response.ErrorStatus, "Share has expired", nil, http.StatusGone).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Share has expired", nil, http.StatusGone)
 		return
 	}
 	payload := map[string]interface{}{
 		"share": share.ToShareResponse(),
 	}
-	json_response.New(json_response.SuccessStatus, "Share found", payload, http.StatusOK).Send(w)
+	responses.SendResponse(w, responses.StatusSuccess, "Share found", payload, http.StatusOK)
 }
 
 func generateUniqueLongId(database *sql.DB) string {
@@ -150,19 +150,19 @@ func generateUniqueLongId(database *sql.DB) string {
 func handleDownloadShare(database *sql.DB, w http.ResponseWriter, r *http.Request, longId string) {
 	share := db.ShareByLongId(database, longId)
 	if share == nil {
-		json_response.New(json_response.ErrorStatus, "Share not found", nil, http.StatusNotFound).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Share not found", nil, http.StatusNotFound)
 		utils.Log("Share not found", utils.ColorRed)
 		return
 	}
 
 	if IsShareExpired(share) {
-		json_response.New(json_response.ErrorStatus, "Share has expired", nil, http.StatusGone).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Share has expired", nil, http.StatusGone)
 		utils.Log("Share has expired", utils.ColorRed)
 		return
 	}
 
 	if _, err := os.Stat(share.FilePath); os.IsNotExist(err) {
-		json_response.New(json_response.ErrorStatus, "The file you are looking for has been deleted or expired.", nil, http.StatusNotFound).Send(w)
+		responses.SendResponse(w, responses.StatusError, "The file you are looking for has been deleted or expired.", nil, http.StatusNotFound)
 		utils.Log("The file you are looking for has been deleted or expired.", utils.ColorRed)
 		return
 	}
@@ -178,7 +178,7 @@ func handleDownloadShare(database *sql.DB, w http.ResponseWriter, r *http.Reques
 	//now we know the folder exists, let's put them in a zip file and serve that
 	downloadFilePath, err := store.CreateDownload(share.FilePath)
 	if err != nil {
-		json_response.New(json_response.ErrorStatus, "Failed to create download file: "+err.Error(), nil, http.StatusInternalServerError).Send(w)
+		responses.SendResponse(w, responses.StatusError, "Failed to create download file: "+err.Error(), nil, http.StatusInternalServerError)
 		utils.Log("Failed to create download file: "+err.Error(), utils.ColorRed)
 		return
 	}

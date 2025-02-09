@@ -2,7 +2,7 @@
   import { ref, onMounted } from 'vue'
   import { niceFileSize, niceExpirationDate, timeUntilExpiration, getApiUrl } from '../utils'
   import { FileIcon, HeartCrack } from 'lucide-vue-next'
-
+  import { getShare } from '../api'
   const apiUrl = getApiUrl()
 
   const share = ref(null)
@@ -22,17 +22,9 @@
   })
 
   const fetchShare = async () => {
-    const response = await fetch(`${apiUrl}/api/shares/${props.downloadShareCode}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-
-    const data = await response.json()
-    if (data.status_code === 200) {
-      share.value = data.data.share
-    } else {
+    try {
+      share.value = await getShare(props.downloadShareCode)
+    } catch (error) {
       shareExpired.value = true
     }
   }

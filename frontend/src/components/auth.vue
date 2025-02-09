@@ -1,11 +1,12 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { getApiUrl } from '../utils'
-  
+  import { useToast } from 'vue-toastification'
+
   import { store } from '../store'
   import { login, refresh, logout } from '../api'
   const apiUrl = getApiUrl()
-
+  const toast = useToast()
   const username = ref('')
   const password = ref('')
   const passwordInput = ref(null)
@@ -14,27 +15,32 @@
     attemptRefresh()
   })
 
-
   const attemptLogin = async () => {
+    if (username.value === '' || password.value === '') {
+      toast.error('Please enter a username and password')
+      return
+    }
+
     try {
       const data = await login(username.value, password.value)
       store.authSuccess(data)
+      toast.success('Login successful')
     } catch (error) {
-      authFailed(error)
+      console.log('error', error)
+      toast.error('Invalid username or password')
     }
   }
 
   const attemptRefresh = () => {
-    refresh().then(data => {
-      store.authSuccess(data)
-    }).catch(error => {
-      authFailed(error)
-    })
+    refresh()
+      .then(data => {
+        store.authSuccess(data)
+      })
+      .catch(error => {
+        //noop
+      })
   }
 
-  const authFailed = (error) => {
-    console.error(error)
-  }
 
   const attemptLogout = async () => {
     await logout()
@@ -43,7 +49,6 @@
   const moveToPassword = () => {
     passwordInput.value.focus()
   }
-
 </script>
 
 <template>

@@ -1,19 +1,19 @@
 <script setup>
   import { store } from '../store'
-  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save, Palette } from 'lucide-vue-next'
+  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save, Palette, User } from 'lucide-vue-next'
   import { ref, onMounted } from 'vue'
   import Users from './settings/users.vue'
   import BrandingSettings from './settings/branding.vue'
-  //settins panels
-  const usersPanel = ref(null)
+  import MyProfile from './settings/myProfile.vue'
 
-  // Track active tab
-  const activeTab = ref('branding')
+  //settings panels
+  const usersPanel = ref(null)
 
   // Create refs for the tab contents
   const tabContents = ref({
     branding: ref(null),
-    users: ref(null)
+    users: ref(null),
+    myProfile: ref(null)
   })
 
   const closeSettings = () => {
@@ -29,6 +29,20 @@
   const setActiveTab = tab => {
     activeTab.value = tab
   }
+
+  const getInitialTab = () => {
+    if (store.isAdmin()) {
+      return 'branding'
+    }
+    return 'myProfile'
+  }
+
+  // Track active tab
+  const activeTab = ref(getInitialTab())
+
+  defineExpose({
+    setActiveTab
+  })
 </script>
 
 <template>
@@ -43,16 +57,22 @@
       </div>
       <div class="settings-tabs-wrapper">
         <div class="settings-tabs-container">
-          <div class="settings-tab" :class="{ active: activeTab === 'branding' }" @click="setActiveTab('branding')">
+          <div class="settings-tab" :class="{ active: activeTab === 'branding' }" @click="setActiveTab('branding')" v-if="store.isAdmin()">
             <h2>
               <Palette />
               Branding
             </h2>
           </div>
-          <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')">
+          <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')" v-if="store.isAdmin()">
             <h2>
               <UsersIcon />
               Users
+            </h2>
+          </div>
+          <div class="settings-tab" :class="{ active: activeTab === 'myProfile' }" @click="setActiveTab('myProfile')">
+            <h2>
+              <User />
+              My Profile
             </h2>
           </div>
         </div>
@@ -75,7 +95,7 @@
                 </div>
               </div>
               <div class="tab-content-body">
-                <BrandingSettings ref="brandingSettings" v-if="store.settingsOpen"/>
+                <BrandingSettings ref="brandingSettings" v-if="store.settingsOpen" />
               </div>
             </div>
             <div v-else-if="activeTab === 'users'" class="settings-tab-content" ref="tabContents.users" key="users">
@@ -95,7 +115,19 @@
                 </div>
               </div>
               <div class="tab-content-body">
-                <Users ref="usersPanel"  v-if="store.settingsOpen"/>
+                <Users ref="usersPanel" v-if="store.settingsOpen" />
+              </div>
+            </div>
+            <div v-else-if="activeTab === 'myProfile'" class="settings-tab-content" ref="tabContents.myProfile" key="myProfile">
+              <div class="tab-content-header">
+                <h2>
+                  <User />
+                  My Profile
+                  <small>Manage your profile.</small>
+                </h2>
+              </div>
+              <div class="tab-content-body">
+                <MyProfile ref="myProfilePanel" v-if="store.settingsOpen" />
               </div>
             </div>
           </Transition>
