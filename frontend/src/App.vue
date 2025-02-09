@@ -1,11 +1,18 @@
 <script setup>
-  import { ref, computed, onMounted } from 'vue'
-  import { GithubIcon, LogOut, Settings as SettingsIcon } from 'lucide-vue-next'
+  import { ref, onMounted } from 'vue'
+  import {LogOut, Settings as SettingsIcon } from 'lucide-vue-next'
   import Uploader from './components/uploader.vue'
   import Downloader from './components/downloader.vue'
   import Auth from './components/auth.vue'
   import Settings  from './components/settings.vue' 
   import { unsplashImages } from './unsplashImages'
+  import { getApiUrl } from './utils'
+  import { domData } from './domData'
+  const apiUrl = getApiUrl()
+
+  const logoUrl = `${apiUrl}/logo`
+  const version = ref()
+  const logoWidth = ref(100)
 
   import { store } from './store'
   import { logout } from './api'
@@ -17,6 +24,8 @@
     setMode()
     changeBackground()
     setTimeout(changeBackground, 180000) //change every 3 minutes
+    version.value = domData().version
+    logoWidth.value = domData().logo_width
   })
 
   const setMode = () => {
@@ -31,7 +40,8 @@
   }
 
   const setPageTitle = (title) => {
-    document.title = `erugo shares - ${title}`
+    let currentTitle = document.title
+    document.title = `${currentTitle} - ${title}`
   }
 
   const handleLogoutClick = () => {
@@ -63,7 +73,7 @@
   <div class="wrapper">
     <div class="left-panel">
       <div class="logo-container">
-        <img src="/erugo.png" alt="Erugo" id="logo" />
+        <img :src="logoUrl" alt="Erugo" id="logo" :style="{ width: `${logoWidth}px` }" />
       </div>
 
       <div class="ui-container">
@@ -76,13 +86,7 @@
     </div>
   </div>
   <div class="version-info">
-    <div class="version-info-text">erugo v0.0.1</div>
-    <div class="github-link">
-      <a href="https://github.com/deanward/erugo">
-        <GithubIcon />
-        github.com/deanward/erugo
-      </a>
-    </div>
+    <div class="version-info-text">Powered by <a href="https://github.com/deanward/erugo">erugo</a> {{ version }}</div>
   </div>
   <Settings />
 </template>

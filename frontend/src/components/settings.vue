@@ -3,7 +3,7 @@
   import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save, Palette } from 'lucide-vue-next'
   import { ref, onMounted } from 'vue'
   import Users from './settings/users.vue'
-
+  import BrandingSettings from './settings/branding.vue'
   //settins panels
   const usersPanel = ref(null)
 
@@ -68,13 +68,15 @@
                   </span>
                 </h2>
                 <div class="user-actions">
-                  <button>
+                  <button @click="$refs['brandingSettings'].saveSettings">
                     <Save />
                     Save Branding Settings
                   </button>
                 </div>
               </div>
-              <div class="tab-content-body">Branding Settings</div>
+              <div class="tab-content-body">
+                <BrandingSettings ref="brandingSettings" v-if="store.settingsOpen"/>
+              </div>
             </div>
             <div v-else-if="activeTab === 'users'" class="settings-tab-content" ref="tabContents.users" key="users">
               <div class="tab-content-header">
@@ -93,7 +95,7 @@
                 </div>
               </div>
               <div class="tab-content-body">
-                <Users ref="usersPanel" />
+                <Users ref="usersPanel"  v-if="store.settingsOpen"/>
               </div>
             </div>
           </Transition>
@@ -117,8 +119,8 @@
     transition-delay: 300ms;
 
     .settings-container {
-      --settings-width: calc(100vw - 100px);
-      --settings-height: calc(100vh - 100px);
+      --settings-width: calc(100vw - 10px);
+      --settings-height: calc(100vh - 10px);
       position: absolute;
       bottom: 0;
       left: 0;
