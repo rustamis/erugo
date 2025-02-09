@@ -1,20 +1,19 @@
 <script setup>
   import { store } from '../store'
-  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save } from 'lucide-vue-next'
+  import { CircleX, Settings, SlidersHorizontal, Users as UsersIcon, UserPlus, Save, Palette, User } from 'lucide-vue-next'
   import { ref, onMounted } from 'vue'
   import Users from './settings/users.vue'
+  import BrandingSettings from './settings/branding.vue'
+  import MyProfile from './settings/myProfile.vue'
 
-  //settins panels
+  //settings panels
   const usersPanel = ref(null)
-
-
-  // Track active tab
-  const activeTab = ref('general')
 
   // Create refs for the tab contents
   const tabContents = ref({
-    general: ref(null),
-    users: ref(null)
+    branding: ref(null),
+    users: ref(null),
+    myProfile: ref(null)
   })
 
   const closeSettings = () => {
@@ -30,6 +29,20 @@
   const setActiveTab = tab => {
     activeTab.value = tab
   }
+
+  const getInitialTab = () => {
+    if (store.isAdmin()) {
+      return 'branding'
+    }
+    return 'myProfile'
+  }
+
+  // Track active tab
+  const activeTab = ref(getInitialTab())
+
+  defineExpose({
+    setActiveTab
+  })
 </script>
 
 <template>
@@ -44,29 +57,56 @@
       </div>
       <div class="settings-tabs-wrapper">
         <div class="settings-tabs-container">
-          <div class="settings-tab" :class="{ active: activeTab === 'general' }" @click="setActiveTab('general')">
-            <h2><SlidersHorizontal /> General</h2>
+          <div class="settings-tab" :class="{ active: activeTab === 'branding' }" @click="setActiveTab('branding')" v-if="store.isAdmin()">
+            <h2>
+              <Palette />
+              Branding
+            </h2>
           </div>
-          <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')">
-            <h2><UsersIcon /> Users</h2>
+          <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')" v-if="store.isAdmin()">
+            <h2>
+              <UsersIcon />
+              Users
+            </h2>
+          </div>
+          <div class="settings-tab" :class="{ active: activeTab === 'myProfile' }" @click="setActiveTab('myProfile')">
+            <h2>
+              <User />
+              My Profile
+            </h2>
           </div>
         </div>
         <div class="settings-tabs-content-container">
           <Transition name="fade">
-            <div v-if="activeTab === 'general'" class="settings-tab-content" ref="tabContents.general" key="general">
+            <div v-if="activeTab === 'branding'" class="settings-tab-content" ref="tabContents.branding" key="branding">
               <div class="tab-content-header">
-                <h2><SlidersHorizontal /> General</h2>
+                <h2>
+                  <Palette />
+                  <span>
+                    Branding
+                    <small>Customize the branding of your erugo instance.</small>
+                  </span>
+                </h2>
                 <div class="user-actions">
-                  <button>
+                  <button @click="$refs['brandingSettings'].saveSettings">
                     <Save />
-                    Save General Settings
+                    Save Branding Settings
                   </button>
                 </div>
+              </div>
+              <div class="tab-content-body">
+                <BrandingSettings ref="brandingSettings" v-if="store.settingsOpen" />
               </div>
             </div>
             <div v-else-if="activeTab === 'users'" class="settings-tab-content" ref="tabContents.users" key="users">
               <div class="tab-content-header">
-                <h2><UsersIcon /> Users</h2>
+                <h2>
+                  <UsersIcon />
+                  <span>
+                    Users
+                    <small>Manage your users.</small>
+                  </span>
+                </h2>
                 <div class="user-actions">
                   <button @click="usersPanel.addUser">
                     <UserPlus />
@@ -75,7 +115,19 @@
                 </div>
               </div>
               <div class="tab-content-body">
-                <Users ref="usersPanel" />
+                <Users ref="usersPanel" v-if="store.settingsOpen" />
+              </div>
+            </div>
+            <div v-else-if="activeTab === 'myProfile'" class="settings-tab-content" ref="tabContents.myProfile" key="myProfile">
+              <div class="tab-content-header">
+                <h2>
+                  <User />
+                  My Profile
+                  <small>Manage your profile.</small>
+                </h2>
+              </div>
+              <div class="tab-content-body">
+                <MyProfile ref="myProfilePanel" v-if="store.settingsOpen" />
               </div>
             </div>
           </Transition>
@@ -99,8 +151,8 @@
     transition-delay: 300ms;
 
     .settings-container {
-      --settings-width: calc(100vw - 100px);
-      --settings-height: calc(100vh - 100px);
+      --settings-width: calc(100vw - 10px);
+      --settings-height: calc(100vh - 10px);
       position: absolute;
       bottom: 0;
       left: 0;
@@ -119,11 +171,10 @@
     }
 
     &.active {
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: var(--accent-color-light-transparent-2);
       pointer-events: auto;
       transition-delay: 0s;
       backdrop-filter: blur(10px);
-      
 
       .settings-container {
         transform: translateX(calc(50vw - var(--settings-width) / 2)) translateY(0);
@@ -134,7 +185,7 @@
   }
 
   .settings-header {
-    background-color: #eec154;
+    background-color: var(--primary-color);
     border-radius: 5px 5px 0 0;
     display: flex;
     justify-content: space-between;
@@ -144,7 +195,7 @@
     h1 {
       font-size: 20px;
       font-weight: 600;
-      color: #222222;
+      color: var(--secondary-color);
       padding-left: 20px;
       display: flex;
       align-items: center;
@@ -170,10 +221,10 @@
     gap: 5px;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: #e2e2e2;
+    background-color: color-mix(in srgb, var(--accent-color-light-transparent) 85%, var(--primary-color));
     width: 100%;
     .settings-tab {
-      background-color: #222222;
+      background-color: var(--secondary-color);
       margin-top: 10px;
       padding: 10px;
       border-radius: 5px 5px 0 0;
@@ -196,9 +247,9 @@
       }
 
       &.active {
-        background-color: #eec154;
+        background-color: var(--primary-color);
         h2 {
-          color: #222222;
+          color: var(--secondary-color);
         }
       }
     }
@@ -208,7 +259,7 @@
     position: relative;
     flex-grow: 1;
     width: 100%;
-    background-color: #eaeaea;
+    background-color: var(--accent-color-light-transparent);
     border-radius: 5px;
 
     .settings-tab-content {
@@ -226,12 +277,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #f4f4f4;
+        background-color: color-mix(in srgb, var(--accent-color-light-transparent) 70%, var(--primary-color));
         padding: 20px;
         width: 100%;
         h2 {
           font-size: 1.4rem;
-          color: #222222;
+          color: var(--secondary-color);
           margin: 0;
           display: flex;
           align-items: center;
@@ -240,10 +291,16 @@
             width: 20px;
             height: 20px;
           }
+          small {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            margin: 0;
+          }
         }
         p {
-          font-size: 1.2rem;
-          color: #222222;
+          font-size: 1rem;
+          color: var(--secondary-color);
           margin: 0;
         }
       }

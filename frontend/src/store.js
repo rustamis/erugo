@@ -1,6 +1,13 @@
-import { reactive } from 'vue'
+import { reactive, nextTick } from 'vue'
+import { useToast } from 'vue-toastification'
+import mitt from 'mitt'
+import debounce from './debounce'
+const emitter = mitt()
+const toast = useToast()
 
-export const store = reactive({
+
+
+const store = reactive({
   userId: null,
   admin: false,
   jwt: null,
@@ -9,6 +16,7 @@ export const store = reactive({
   settingsOpen: false,
   mode: 'upload',
   shareCode: null,
+  mustChangePassword: false,
 
   setUserId(userId) {
     this.userId = userId
@@ -43,8 +51,10 @@ export const store = reactive({
   },
 
   setMultiple(data) {
+    console.log('setMultiple', data)
     const keys = Object.keys(data)
     keys.forEach(key => {
+      console.log('setting', key, data[key])
       this[`set${key.charAt(0).toUpperCase() + key.slice(1)}`](data[key])
     })
   },
@@ -57,6 +67,18 @@ export const store = reactive({
     return this.loggedIn
   },
 
+  authSuccess(data) {
+    this.setMultiple({
+      userId: data.userId,
+      admin: data.admin,
+      jwt: data.jwt,
+      jwtExpires: data.jwtExpires,
+      loggedIn: data.loggedIn
+    })
+    this.mustChangePassword = data.mustChangePassword
+    this.logState()
+  },
+
   logState() {
     console.group('Displaying current state')
     console.table({
@@ -67,8 +89,29 @@ export const store = reactive({
       loggedIn: this.loggedIn,
       settingsOpen: this.settingsOpen,
       mode: this.mode,
-      shareCode: this.shareCode
+      mustChangePassword: this.mustChangePassword
     })
+    if(this.mustChangePassword) {
+      this.showPasswordResetForm()
+      debouncedShowResetPasswordToast()
+    }
     console.groupEnd()
-  }
+  },
+
+  autoShowProfileEdit: false,
+  showPasswordResetForm() {
+    this.autoShowProfileEdit = true
+    emitter.emit('showPasswordResetForm')
+  },
+
+  
 })
+
+const showResetPasswordToast = () => {
+  toast.error('You must change your password to continue')
+}
+
+const debouncedShowResetPasswordToast = debounce(showResetPasswordToast, 100)
+
+
+export { emitter, store }

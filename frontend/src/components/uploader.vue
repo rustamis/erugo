@@ -1,12 +1,9 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { CircleSlash2, FilePlus, FolderPlus, Upload, Trash, Copy, X, Loader, Check } from 'lucide-vue-next'
-  import { niceFileSize, niceFileType, getApiUrl } from '../utils'
-  import { store } from '../store'
+  import { niceFileSize, niceFileType } from '../utils'
+  import { createShare, getHealth } from '../api'
 
-
-
-  const apiUrl = getApiUrl()
   
   const fileInput = ref(null)
   const sharePanelVisible = ref(false)
@@ -16,11 +13,9 @@
   const maxShareSize = ref(0)
 
   onMounted(async () => {
-    const response = await fetch(`${apiUrl}/api/health`)
-    const data = await response.json()
-    maxShareSize.value = data.data.max_share_size
+    const health = await getHealth()
+    maxShareSize.value = health.max_share_size
   })
-
 
   const showFilePicker = () => {
     fileInput.value.webkitdirectory = false
@@ -67,27 +62,13 @@
       alert(`Total size of files is greater than the max share size of ${niceFileSize(maxShareSize.value)}`)
       return
     }
-    const formData = new FormData()
-    uploadBasket.value.forEach(file => {
-      formData.append('files', file)
-    })
-
-    formData.append('name', 'test')
-    formData.append('description', 'test')
-
-    currentlyUploading.value = true
-    const response = await fetch(`${apiUrl}/api/shares`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${store.jwt}`
-      },
-      body: formData
-    })
-
-    const data = await response.json()
-    if (data.status_code === 200) {
-      showSharePanel(createShareURL(data.data.share.long_id))
+    try {
+      const share = await createShare(uploadBasket.value, 'test', 'test')
+      console.log(share)
+      showSharePanel(createShareURL(share.long_id))
       uploadBasket.value = []
+    } catch (error) {
+      console.error(error)
     }
     currentlyUploading.value = false
   }

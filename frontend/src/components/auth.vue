@@ -1,10 +1,12 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { getApiUrl } from '../utils'
-  import { jwtDecode } from 'jwt-decode'
-  import { store } from '../store'
-  const apiUrl = getApiUrl()
+  import { useToast } from 'vue-toastification'
 
+  import { store } from '../store'
+  import { login, refresh, logout } from '../api'
+  const apiUrl = getApiUrl()
+  const toast = useToast()
   const username = ref('')
   const password = ref('')
   const passwordInput = ref(null)
@@ -13,81 +15,40 @@
     attemptRefresh()
   })
 
+  const attemptLogin = async () => {
+    if (username.value === '' || password.value === '') {
+      toast.error('Please enter a username and password')
+      return
+    }
+
+    try {
+      const data = await login(username.value, password.value)
+      store.authSuccess(data)
+      toast.success('Login successful')
+    } catch (error) {
+      console.log('error', error)
+      toast.error('Invalid username or password')
+    }
+  }
+
   const attemptRefresh = () => {
-    fetch(`${apiUrl}/api/auth/refresh`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => {
-      if (response.ok) {
-        response.json().then(data => {
-          authSuccess(data)
-        })
-      }
-    })
-  }
-
-  const authSuccess = (data) => {
-    const decoded = jwtDecode(data.data.token)
-    store.setMultiple({
-      userId: decoded.sub,
-      admin: decoded.admin,
-      loggedIn: true,
-      jwtExpires: decoded.exp,
-      jwt: data.data.token
-    })
-    store.logState()
-  }
-
-  const login = () => {
-    fetch(`${apiUrl}/api/auth/login`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value
+    refresh()
+      .then(data => {
+        store.authSuccess(data)
       })
-    }).then(response => {
-      if (response.ok) {
-        response.json().then(data => {
-          authSuccess(data)
-        })
-      }
-    })
+      .catch(error => {
+        //noop
+      })
   }
 
-  const logout = () => {
-    fetch(`${apiUrl}/api/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    }).then(response => {
-      username.value = ''
-      password.value = ''
 
-      if (response.ok) {
-        store.setMultiple({
-          admin: false,
-          loggedIn: false,
-          jwt: '',
-          jwtExpires: null
-        })
-      }
-    })
+  const attemptLogout = async () => {
+    await logout()
   }
 
   const moveToPassword = () => {
     passwordInput.value.focus()
   }
-
-  //export the functions
-  defineExpose({
-    logout
-  })
 </script>
 
 <template>
@@ -95,9 +56,9 @@
     <div class="auth-container-inner">
       <h1>Login</h1>
       <p>Login to your erugo account to upload files.</p>
-      <input type="text" v-model="username" placeholder="Username" @keyup.enter="moveToPassword"/>
-      <input type="password" v-model="password" placeholder="Password" @keyup.enter="login" ref="passwordInput"/>
-      <button @click="login" class="login-button mt-4">Login</button>
+      <input type="text" v-model="username" placeholder="Username" @keyup.enter="moveToPassword" />
+      <input type="password" v-model="password" placeholder="Password" @keyup.enter="attemptLogin" ref="passwordInput" />
+      <button @click="attemptLogin" class="login-button mt-4">Login</button>
     </div>
   </div>
 </template>

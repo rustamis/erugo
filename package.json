@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "jwt-decode": "^4.0.0"
+    "jwt-decode": "^4.0.0",
+    "mitt": "^3.0.1",
+    "vue-toastification": "^2.0.0-rc.5"
   }
 }

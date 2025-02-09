@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
+	database "github.com/DeanWard/erugo/db"
+	"github.com/DeanWard/erugo/models"
 	"github.com/DeanWard/erugo/utils"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/fatih/color"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type state int
@@ -144,15 +146,19 @@ func (m model) handleEnter() (tea.Model, tea.Cmd) {
 }
 
 func createUser(db *sql.DB, username, password string) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		log.Println("Error hashing password:", err) // Log error
-		return err
+
+	user := models.User{
+		Username:     username,
+		PasswordHash: password,
+		Admin:        true,
+		Active:       true,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
-	_, err = db.Exec("INSERT INTO users (username, password_hash, admin) VALUES (?, ?, ?)", username, hashedPassword, true)
+	_, err := database.UserCreate(db, user)
 	if err != nil {
-		log.Println("Error inserting user into database:", err) // Log error
+		log.Println("Error creating user:", err) // Log error
 		return err
 	}
 

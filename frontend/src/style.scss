@@ -2,17 +2,26 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+:root {
+  --primary-color: rgb(238, 193, 84);
+  --secondary-color: rgb(34, 34, 34);
+  --accent-color: rgb(27, 199, 177);
+  --accent-color-light: rgb(238, 238, 238);
+
+  --accent-color-light-transparent: color-mix(in srgb, var(--accent-color-light) 90%, rgba(255, 255, 255, 0) 10%);
+  --accent-color-light-transparent-2: color-mix(in srgb, var(--accent-color-light) 70%, rgba(255, 255, 255, 0) 30%);
+}
+
 body {
   font-family: "Inter", sans-serif;
-  background-color: #f0f0f0;
+  background-color: var(--accent-color-light);
 }
 
 #logo {
   margin-top: 40px;
-  height: 25px;
   margin-bottom: 20px;
   margin-left: 5px;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+  z-index: 9999999999999;
 }
 
 .wrapper {
@@ -69,7 +78,7 @@ body {
   border-radius: 10px;
   margin-bottom: 20px;
   .download-panel-title {
-    color: #222222;
+    color: var(--secondary-color);
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -83,7 +92,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--accent-color-light-transparent);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 10px;
@@ -100,7 +109,7 @@ body {
 
   .max-size-label {
     margin-top: 10px;
-    color: #4e4e4e;
+    color: var(--secondary-color);
     font-size: 0.8rem;
     &.under-limit {
       color: #0dac25;
@@ -112,7 +121,7 @@ body {
 }
 
 .upload-basket {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--accent-color-light-transparent);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   width: 400px;
@@ -128,7 +137,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--accent-color-light-transparent);
     padding: 10px 20px;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -137,7 +146,7 @@ body {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #222222;
+      color: var(--secondary-color);
     }
     .meta {
       display: flex;
@@ -145,7 +154,7 @@ body {
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      color: #3e3e3e;
+      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
       font-size: 0.8rem;
     }
     .hover-actions {
@@ -163,26 +172,29 @@ body {
       transition: opacity 0.3s ease-in-out;
       pointer-events: none;
       padding-right: 10px;
-      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.8));
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, var(--accent-color-light-transparent));
       border-radius: 0 5px 5px 0;
       button {
         background-color: transparent;
         border: none;
         cursor: pointer;
-        background-color: white;
+        background-color: var(--accent-color-light);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         width: 30px;
         height: 30px;
+        padding: 0;
         &:hover {
-          background-color: #eec154;
+          color: var(--secondary-color);
+          background-color: var(--primary-color);
         }
         svg {
-          color: #222222;
+          color: var(--secondary-color);
           width: 16px;
           height: 16px;
+          margin: 0;
         }
       }
     }
@@ -202,7 +214,7 @@ body {
     width: 100%;
     height: 100%;
     .upload-basket-empty-text {
-      color: #222222;
+      color: var(--secondary-color);
       font-size: 0.8rem;
       display: flex;
       flex-direction: row;
@@ -219,8 +231,6 @@ body {
 }
 
 .upload-button-container {
-  // background-color: rgba(255, 255, 255, 0.8);
-  // backdrop-filter: blur(10px);
   border-radius: 10px;
   width: 400px;
   display: flex;
@@ -235,8 +245,8 @@ body {
     width: 100%;
     border-radius: 5px;
     border: none;
-    background-color: #eec154;
-    color: #222222;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -255,12 +265,12 @@ body {
     }
 
     &:hover {
-      background-color: #222222;
-      color: #eec154;
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
     }
     &:disabled {
-      background-color: #222222;
-      color: #eec154;
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -270,37 +280,30 @@ body {
     }
 
     &.uploading {
-      background-color: #222222;
-      color: #eec154;
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
       opacity: 1 !important;
     }
   }
 }
 
 .version-info {
+  background-color: var(--accent-color-light-transparent);
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
   text-align: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--secondary-color);
   padding: 10px 20px;
   font-size: 0.9rem;
-}
-
-.github-link {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.8rem;
+  transform: translateX(-50%);
+  left: 50%;
+  border-radius: 10px 10px 0 0;
   a {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--secondary-color);
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    svg {
-      width: 16px;
-      height: 16px;
+    &:hover {
+      color: var(--primary-color);
     }
   }
 }
@@ -327,15 +330,15 @@ body {
       position: fixed;
       top: 20px;
       right: 0px;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: var(--accent-color-light);
       backdrop-filter: blur(10px);
       padding: 10px;
       border-radius: 5px 0 0 5px;
-      color: #222222;
+      color: var(--secondary-color);
       font-size: 0.6rem;
       z-index: 9999999999999;
       a {
-        color: #222222;
+        color: var(--secondary-color);
         text-decoration: none;
       }
     }
@@ -365,7 +368,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--accent-color-light-transparent-2);
   backdrop-filter: blur(10px);
   z-index: 99999999999;
   opacity: 0;
@@ -376,27 +379,27 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: var(--accent-color-light-transparent-2);
     padding: 20px;
     border-radius: 10px;
 
     .sharePanel-title {
-      color: #222222;
+      color: var(--secondary-color);
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 10px;
     }
     .sharePanel-url {
-      color: #222222;
+      color: var(--secondary-color);
       font-size: 0.8rem;
       padding: 10px;
       border-radius: 5px;
-      background-color: #eeeeee;
+      background-color: var(--accent-color-light);
       width: 100%;
     }
     .sharePanel-copy-button {
-      background-color: #eec154;
-      color: #222222;
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
       border: none;
       padding: 10px;
       border-radius: 5px;
@@ -404,6 +407,7 @@ body {
       svg {
         width: 16px;
         height: 16px;
+        margin: 0 !important;
       }
     }
     .sharePanel-close {
@@ -411,9 +415,12 @@ body {
       top: 10px;
       right: 10px;
       cursor: pointer;
+      color: var(--secondary-color);
+      padding: 0;
       svg {
         width: 20px;
         height: 20px;
+        margin: 0 !important;
       }
     }
   }
@@ -439,7 +446,7 @@ body {
   justify-content: center;
 
   h1 {
-    color: #222222;
+    color: var(--secondary-color);
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -447,7 +454,7 @@ body {
   .total-size,
   .share-expires {
     margin-top: 10px;
-    color: #4e4e4e;
+    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
     font-size: 0.8rem;
     margin-bottom: 10px;
     &.share-expires {
@@ -468,17 +475,17 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    background-color: #eeeeee;
+    background-color: var(--accent-color-light);
     padding: 10px;
     border-radius: 5px;
     width: 100%;
     margin-bottom: 4px;
     &.more-files {
       margin-top: 10px;
-      background-color: #eeeeee9e;
+      background-color: color-mix(in srgb, var(--accent-color-light) 90%, white 10%);
     }
     .file-name {
-      color: #222222;
+      color: var(--secondary-color);
       font-size: 1rem;
       display: flex;
       flex-direction: row;
@@ -492,7 +499,7 @@ body {
       max-width: 100%;
       width: 100%;
       &.more-files {
-        color: #4e4e4e;
+        color: var(--secondary-color);
         font-size: 0.8rem;
       }
       svg {
@@ -513,8 +520,8 @@ body {
   width: 100%;
   border-radius: 5px;
   border: none;
-  background-color: #eec154;
-  color: #222222;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -522,8 +529,8 @@ body {
   white-space: nowrap;
 
   &:hover {
-    background-color: #222222;
-    color: #eec154;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
   }
 
   svg {
@@ -556,8 +563,8 @@ body {
 }
 
 button {
-  background-color: #eec154;
-  color: #222222;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
   border: none;
   cursor: pointer;
   padding: 10px;
@@ -573,8 +580,8 @@ button {
     margin-right: 0;
   }
   &:hover {
-    background-color: #222222;
-    color: #eec154;
+    background-color: var(--secondary-color);
+    color: var(--accent-color);
   }
   svg {
     width: 20px;
@@ -584,17 +591,17 @@ button {
   }
 
   &:disabled {
-    background-color: #eec05444;
-    color: #22222248;
+    background-color: color-mix(in srgb, var(--primary-color) 10%, rgba(255, 255, 255, 0) 90%);
+    color: var(--secondary-color);
     cursor: not-allowed;
   }
 
   &.secondary {
-    background-color: #5481EE;
+    background-color: var(--accent-color);
     color: #fff;
     &:hover {
-      background-color: #222222;
-      color: #5481EE;
+      background-color: var(--secondary-color);
+      color: var(--accent-color);
     }
   }
 }
@@ -605,22 +612,26 @@ button.close-settings-button {
   display: flex;
   position: absolute;
   bottom: 20px;
-  background-color: #eec154;
-  color: #222222;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
   border: none;
   cursor: pointer;
   padding: 10px;
   border-radius: 5px;
   z-index: 9999999999999;
   svg {
+    color: var(--secondary-color);
     width: 20px;
     height: 20px;
     margin-right: 0px;
     margin-top: 0px;
   }
   &:hover {
-    background-color: #222222;
-    color: #eec154;
+    background-color: var(--secondary-color);
+    color: var(--accent-color);
+    svg {
+      color: var(--accent-color);
+    }
   }
 }
 
@@ -636,17 +647,23 @@ button.close-settings-button {
   right: 20px;
   top: 20px;
   bottom: unset;
-  background-color: #222222;
-  color: #eec154;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  svg {
+    color: var(--accent-color);
+  }
   &:hover {
-    background-color: #eec154;
-    color: #222222;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    svg {
+      color: var(--secondary-color);
+    }
   }
 }
 
 button {
   &:focus {
-    outline: 2px solid #4b4b4b;
+    outline: 2px solid var(--secondary-color);
   }
 }
 
@@ -655,28 +672,29 @@ table {
   border-collapse: collapse;
 
   thead {
-    color: #222222;
+    color: var(--secondary-color);
     position: sticky;
     top: 0;
     z-index: 10;
     th {
-      background-color: #eec154;
+      background-color: var(--primary-color);
       padding: 10px;
       text-align: left;
     }
   }
   tbody {
-    background-color: #eeeeee;
+    background-color: var(--accent-color-light-transparent);
     tr {
-      background-color: #eeeeee;
+      background-color: var(--accent-color-light-transparent);
       &:nth-child(even) {
-        background-color: color.adjust(#eeeeee, $lightness: 1%);
+        background-color: var(--accent-color-light-transparent-2);
       }
     }
     td {
       padding: 10px;
       text-align: left;
       border: 1px solid rgba(175, 175, 175, 0.2);
+      color: var(--secondary-color);
     }
   }
 }
@@ -686,15 +704,22 @@ input {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: white;
-  color: #222222;
+  background-color: var(--accent-color-light);
+  color: var(--secondary-color);
   margin-bottom: 10px;
-  border: 1px solid white;
+  border: 1px solid var(--accent-color-light-transparent);
   transition: all 0.3s ease-in-out;
+  outline: 2px solid var(--primary-color);
+  height: 50px;
+
+  //placeholder
+  &::placeholder {
+    color: color-mix(in srgb, var(--secondary-color) 60%, rgba(255, 255, 255, 0) 40%);
+  }
 
   &:focus {
     //nice yellow outline
-    outline: 2px solid #eec154;
+    outline: 2px solid var(--secondary-color);
   }
   &.error {
     border: 1px solid red;
@@ -704,11 +729,18 @@ input {
 .input-container {
   position: relative;
   width: 100%;
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    font-weight: bold;
+  }
   .error-message {
     position: absolute;
     color: rgb(169, 86, 86);
     font-size: 0.8rem;
-    top: 12px;
+    top: 16px;
     right: 10px;
   }
 }
@@ -730,12 +762,12 @@ input {
     align-items: center;
     justify-content: flex-start;
     &::before {
-      font-family: 'Material Icons';
+      font-family: "Material Icons";
       content: "";
       width: 20px;
       height: 20px;
-      background-color: #eec0544a;
-      color: #222222;
+      background-color: color-mix(in srgb, var(--primary-color) 50%, rgba(255, 255, 255, 0) 50%);
+      color: var(--secondary-color);
       border-radius: 5px;
       display: inline-flex;
       align-items: center;
@@ -749,12 +781,12 @@ input {
   }
   input:checked + label {
     &::before {
-      font-family: 'Material Icons';
+      font-family: "Material Icons";
       content: "check";
       width: 20px;
       height: 20px;
-      background-color: #eec154;
-      color: #222222;
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
       border-radius: 5px;
       display: inline-flex;
       align-items: center;
@@ -768,7 +800,7 @@ input {
     margin-left: 30px;
     width: 100%;
     font-size: 0.8rem;
-    color: #d4d4d4;
+    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
     svg {
       width: 16px;
       height: 16px;
@@ -778,7 +810,6 @@ input {
   }
 }
 
-
 .button-bar {
   width: 100%;
   display: flex;
@@ -786,5 +817,132 @@ input {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
- 
+}
+
+.setting-groups {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .setting-groups {
+    padding:0;
+    flex-grow: 1;
+  }
+  .setting-group {
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    height: 100%;
+
+
+
+    .setting-group-header {
+      background-color: var(--primary-color);
+      padding: 10px;
+      border-radius: 8px 8px 0 0;
+      color: var(--secondary-color);
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: -20px;
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      width: calc(100% + 40px);
+      h3 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+      p {
+        font-size: 0.8rem;
+        margin: 0;
+      }
+    }
+    .settings-group-info {
+      width: calc(100% + 40px);
+      padding: 10px;
+      font-size: 0.8rem;
+      margin-left: -20px;
+      margin-right: -20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      margin-top: -10px;
+      margin-bottom: 0px;
+      background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+      color: var(--secondary-color);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      svg {
+        width: 16px;
+        height: 16px;
+        margin-top: -2px;
+        color: var(--secondary-color);
+      }
+      p {
+        margin: 0;
+      }
+    }
+    .setting-group-body {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
+
+      .setting-group-body-item {
+        width: 100%;
+      }
+
+      h6, label{
+        font-weight: bold;
+        font-size: 1rem;
+        margin: 0;
+        margin-bottom: 10px;
+        small {
+          font-weight: normal;
+          font-size: 0.7rem;
+          color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
+        }
+      }
+    }
+  }
+}
+
+
+.hu-color-picker {
+  box-shadow: none !important;
+  width: 220px !important;
+}
+
+
+h1,h2,h3,h4,h5,h6 {
+  color: var(--secondary-color);
+}
+
+
+.Vue-Toastification__container {
+  z-index: 9999999999999 !important;
 }

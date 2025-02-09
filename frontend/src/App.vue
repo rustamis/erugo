@@ -1,21 +1,41 @@
 <script setup>
-  import { ref, computed, onMounted } from 'vue'
-  import { GithubIcon, LogOut, Settings as SettingsIcon } from 'lucide-vue-next'
+  import { ref, onMounted, nextTick } from 'vue'
+  import { LogOut, Settings as SettingsIcon } from 'lucide-vue-next'
   import Uploader from './components/uploader.vue'
   import Downloader from './components/downloader.vue'
   import Auth from './components/auth.vue'
-  import Settings  from './components/settings.vue' 
+  import Settings from './components/settings.vue'
   import { unsplashImages } from './unsplashImages'
   import { getApiUrl } from './utils'
-  import { store } from './store'
+  import { domData } from './domData'
+  import { emitter, store } from './store'
+  import { logout } from './api'
+
+  const apiUrl = getApiUrl()
+
+  const logoUrl = `${apiUrl}/logo`
+  const version = ref()
+  const logoWidth = ref(100)
 
   const auth = ref(null)
   const downloadShareCode = ref('')
+  const settingsPanel = ref(null)
 
   onMounted(() => {
     setMode()
     changeBackground()
     setTimeout(changeBackground, 180000) //change every 3 minutes
+    version.value = domData().version
+    logoWidth.value = domData().logo_width
+    emitter.on('showPasswordResetForm', () => {
+      settingsPanel.value.setActiveTab('myProfile')
+      nextTick(() => {
+        store.setSettingsOpen(true)
+        nextTick(() => {
+          emitter.emit('profileEditActive')
+        })
+      })
+    })
   })
 
   const setMode = () => {
@@ -29,12 +49,13 @@
     }
   }
 
-  const setPageTitle = (title) => {
-    document.title = `erugo shares - ${title}`
+  const setPageTitle = title => {
+    let currentTitle = document.title
+    document.title = `${currentTitle} - ${title}`
   }
 
-  const logout = () => {
-    auth.value.logout()
+  const handleLogoutClick = () => {
+    logout()
   }
 
   const changeBackground = async () => {
@@ -51,37 +72,34 @@
 </script>
 
 <template>
-  
   <div class="backgrounds">
     <div class="backgrounds-item" v-for="image in unsplashImages" :key="image" :style="{ backgroundImage: `url(https://images.unsplash.com/${image.id}?q=80)` }">
       <div class="backgrounds-item-credit" v-html="image.credit"></div>
     </div>
   </div>
-  <button class="logout" @click="logout" v-if="store.isLoggedIn()"><LogOut /></button>
-  <button class="settings-button" @click="openSettings" v-if="store.isAdmin()"><SettingsIcon /></button>
+  <button class="logout" @click="handleLogoutClick" v-if="store.isLoggedIn()"><LogOut /></button>
+  <button class="settings-button" @click="openSettings"><SettingsIcon /></button>
   <div class="wrapper">
     <div class="left-panel">
       <div class="logo-container">
-        <img src="/erugo.png" alt="Erugo" id="logo" />
+        <img :src="logoUrl" alt="Erugo" id="logo" :style="{ width: `${logoWidth}px` }" />
       </div>
 
       <div class="ui-container">
         <template v-if="store.mode === 'upload'">
-          <Uploader v-if="store.isLoggedIn()"/>
-          <Auth v-show="!store.isLoggedIn()" ref="auth"/>
+          <Uploader v-if="store.isLoggedIn()" />
+          <Auth v-show="!store.isLoggedIn()" ref="auth" />
         </template>
         <Downloader v-if="store.mode === 'download'" :downloadShareCode="downloadShareCode" />
       </div>
     </div>
   </div>
   <div class="version-info">
-    <div class="version-info-text">erugo v0.0.1</div>
-    <div class="github-link">
-      <a href="https://github.com/deanward/erugo">
-        <GithubIcon />
-        github.com/deanward/erugo
-      </a>
+    <div class="version-info-text">
+      Powered by
+      <a href="https://github.com/deanward/erugo">erugo</a>
+      {{ version }}
     </div>
   </div>
-  <Settings />
+  <Settings ref="settingsPanel" />
 </template>

@@ -1,12 +1,16 @@
 <script setup>
   import { ref, onMounted } from 'vue'
-  import { getUsers, createUser } from '../../api'
-  import { UserPen, Trash, UserPlus, CircleX } from 'lucide-vue-next'
+  import { getUsers, createUser, deleteUser, updateUser } from '../../api'
+  import { UserPen, Trash, UserPlus, CircleX, UserRoundCheck } from 'lucide-vue-next'
   import { store } from '../../store'
+  import { useToast } from 'vue-toastification'
+
+  const toast = useToast()
   const users = ref([])
   const errors = ref({})
 
   const newUser = ref({})
+  const editUser = ref({})
 
   onMounted(async () => {
     loadUsers()
@@ -19,8 +23,24 @@
     })
   }
 
-  const deleteUser = id => {
-    console.log(id)
+  const handleDeleteUserClick = id => {
+    if (id === store.userId) {
+      toast.error('You cannot delete yourself.')
+      return
+    }
+    if (confirm(`Are you sure you want to delete user ${id}?`)) {
+      deleteUser(id).then(data => {
+        loadUsers()
+        toast.success('User deleted successfully')
+      }, error => {
+        toast.error('Failed to delete user')
+      })
+    }
+  }
+
+  const handleEditUserClick = user => {
+    editUser.value = user
+    editUserFormActive.value = true
   }
 
   const addUser = () => {
@@ -35,23 +55,49 @@
   const newUserFormActive = ref(false)
 
   const newUserFormClickOutside = event => {
-    if (!event.target.closest('.new-user-form')) {
+    if (!event.target.closest('.user-form')) {
       newUserFormActive.value = false
+    }
+  }
+
+  const editUserFormActive = ref(false)
+
+  const editUserFormClickOutside = event => {
+    if (!event.target.closest('.user-form')) {
+      editUserFormActive.value = false
     }
   }
 
   const saveUser = () => {
     errors.value = {}
-    createUser(newUser.value).then(
-      data => {
-        loadUsers()
-        newUserFormActive.value = false
-        newUser.value = getEmptyUser()
-      },
-      error => {
-        errors.value = error.data.errors
-      }
-    )
+
+    if (newUserFormActive.value) {
+      createUser(newUser.value).then(
+        data => {
+          loadUsers()
+          newUserFormActive.value = false
+          newUser.value = getEmptyUser()
+          toast.success('User created successfully')
+        },
+        error => {
+          errors.value = error.data.errors
+          toast.error('Failed to create user')
+        }
+      )
+    } else if (editUserFormActive.value) {
+      updateUser(editUser.value).then(
+        data => {
+          loadUsers()
+          editUserFormActive.value = false
+          editUser.value = getEmptyUser() 
+          toast.success('User updated successfully')
+        },
+        error => {
+          errors.value = error.data.errors
+          toast.error('Failed to update user')
+        }
+      )
+    }
   }
 
   const getEmptyUser = () => {
@@ -64,7 +110,6 @@
       must_change_password: true
     }
   }
-    
 </script>
 
 <template>
@@ -84,41 +129,33 @@
         <tr v-for="user in users" :key="user.id">
           <td width="1" style="white-space: nowrap">{{ user.id }}</td>
           <td>
-            <span v-if="user.id === store.userId" class="you-tag">You</span>
             {{ user.username }}
+            <div class="tags" v-if="user.id === store.userId || user.admin || user.must_change_password">
+              <span v-if="user.id === store.userId" class="you-tag">You</span>
+              <span v-if="user.admin" class="admin-tag">Admin</span>
+              <span v-if="user.must_change_password" class="must-change-password-tag">Password change required</span>
+            </div>
           </td>
           <td>{{ user.full_name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.admin ? 'Yes' : 'No' }}</td>
           <td width="1" style="white-space: nowrap">
-            <button :disabled="user.id === store.userId">
+            <button :disabled="user.id === store.userId" @click="handleEditUserClick(user)">
               <UserPen />
               Edit
             </button>
-            <button :disabled="user.id === store.userId" @click="deleteUser(user.id)">
+            <button :disabled="user.id === store.userId" @click="handleDeleteUserClick(user.id)">
               <Trash />
               Delete
-            </button>
-          </td>
-        </tr>
-        <tr v-for="index in 20" :key="index">
-          <td>x</td>
-          <td>fakseuser{{ index }}</td>
-          <td>Fake user {{ index }}</td>
-          <td>fake-email-{{ index }}@example.com</td>
-          <td>No</td>
-          <td>
-            <button>
-              <UserPen />
-              Edit
             </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div class="new-user-form-overlay" :class="{ active: newUserFormActive }" @click="newUserFormClickOutside">
-    <div class="new-user-form">
+
+  <div class="user-form-overlay" :class="{ active: newUserFormActive }" @click="newUserFormClickOutside">
+    <div class="user-form">
       <h2>
         <UserPlus />
         Add User
@@ -174,28 +211,110 @@
       </div>
     </div>
   </div>
+
+  <div class="user-form-overlay" :class="{ active: editUserFormActive }" @click="editUserFormClickOutside">
+    <div class="user-form">
+      <h2>
+        <UserPlus />
+        Edit User {{ editUser.full_name }}
+      </h2>
+      <div class="input-container">
+        <input type="text" v-model="editUser.username" placeholder="Username" required :class="{ error: errors.username }" />
+        <div class="error-message" v-if="errors.username">
+          {{ errors.username }}
+        </div>
+      </div>
+      <div class="input-container">
+        <input type="text" v-model="editUser.full_name" placeholder="Full Name" required :class="{ error: errors.full_name }" />
+        <div class="error-message" v-if="errors.full_name">
+          {{ errors.full_name }}
+        </div>
+      </div>
+      <div class="input-container">
+        <input type="email" v-model="editUser.email" placeholder="Email" required :class="{ error: errors.email }" />
+        <div class="error-message" v-if="errors.email">
+          {{ errors.email }}
+        </div>
+      </div>
+      <div class="input-container">
+        <input type="password" v-model="editUser.password" placeholder="Password" required :class="{ error: errors.password }" />
+        <div class="error-message" v-if="errors.password">
+          {{ errors.password }}
+        </div>
+      </div>
+
+      <div class="checkbox-container">
+        <input type="checkbox" v-model="editUser.admin" id="edit_user_admin" />
+        <label for="edit_user_admin">Admin</label>
+        <p class="help-text">
+          Make the user an admin.
+          <br />
+          User will have the privelges as you.
+        </p>
+      </div>
+      <div class="checkbox-container">
+        <input type="checkbox" v-model="editUser.must_change_password" id="edit_user_must_change_password" />
+        <label for="edit_user_must_change_password">Must change password</label>
+        <p class="help-text">Force the user to change their password on next login.</p>
+      </div>
+      <div class="button-bar">
+        <button @click="saveUser">
+          <UserRoundCheck />
+          Save Changes
+        </button>
+        <button class="secondary close-button" @click="editUserFormActive = false">
+          <CircleX />
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+  .tags {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+  }
   .you-tag {
     display: inline-block;
-    background-color: #eec154;
-    color: #222222;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
-    margin-left: 10px;
     transform: translateY(-1px);
   }
 
-  .new-user-form-overlay {
+  .admin-tag {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    transform: translateY(-1px);
+  }
+
+  .must-change-password-tag {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 5px;
+    transform: translateY(-1px);
+  }
+
+  .user-form-overlay {
     border-radius: 10px 10px 0 0;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: var(--accent-color-light-transparent-2);
     backdrop-filter: blur(10px);
     z-index: 9999999999999;
     opacity: 0;
@@ -205,7 +324,7 @@
     h2 {
       margin-bottom: 10px;
       font-size: 24px;
-      color: #ffffff;
+      color: var(--secondary-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -216,14 +335,14 @@
         margin-right: 10px;
       }
     }
-    .new-user-form {
+    .user-form {
       position: absolute;
       bottom: 0;
       left: 50%;
       transform: translate(-50%, 100%);
       width: 500px;
-      background-color: #222222;
-      color: #ffffff;
+      background-color: var(--accent-color-light-transparent);
+      color: var(--secondary-color);
       padding: 20px;
       border-radius: 10px 10px 0 0;
       box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);
@@ -243,7 +362,7 @@
     &.active {
       opacity: 1;
       pointer-events: auto;
-      .new-user-form {
+      .user-form {
         transform: translate(-50%, 0%);
       }
     }
