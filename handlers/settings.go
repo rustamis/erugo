@@ -12,6 +12,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/DeanWard/erugo/config"
 	"github.com/DeanWard/erugo/db"
 	"github.com/DeanWard/erugo/models"
 	"github.com/DeanWard/erugo/responses"
@@ -151,7 +152,7 @@ func SetSettingsByIdHandler(database *sql.DB) http.HandlerFunc {
 }
 
 func SetLogoHandler() http.HandlerFunc {
-	privateDir := "./private"
+	privateDir := config.AppConfig.PrivateDataPath
 	return func(w http.ResponseWriter, r *http.Request) {
 		//we're going to receive a file from the request. We'll store the file in the private directory as logo.<ext>
 		file, _, err := r.FormFile("logo")

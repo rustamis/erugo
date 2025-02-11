@@ -53,12 +53,13 @@ type UserResponse struct {
 
 // UserCreateRequest represents the expected input for user creation
 type UserCreateRequest struct {
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	Admin              bool   `json:"admin"`
-	FullName           string `json:"full_name"`
-	Email              string `json:"email"`
-	MustChangePassword bool   `json:"must_change_password"`
+	Username             string `json:"username"`
+	Password             string `json:"password"`
+	PasswordConfirmation string `json:"password_confirmation"`
+	Admin                bool   `json:"admin"`
+	FullName             string `json:"full_name"`
+	Email                string `json:"email"`
+	MustChangePassword   bool   `json:"must_change_password"`
 }
 
 // UserUpdateRequest represents the expected input for user updates

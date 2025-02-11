@@ -15,7 +15,6 @@ import (
 	"github.com/DeanWard/erugo/db"
 	"github.com/DeanWard/erugo/middleware"
 	"github.com/DeanWard/erugo/routes"
-	"github.com/DeanWard/erugo/setup"
 	"github.com/DeanWard/erugo/utils"
 	"github.com/gorilla/mux"
 	_ "modernc.org/sqlite"
@@ -59,17 +58,15 @@ func main() {
 
 	createLogoFile(embeddedFS)
 
-	runSetupIfNeeded(database)
-
 	// Bring up the server
 	bringUpServer(database, embeddedFS)
 }
 
 func createLogoFile(embeddedFS fs.FS) {
 	//check if the logo file and private directory exist
-	if _, err := os.Stat("./private/logo.png"); os.IsNotExist(err) {
+	if _, err := os.Stat(config.AppConfig.PrivateDataPath + "/logo.png"); os.IsNotExist(err) {
 		//create the private directory if it doesn't exist
-		os.MkdirAll("./private", 0755)
+		os.MkdirAll(config.AppConfig.PrivateDataPath, 0755)
 
 		//the logo file is in the embeddedFS at frontend/dist/erugo.png
 		logoFile, err := embeddedFS.Open("erugo.png")
@@ -79,7 +76,7 @@ func createLogoFile(embeddedFS fs.FS) {
 		defer logoFile.Close()
 
 		//create the logo file
-		logoFile, err = os.Create("./private/logo.png")
+		logoFile, err = os.Create(config.AppConfig.PrivateDataPath + "/logo.png")
 		if err != nil {
 			log.Fatalf("Failed to create logo file: %v", err)
 		}
@@ -91,7 +88,7 @@ func createLogoFile(embeddedFS fs.FS) {
 		}
 		defer srcFile.Close()
 
-		destFile, err := os.Create("./private/logo.png")
+		destFile, err := os.Create(config.AppConfig.PrivateDataPath + "/logo.png")
 		if err != nil {
 			log.Fatalf("Failed to create destination logo file: %v", err)
 		}
@@ -104,21 +101,6 @@ func createLogoFile(embeddedFS fs.FS) {
 		log.Println("Logo file created")
 	} else {
 		log.Println("Logo file already exists")
-	}
-}
-
-func runSetupIfNeeded(database *sql.DB) {
-	//are there any users in the database?
-	users, err := db.UserList(database)
-	if err != nil {
-		log.Fatalf("Failed to get users: %v", err)
-	}
-	if len(users) == 0 {
-		//run the setup
-		log.Println("No users found, running setup")
-		setup.RunSetup(database)
-	} else {
-		log.Println("Users found, skipping setup")
 	}
 }
 

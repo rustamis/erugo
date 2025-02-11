@@ -21,13 +21,19 @@ func NewUserValidator(db *sql.DB) *UserValidator {
 }
 
 // ValidateCreate performs all validations for user creation
-func (v *UserValidator) ValidateCreate(user *models.UserCreateRequest) models.ValidationErrors {
+func (v *UserValidator) ValidateCreate(user *models.UserCreateRequest, checkPasswordConfirmation bool) models.ValidationErrors {
 	// First do basic validation
 	errors := user.Validate()
 
 	// Then check uniqueness
 	if !errors.HasErrors() {
 		errors = v.validateUniqueness(user.Username, user.Email)
+	}
+
+	if checkPasswordConfirmation {
+		if user.Password != user.PasswordConfirmation {
+			errors.Add("password_confirmation", "New password and confirmation do not match")
+		}
 	}
 
 	return errors

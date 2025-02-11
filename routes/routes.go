@@ -169,6 +169,11 @@ func registerSettingsRoutes(router *mux.Router, database *sql.DB) {
 			),
 		),
 	).Methods("PUT")
+
+	//POST /api/setup - create the first user
+	router.Handle("/api/setup",
+		handlers.CreateFirstUserHandler(database),
+	).Methods("POST")
 }
 
 func registerFrontendRoutes(router *mux.Router, embeddedFS fs.FS, database *sql.DB) {

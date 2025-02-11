@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+frontend/node_modules
+frontend/dist
+*.db
+storage/
+private/
+.git
+.github
+.gitignore
+*.md

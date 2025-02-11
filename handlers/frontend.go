@@ -24,7 +24,14 @@ func ServeFrontendHandler(embeddedFS fs.FS, database *sql.DB) http.Handler {
 }
 
 func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS, database *sql.DB) {
-	log.Printf("Serving frontend for %s", r.URL.Path)
+
+	userCount, err := db.UserCount(database)
+	if err != nil {
+		http.Error(w, "failed to get user count", http.StatusInternalServerError)
+		return
+	}
+	isSetupNeeded := userCount == 0
+
 	if wantsAsset(r.URL.Path) {
 		http.FileServer(http.FS(embeddedFS)).ServeHTTP(w, r)
 		return
@@ -100,6 +107,10 @@ func ServeFrontend(w http.ResponseWriter, r *http.Request, embeddedFS fs.FS, dat
 	htmlDataAttributeSettings := []Setting{}
 	for _, setting := range htmlDataAtributeSettings {
 		htmlDataAttributeSettings = append(htmlDataAttributeSettings, Setting{Id: setting.Id, Value: setting.Value})
+	}
+
+	if isSetupNeeded {
+		htmlDataAttributeSettings = append(htmlDataAttributeSettings, Setting{Id: "setup_needed", Value: "true"})
 	}
 	htmlContent = injectSettings(htmlContent, htmlDataAttributeSettings)
 

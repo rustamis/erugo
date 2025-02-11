@@ -56,7 +56,7 @@ func CreateUserHandler(database *sql.DB) http.HandlerFunc {
 		}
 
 		// Validate including uniqueness checks
-		if validationErrors := validator.ValidateCreate(&createReq); validationErrors.HasErrors() {
+		if validationErrors := validator.ValidateCreate(&createReq, false); validationErrors.HasErrors() {
 			responses.SendResponse(w, responses.StatusError, "Validation failed",
 				map[string]interface{}{"errors": validationErrors},
 				http.StatusBadRequest)
@@ -275,5 +275,54 @@ func UpdateMyProfileHandler(database *sql.DB) http.HandlerFunc {
 		}
 
 		responses.SendResponse(w, responses.StatusSuccess, "User updated successfully", updatedUser.ToResponse(), http.StatusOK)
+	}
+}
+
+// CreateFirstUserHandler creates the first user
+func CreateFirstUserHandler(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		//first check if there are any users in the database
+		userCount, err := db.UserCount(database)
+		if err != nil {
+			responses.SendResponse(w, responses.StatusError, "Failed to check for users", nil, http.StatusInternalServerError)
+			return
+		}
+		if userCount > 0 {
+			payload := map[string]interface{}{
+				"outcome": "error",
+				"message": "Users already exist",
+			}
+			responses.SendResponse(w, responses.StatusError, "Users already exist", payload, http.StatusUnauthorized)
+			return
+		}
+
+		validator := validation.NewUserValidator(database)
+
+		//read the user from the request
+		var user models.UserCreateRequest
+		if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+			responses.SendResponse(w, responses.StatusError, "Invalid request format", nil, http.StatusBadRequest)
+			return
+		}
+
+		user.Admin = true
+
+		//validate the user
+		if validationErrors := validator.ValidateCreate(&user, true); validationErrors.HasErrors() {
+			responses.SendResponse(w, responses.StatusError, "Validation failed",
+				map[string]interface{}{"errors": validationErrors},
+				http.StatusBadRequest)
+			return
+		}
+		//create the user
+		createdUser, err := db.UserCreate(database, user.ToUser())
+		if err != nil {
+			responses.SendResponse(w, responses.StatusError, "Failed to create user", nil, http.StatusInternalServerError)
+			return
+		}
+
+		responses.SendResponse(w, responses.StatusSuccess, "User created successfully", createdUser.ToResponse(), http.StatusCreated)
+
 	}
 }

@@ -5,6 +5,7 @@
   import Downloader from './components/downloader.vue'
   import Auth from './components/auth.vue'
   import Settings from './components/settings.vue'
+  import Setup from './components/setup.vue'
   import { unsplashImages } from './unsplashImages'
   import { getApiUrl } from './utils'
   import { domData } from './domData'
@@ -20,10 +21,19 @@
   const auth = ref(null)
   const downloadShareCode = ref('')
   const settingsPanel = ref(null)
+  const setupNeeded = ref(false)
 
   onMounted(() => {
-    setMode()
+    setupNeeded.value = domData().setup_needed
+    
     changeBackground()
+    
+    if (setupNeeded.value == "true") {
+      store.setMode('setup')
+      return
+    }
+
+    setMode()
     setTimeout(changeBackground, 180000) //change every 3 minutes
     version.value = domData().version
     logoWidth.value = domData().logo_width
@@ -91,6 +101,9 @@
           <Auth v-show="!store.isLoggedIn()" ref="auth" />
         </template>
         <Downloader v-if="store.mode === 'download'" :downloadShareCode="downloadShareCode" />
+        <template v-if="store.mode === 'setup'">
+          <Setup />
+        </template>
       </div>
     </div>
   </div>

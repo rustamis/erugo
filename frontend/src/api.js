@@ -169,6 +169,8 @@ export const createUser = async user => {
   return data.data
 }
 
+
+
 export const updateUser = async user => {
   const response = await fetchWithAuth(`${apiUrl}/api/users/${user.id}`, {
     method: 'PUT',
@@ -324,6 +326,21 @@ export const getMyProfile = async () => {
   const data = await response.json()
   if (!response.ok) {
     throw new Error(data.message)
+  }
+  return data.data
+}
+
+export const createFirstUser = async user => {
+  const response = await fetch(`${apiUrl}/api/setup`, {
+    method: 'POST',
+    headers: {
+      ...addJsonHeader()
+    },
+    body: JSON.stringify(user)
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    return Promise.reject(data)
   }
   return data.data
 }

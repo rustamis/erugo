@@ -259,3 +259,13 @@ func UserExistsByEmailExcept(db *sql.DB, email string, exceptUserID int) (bool, 
 	}
 	return exists, nil
 }
+
+func UserCount(db *sql.DB) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM users`
+	err := db.QueryRow(query).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrDBOperation, err)
+	}
+	return count, nil
+}

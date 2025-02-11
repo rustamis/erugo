@@ -1,6 +1,6 @@
 <script setup>
   import { Pipette, Image, MessageCircleQuestion, Ruler, Tag } from 'lucide-vue-next'
-  import { ref, onMounted, defineExpose } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { ColorPicker } from 'vue-color-kit'
   import { getSettingsByGroup, saveSettingsById, saveLogo, getSettingById } from '../../api'
   import FileInput from '../fileInput.vue'
