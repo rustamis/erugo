@@ -52,12 +52,18 @@ func registerAuthRoutes(router *mux.Router, database *sql.DB) {
 
 func registerShareRoutes(router *mux.Router, database *sql.DB) {
 	log.Println("registering share routes")
+
 	//POST /api/shares - create a new share
 	router.Handle("/api/shares",
 		middleware.JwtMiddleware(
 			handlers.CreateShareHandler(database),
 		),
 	).Methods("POST")
+
+	//GET /api/shares/progress/{uploadId} - get the progress of an upload
+	router.Handle("/api/shares/progress/{uploadId}",
+		handlers.UploadProgressHandler(),
+	).Methods("GET")
 
 	//GET /api/shares/{longId} - get a share by longId
 	router.Handle("/api/shares/{longId}",

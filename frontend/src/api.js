@@ -169,8 +169,6 @@ export const createUser = async user => {
   return data.data
 }
 
-
-
 export const updateUser = async user => {
   const response = await fetchWithAuth(`${apiUrl}/api/users/${user.id}`, {
     method: 'PUT',
@@ -274,7 +272,9 @@ export const saveLogo = async logoFile => {
   return data.data
 }
 
-export const createShare = async (files, name, description) => {
+// Share Methods
+export const createShare = async (files, name, description, uploadId) => {
+
   const formData = new FormData()
   files.forEach(file => {
     formData.append('files', file)
@@ -282,7 +282,7 @@ export const createShare = async (files, name, description) => {
   formData.append('name', name)
   formData.append('description', description)
 
-  const response = await fetchWithAuth(`${apiUrl}/api/shares`, {
+  const response = await fetchWithAuth(`${apiUrl}/api/shares?uploadId=${uploadId}`, {
     method: 'POST',
     body: formData
   })
@@ -307,6 +307,7 @@ export const getShare = async id => {
   return data.data.share
 }
 
+//misc methods
 export const getHealth = async () => {
   const response = await fetch(`${apiUrl}/api/health`)
   const data = await response.json()

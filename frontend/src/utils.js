@@ -1,5 +1,13 @@
 
-
+const simpleUUID = () => {
+  //this isn't cryptographically secure, but it's good enough for our purposes
+  //our purposes being a simple unique string to track upload progress via SSE
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
 
 const niceFileSize = size => {
   //return in most readable format
@@ -48,4 +56,4 @@ const getApiUrl = () => {
   return url
 }
 
-export { niceFileSize, niceFileType, niceExpirationDate, timeUntilExpiration, getApiUrl }
+export { niceFileSize, niceFileType, niceExpirationDate, timeUntilExpiration, getApiUrl, simpleUUID }

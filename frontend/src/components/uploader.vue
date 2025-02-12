@@ -1,16 +1,19 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { CircleSlash2, FilePlus, FolderPlus, Upload, Trash, Copy, X, Loader, Check } from 'lucide-vue-next'
-  import { niceFileSize, niceFileType } from '../utils'
+  import { niceFileSize, niceFileType, simpleUUID, getApiUrl } from '../utils'
   import { createShare, getHealth } from '../api'
 
-  
+  const apiUrl = getApiUrl()
   const fileInput = ref(null)
   const sharePanelVisible = ref(false)
   const shareUrl = ref('')
   const currentlyUploading = ref(false)
   const uploadBasket = ref([])
   const maxShareSize = ref(0)
+  const uploadProgress = ref(0)
+  const uploadedBytes = ref(0)
+  const totalBytes = ref(0)
 
   onMounted(async () => {
     const health = await getHealth()
@@ -58,19 +61,34 @@
   })
 
   const uploadFiles = async () => {
+    //Simple UUID-like string to track upload progress via SSE
+    const uploadId = simpleUUID()
+    currentlyUploading.value = true
+
     if (totalSize.value > maxShareSize.value) {
       alert(`Total size of files is greater than the max share size of ${niceFileSize(maxShareSize.value)}`)
       return
     }
+
+    setTimeout(() => {
+      const eventSource = createEventSource(uploadId)
+    }, 1)
+
     try {
-      const share = await createShare(uploadBasket.value, 'test', 'test')
+      const share = await createShare(uploadBasket.value, 'test', 'test', uploadId)
       console.log(share)
       showSharePanel(createShareURL(share.long_id))
       uploadBasket.value = []
     } catch (error) {
       console.error(error)
+    } finally {
+      currentlyUploading.value = false
+      setTimeout(() => {
+        uploadProgress.value = 0
+        uploadedBytes.value = 0
+        totalBytes.value = 0
+      }, 1000)
     }
-    currentlyUploading.value = false
   }
 
   const createShareURL = longId => {
@@ -91,7 +109,29 @@
     showCopySuccess.value = true
     setTimeout(() => {
       showCopySuccess.value = false
-    }, 2000)
+    }, 10)
+  }
+
+  const createEventSource = uploadId => {
+    const eventSource = new EventSource(`${apiUrl}/api/shares/progress/${uploadId}`)
+    console.log(eventSource)
+    eventSource.onmessage = event => {
+      const progress = JSON.parse(event.data)
+      uploadProgress.value = progress.totalProgress
+      uploadedBytes.value = progress.totalBytesRead
+      totalBytes.value = progress.totalFileSize
+    }
+
+    //if we get an error 10 times, close the event source
+    let errorCount = 0
+    eventSource.onerror = () => {
+      errorCount++
+      if (errorCount >= 10) {
+        eventSource.close()
+        currentlyUploading.value = false
+      }
+    }
+    return eventSource
   }
 </script>
 
@@ -108,6 +148,17 @@
       </button>
     </div>
     <div class="max-size-label">{{ niceFileSize(totalSize) }} / {{ niceFileSize(maxShareSize) }}</div>
+    <div>
+      <div class="progress-bar-container" :class="{ visible: currentlyUploading }">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" :style="{ width: `${uploadProgress}%` }"></div>
+        </div>
+        <div class="progress-bar-text">
+          {{ Math.round(uploadProgress) }}%
+          <div class="progress-bar-text-sub">{{ niceFileSize(uploadedBytes) }} / {{ niceFileSize(totalBytes) }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="upload-basket">
@@ -165,3 +216,62 @@
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+  .progress-bar-container {
+    margin-top: -20px;
+    // width: 300px;
+    // height: 30px;
+    background-color: var(--accent-color-light);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    position: absolute;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    left: 0;
+    right: 0;
+    top: 20px;
+    bottom: 0;
+    z-index: 1000;
+    pointer-events: none;
+
+    &.visible {
+      opacity: 1;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 100%;
+      background: transparent;
+      .progress-bar-fill {
+        background-color: var(--primary-color);
+        border-radius: 5px;
+        transition: all 1s linear;
+        height: 100%;
+      }
+    }
+    .progress-bar-text {
+      font-size: 24px;
+      color: var(--secondary-color);
+      font-weight: 600;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      .progress-bar-text-sub {
+        font-size: 10px;
+        color: var(--secondary-color);
+        font-weight: 400;
+      }
+    }
+  }
+</style>
