@@ -41,21 +41,55 @@ erugo is a secure, self-hosted alternative to WeTransfer, built with Go and Vue.
    ./erugo
    ```
 
-4. Complete the interactive first-run setup to create your admin account
+4. Access the web interface at `http://localhost:9199` and complete the interactive first-run setup to create your admin account
 
-5. Access the web interface at `http://localhost:9199`
+## Docker
+
+You can use the example docker-compose.yaml below to run erugo in a container.
+
+```
+services:
+  erugo:
+    image: wardy784/erugo:latest
+    ports:
+      - "9199:9199"  # The web interface will be available at http://localhost:9199
+    volumes:
+      - erugo-storage:/app/storage  # Persistent storage for shared files
+      - erugo-private:/app/private  # Persistent storage for private files (e.g., logo)
+    environment:
+      - ERUGO_BASE_STORAGE_PATH=/app/storage
+      - ERUGO_APP_URL=http://localhost:9199
+      - ERUGO_BIND_PORT=9199
+      - ERUGO_DATABASE_FILE_PATH=/app/private/erugo.db
+      - ERUGO_MAX_SHARE_SIZE=2G
+      - ERUGO_JWT_SECRET=change_this_to_a_secure_secret_in_production
+      - ERUGO_PRIVATE_DATA_PATH=/app/private
+    restart: unless-stopped  # Automatically restart the container
+
+volumes:
+  erugo-storage:  # Stores uploaded files
+  erugo-private:  # Stores private files including the .db and logo.png
+```
+
+The above docker-compose.yml creates a volume for the storage and private data directories, it stores the database and logo in the private volume. Uploaded files are separately stored in the storage volume.
+
+```sh
+docker compose up -d
+```
 
 ## Configuration Options
 
-erugo can be customized through a configuration file with the following options:
+erugo can be customized through a configuration file or environment variables with the following options:
 
-| Option              | Description                               | Default Value           |
-|--------------------|-------------------------------------------|------------------------|
-| `app_url`          | Application hosting URL                   | `http://localhost:9199` |
-| `base_storage_path`| File storage location                     | `storage`              |
-| `max_share_size`   | Maximum file size per share              | `2G`                   |
-| `bind_port`        | Web server port                          | `9199`                 |
-| `jwt_secret`       | JWT authentication secret                 | `change_me`            |
+| Option              | Environment Variable      | Description                               | Default Value           |
+|--------------------|---------------------------|-------------------------------------------|------------------------|
+| `app_url`          | `ERUGO_APP_URL`          | Application hosting URL                   | `http://localhost:9199` |
+| `base_storage_path`| `ERUGO_BASE_STORAGE_PATH`| File storage location                     | `storage`              |
+| `max_share_size`   | `ERUGO_MAX_SHARE_SIZE`   | Maximum file size per share              | `2G`                   |
+| `bind_port`        | `ERUGO_BIND_PORT`        | Web server port                          | `9199`                 |
+| `jwt_secret`       | `ERUGO_JWT_SECRET`       | JWT authentication secret                 | `change_me`            |
+| `database_file_path` | `ERUGO_DATABASE_FILE_PATH` | Database file location                  | `erugo.db`             |
+| `private_data_path` | `ERUGO_PRIVATE_DATA_PATH` | Private data storage location            | `/private`             |
 
 A default `config.json` file is automatically generated on first run.
 
