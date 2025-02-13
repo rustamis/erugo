@@ -1,6 +1,14 @@
 # erugo
 
-[![Build](https://github.com/DeanWard/erugo/actions/workflows/build.yml/badge.svg)](https://github.com/DeanWard/erugo/actions/workflows/build.yml)
+[![Build](https://github.com/DeanWard/erugo/actions/workflows/build.yml/badge.svg)](https://github.com/DeanWard/erugo/actions/workflows/build.yml) 
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/deanward/erugo/total)
+![Docker Pulls](https://img.shields.io/docker/pulls/wardy784/erugo)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/deanward/erugo)
+
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/deanward/erugo)
+
+
+
 
 erugo is a secure, self-hosted alternative to WeTransfer, built with Go and Vue.js. It combines powerful file-sharing capabilities with a sleek user interface, all packaged in a single, easy-to-deploy binary.
 
