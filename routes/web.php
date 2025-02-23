@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Mail\shareDownloadedMail;
+use App\Jobs\sendEmail;
+use App\Models\Share;
 
 Route::get('/', function () {
     $settings = Setting::whereLike('group', 'ui%')->get();
@@ -21,12 +24,6 @@ Route::get('/', function () {
     $indexedSettings['api_url'] = $appURL;
 
     return view('app', ['settings' => $indexedSettings]);
-});
-
-Route::get('/test', function () {
-    return response()->json([
-        'app_url' => env('APP_URL'),
-    ]);
 });
 
 Route::get('/shares/{share}', function () {
@@ -57,10 +54,7 @@ Route::get('/logo', function () {
 });
 
 
-Route::get('/info',function() {
-
-    return response()->json([
-        'app_url' => env('APP_URL'),
-    ]);
-
+Route::get('/test-email', function () {
+    $share = Share::find(1);
+    sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);
 });

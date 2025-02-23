@@ -151,6 +151,14 @@ class SettingsSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
+                'key' => 'smtp_encryption',
+                'value' => 'tls',
+                'previous_value' => null,
+                'group' => 'system.smtp',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
                 'key' => 'smtp_username',
                 'value' => null,
                 'previous_value' => null,
@@ -181,7 +189,16 @@ class SettingsSeeder extends Seeder
                 'group' => 'system.smtp',
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'key' => 'emails_share_downloaded_enabled',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system.emails',
+                'created_at' => now(),
+                'updated_at' => now()
             ]
+
         ], ['key']);
     }
 }

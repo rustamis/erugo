@@ -11,7 +11,7 @@ import {
   saveBackgroundImage,
   deleteBackgroundImage
 } from '../../api'
-import EnvVar from '../envVar.vue'
+
 import { useToast } from 'vue-toastification'
 import { mapSettings } from '../../utils'
 import { domData } from '../../domData'
@@ -26,6 +26,7 @@ const settings = ref({
   max_share_size: '',
   max_share_size_unit: '',
   clean_files_after_days: '',
+  emails_share_downloaded_enabled: '',
   smtp_host: '',
   smtp_port: '',
   smtp_username: '',
@@ -96,6 +97,9 @@ defineExpose({
             <a href="" @click.prevent="handleNavItemClicked('shares')">Shares</a>
           </li>
           <li>
+            <a href="" @click.prevent="handleNavItemClicked('emails')">Emails</a>
+          </li>
+          <li>
             <a href="#" @click.prevent="handleNavItemClicked('smtp')">SMTP</a>
           </li>
         </ul>
@@ -116,13 +120,12 @@ defineExpose({
                   <label for="application_name">Application Name</label>
                   <input type="text" id="application_name" v-model="settings.application_name" />
                 </div>
-                <!--
+
                 <div class="setting-group-body-item mt-3">
                   <label for="application_url">Application URL</label>
                   <input type="text" id="application_url" v-model="settings.application_url" />
-                  <EnvVar variable="APP_URL" />
                 </div>
-              -->
+
                 <div class="setting-group-body-item mt-3">
                   <label for="login_message">Login Message</label>
                   <input
@@ -139,13 +142,10 @@ defineExpose({
             <div class="section-help">
               <h6>Application name</h6>
               <p>Customise the displayed name of the application in places like title bars and dialogues.</p>
-              <!--
+
               <h6>Application URL</h6>
-              <p>
-                The URL from which users can access your erugo instance. Setting a value here will override the value
-                found in the envimonment variables.
-              </p>
-               -->
+              <p>Used to allow emails to link back to the application.</p>
+
               <h6>Login Message</h6>
               <p>Customise the message displayed on the login screen.</p>
             </div>
@@ -175,7 +175,6 @@ defineExpose({
                     <div class="col pe-0">
                       <label for="max_share_size">Max share size</label>
                       <input type="number" id="max_share_size" v-model="settings.max_share_size" />
-                      <EnvVar variable="MAX_SHARE_SIZE" />
                     </div>
                     <div class="col-auto ps-1">
                       <label for="max_share_size_unit">&nbsp;</label>
@@ -226,6 +225,41 @@ defineExpose({
 
         <div class="row mb-5">
           <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
+            <div class="setting-group" id="emails">
+              <div class="setting-group-header">
+                <h3>
+                  <Tag />
+                  Emails
+                </h3>
+              </div>
+
+              <div class="setting-group-body">
+                <div class="setting-group-body-item">
+                  <label for="emails_share_downloaded_enabled">Share downloaded emails</label>
+                  <div class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      id="emails_share_downloaded_enabled"
+                      v-model="settings.emails_share_downloaded_enabled"
+                    />
+                    <label for="emails_share_downloaded_enabled">Enable share downloaded emails</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block col ps-0">
+            <div class="section-help">
+              <h6>Share downloaded emails</h6>
+              <p>
+                Enable or disable the emails that are sent to share owner when a share is downloaded.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-5">
+          <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
             <div class="setting-group" id="smtp">
               <div class="setting-group-header">
                 <h3>
@@ -235,56 +269,29 @@ defineExpose({
               </div>
 
               <div class="setting-group-body">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_host">Host</label>
-                      <input type="text" id="smtp_host" v-model="settings.smtp_host" />
-                      <EnvVar variable="SMTP_HOST" />
-                    </div>
-                  </div>
-
-                  <div class="col-6">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_port">Port</label>
-                      <input type="number" id="smtp_port" v-model="settings.smtp_port" />
-                      <EnvVar variable="SMTP_PORT" />
-                    </div>
-                  </div>
+                <div class="setting-group-body-item">
+                  <label for="smtp_host">Host</label>
+                  <input type="text" id="smtp_host" v-model="settings.smtp_host" />
                 </div>
-
-                <div class="row mt-4">
-                  <div class="col-6">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_username">Username</label>
-                      <input type="text" id="smtp_username" v-model="settings.smtp_username" />
-                      <EnvVar variable="SMTP_USERNAME" />
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_password">Password</label>
-                      <input type="password" id="smtp_password" v-model="settings.smtp_password" />
-                      <EnvVar variable="SMTP_PASSWORD" />
-                    </div>
-                  </div>
+                <div class="setting-group-body-item mt-3">
+                  <label for="smtp_port">Port</label>
+                  <input type="number" id="smtp_port" v-model="settings.smtp_port" />
                 </div>
-
-                <div class="row mt-4">
-                  <div class="col-6">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_sender_name">Sender Name</label>
-                      <input type="text" id="smtp_sender_name" v-model="settings.smtp_sender_name" />
-                      <EnvVar variable="SMTP_SENDER_NAME" />
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="setting-group-body-item">
-                      <label for="smtp_sender_address">Sender Address</label>
-                      <input type="text" id="smtp_sender_address" v-model="settings.smtp_sender_address" />
-                      <EnvVar variable="SMTP_SENDER_ADDRESS" />
-                    </div>
-                  </div>
+                <div class="setting-group-body-item mt-3">
+                  <label for="smtp_username">Username</label>
+                  <input type="text" id="smtp_username" v-model="settings.smtp_username" />
+                </div>
+                <div class="setting-group-body-item mt-3">
+                  <label for="smtp_password">Password</label>
+                  <input type="password" id="smtp_password" v-model="settings.smtp_password" />
+                </div>
+                <div class="setting-group-body-item mt-3">
+                  <label for="smtp_sender_name">Sender Name</label>
+                  <input type="text" id="smtp_sender_name" v-model="settings.smtp_sender_name" />
+                </div>
+                <div class="setting-group-body-item mt-3">
+                  <label for="smtp_sender_address">Sender Address</label>
+                  <input type="text" id="smtp_sender_address" v-model="settings.smtp_sender_address" />
                 </div>
               </div>
             </div>

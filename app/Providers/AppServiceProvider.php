@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\SettingsService;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,5 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $settingsService = new SettingsService();
+        $settings = $settingsService->getGlobalViewData();
+        View::share('settings', $settings);
+
+        View::prependLocation(storage_path('templates'));
     }
 }

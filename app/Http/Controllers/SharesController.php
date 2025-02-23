@@ -14,6 +14,9 @@ use App\Haikunator;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\Download;
+use App\Mail\shareDownloadedMail;
+use App\Jobs\sendEmail;
+use App\Services\SettingsService;
 class SharesController extends Controller
 {
     public function create(Request $request)
@@ -150,9 +153,7 @@ class SharesController extends Controller
         //if there is only one file, download it directly
         if ($share->file_count == 1) {
             if (file_exists($share->path . '/' . $share->files[0]->name)) {
-                $share->download_count++;
-                $share->save();
-
+               
                 $this->createDownloadRecord($share);
 
                 return response()->download($share->path . '/' . $share->files[0]->name);
@@ -174,10 +175,6 @@ class SharesController extends Controller
             $filename = $share->path . '.zip';
             //does the file exist?
             if (file_exists($filename)) {
-                //we're as sure as we can be that this download is going to happen, so let's mark the share as downloaded +1 time!
-                $share->download_count++;
-                $share->save();
-
                 $this->createDownloadRecord($share);
                 
                 return response()->download($filename);
@@ -375,6 +372,21 @@ class SharesController extends Controller
             'user_agent' => $userAgent
         ]);
         $download->save();
+
+        if($share->download_count == 0) {
+            $this->sendShareDownloadedEmail($share);
+        }
+
+        $share->download_count++;
+        $share->save();
         return $download;
+    }
+
+    private function sendShareDownloadedEmail(Share $share) {
+        $settingsService = new SettingsService();
+        $sendEmail = $settingsService->get('emails_share_downloaded_enabled');
+        if($sendEmail == 'true') {
+            sendEmail::dispatch($share->user->email, shareDownloadedMail::class, ['share' => $share]);
+        }
     }
 }

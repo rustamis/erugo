@@ -15,6 +15,22 @@ class SettingsService
     return $setting->value;
   }
 
+  public function getMany($keys)
+  {
+    return Setting::whereIn('key', $keys)->pluck('value', 'key')->toArray();
+  }
+
+  public function getGlobalViewData()
+  {
+    $required_keys = [
+      'application_name',
+      'application_url',
+      'login_message',
+    ];
+
+    return $this->getMany($required_keys);
+  }
+
   public function getMaxUploadSize()
   {
     $max_upload_size = $this->get('max_share_size');
@@ -27,5 +43,29 @@ class SettingsService
       }
     }
     return null;
+  }
+
+  public function getMailSettings()
+  {
+
+    $settings = $this->getMany([
+      'smtp_host',
+      'smtp_port',
+      'smtp_username',
+      'smtp_password',
+      'smtp_encryption',
+      'smtp_sender_address',
+      'smtp_sender_name',
+    ]);
+
+    return [
+      'host' => $settings['smtp_host'],
+      'port' => $settings['smtp_port'],
+      'username' => $settings['smtp_username'],
+      'password' => $settings['smtp_password'],
+      'encryption' => $settings['smtp_encryption'],
+      'from_address' => $settings['smtp_sender_address'],
+      'from_name' => $settings['smtp_sender_name'],
+    ];
   }
 }
