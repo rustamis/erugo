@@ -1,47 +1,55 @@
 #!/bin/sh
 
-if [ "$SUPERVISOR_PHP_USER" != "root" ] && [ "$SUPERVISOR_PHP_USER" != "erugo" ]; then
-    echo "You should set SUPERVISOR_PHP_USER to either 'erugo' or 'root'."
-    exit 1
-fi
+export APP_URL=/
+export ASSET_URL=/
 
-if [ ! -z "$WWWUSER" ]; then
-    deluser erugo
-    delgroup erugo
-    addgroup -g $WWWUSER erugo
-    adduser -D -u $WWWUSER -G erugo erugo
-fi
-
-# does the .setup-lock file exist?
+# First time setup check
 if [ ! -f /var/www/html/storage/.setup-lock ]; then
-    # Copy storage skeleton contents to storage directory
     echo "[First time setup] Copying storage skeleton contents..."
     cp -rn /var/www/html/storage_skell/* /var/www/html/storage/
-
-    chown -R $WWWUSER:erugo /var/www/html/storage
-fi
-
-# Run migrations as the erugo user
-su-exec erugo php artisan migrate --force
-su-exec erugo php artisan db:seed --force
-
-if [ ! -f /var/www/html/storage/.setup-lock ]; then
-    echo "[First time setup] Running seeders..."
-    # Run seeders
-    php artisan db:seed --class=SettingsSeeder --force
-
-    # Create the .setup-lock file
+    chown -R erugo:erugo /var/www/html/storage
     touch /var/www/html/storage/.setup-lock
 else
     echo "Setup already completed, skipping..."
 fi
 
+# if the app.key file exists, load its contents into the environment as APP_KEY, otherwise generate a new one
+if [ -f /var/www/html/storage/app.key ]; then
+    echo "App key already exists, loading..."
+    export APP_KEY=$(cat /var/www/html/storage/app.key)
+else
+    # generate app key
+    echo "Generating app key..."
+    su-exec erugo php artisan key:generate --force --show >/var/www/html/storage/app.key
+    echo "App key generated, loading..."
+    export APP_KEY=$(cat /var/www/html/storage/app.key)
+fi
+
+# if the jwt.secret file exists, load its contents into the environment as JWT_SECRET, otherwise generate a new one
+if [ -f /var/www/html/storage/jwt.secret ]; then
+    echo "JWT secret already exists, loading..."
+    export JWT_SECRET=$(cat /var/www/html/storage/jwt.secret)
+else
+    echo "Generating JWT secret..."
+    su-exec erugo php -r "echo base64_encode(random_bytes(32));" > /var/www/html/storage/jwt.secret
+    echo "JWT secret generated, loading..."
+    export JWT_SECRET=$(cat /var/www/html/storage/jwt.secret)
+fi
+
+# does and environment variable DB_CONNECTION exist?
+if [ -z "$DB_CONNECTION" ]; then
+    echo "DB_CONNECTION environment variable not set, setting to sqlite..."
+    export DB_CONNECTION=sqlite
+    export DB_DATABASE=./storage/app/private/database.sqlite
+fi
+
+# Always run migrations
+su-exec erugo php artisan migrate --force
+su-exec erugo php artisan db:seed --force
+
+# Execute command or start supervisor
 if [ $# -gt 0 ]; then
-    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
-        exec "$@"
-    else
-        exec su-exec erugo "$@"
-    fi
+    exec su-exec erugo "$@"
 else
     exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 fi

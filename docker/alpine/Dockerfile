@@ -18,8 +18,6 @@ FROM alpine:3.19
 
 LABEL maintainer="Dean Ward"
 
-ARG WWWGROUP
-
 WORKDIR /var/www/html
 
 ENV TZ=UTC
@@ -70,8 +68,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php83
 
 # Create erugo user and group
-RUN addgroup -g $WWWGROUP erugo
-RUN adduser -D -u 1337 -G erugo erugo
+RUN addgroup erugo && \
+    adduser -D -G erugo erugo
+
 
 # Copy necessary files from build stages and local context
 COPY --chown=erugo:erugo . /var/www/html/

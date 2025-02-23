@@ -8,7 +8,7 @@ if [ -z "$DOCKER_HUB_USERNAME" ]; then
 fi
 
 # Get version from argument or use 'latest'
-VERSION=${1:-next}
+VERSION=${1:-latest}
 
 # Ensure buildx is set up correctly
 docker buildx create --name mybuilder --driver docker-container --bootstrap 2>/dev/null || true
@@ -18,9 +18,8 @@ docker buildx use mybuilder
 docker buildx build \
     --platform linux/amd64,linux/arm64 \
     --progress=plain \
-    --build-arg WWWGROUP=1000 \
     -t $DOCKER_HUB_USERNAME/erugo:$VERSION \
-    -t $DOCKER_HUB_USERNAME/erugo:next \
+    -t $DOCKER_HUB_USERNAME/erugo:latest \
     -f docker/alpine/Dockerfile \
     --push \
     .
