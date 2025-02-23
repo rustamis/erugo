@@ -1,0 +1,47 @@
+#!/bin/sh
+
+if [ "$SUPERVISOR_PHP_USER" != "root" ] && [ "$SUPERVISOR_PHP_USER" != "erugo" ]; then
+    echo "You should set SUPERVISOR_PHP_USER to either 'erugo' or 'root'."
+    exit 1
+fi
+
+if [ ! -z "$WWWUSER" ]; then
+    deluser erugo
+    delgroup erugo
+    addgroup -g $WWWUSER erugo
+    adduser -D -u $WWWUSER -G erugo erugo
+fi
+
+# does the .setup-lock file exist?
+if [ ! -f /var/www/html/storage/.setup-lock ]; then
+    # Copy storage skeleton contents to storage directory
+    echo "[First time setup] Copying storage skeleton contents..."
+    cp -rn /var/www/html/storage_skell/* /var/www/html/storage/
+
+    chown -R $WWWUSER:erugo /var/www/html/storage
+fi
+
+# Run migrations as the erugo user
+su-exec erugo php artisan migrate --force
+su-exec erugo php artisan db:seed --force
+
+if [ ! -f /var/www/html/storage/.setup-lock ]; then
+    echo "[First time setup] Running seeders..."
+    # Run seeders
+    php artisan db:seed --class=SettingsSeeder --force
+
+    # Create the .setup-lock file
+    touch /var/www/html/storage/.setup-lock
+else
+    echo "Setup already completed, skipping..."
+fi
+
+if [ $# -gt 0 ]; then
+    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
+        exec "$@"
+    else
+        exec su-exec erugo "$@"
+    fi
+else
+    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+fi

@@ -1,0 +1,28 @@
+services:
+  app:
+    image: wardy784/erugo:next
+    restart: unless-stopped
+    environment:
+      WWWUSER: '${WWWUSER:-1000}'
+      WWWGROUP: '${WWWGROUP:-1000}'
+      SUPERVISOR_PHP_USER: "${SUPERVISOR_PHP_USER:-erugo}"
+      APP_KEY: "${APP_KEY:-base64:2X+hdr5c3ldu3XJysM2yoG1wlr86sk3Xsysceop+aIk=}"
+      APP_TIMEZONE: "${APP_TIMEZONE:-UTC}"
+      APP_URL: "/"    #Limitation of Laravel Vite - this must be set in the environment - you don't need to change this but it must be present
+      ASSET_URL: "/"  #Limitation of Laravel Vite - this must be set in the environment - you don't need to change this but it must be present
+      APP_LOCALE: "${APP_LOCALE:-en}"
+      LOG_CHANNEL: "${LOG_CHANNEL:-stack}"
+      LOG_STACK: "${LOG_STACK:-single}"
+      DB_CONNECTION: "${DB_CONNECTION:-sqlite}"
+      DB_DATABASE: "${DB_DATABASE:-./storage/app/private/database.sqlite}"
+      JWT_SECRET: "${JWT_SECRET:-change_this_or_terrible_things_will_happen}"
+    volumes:
+      - ./storage:/var/www/html/storage
+    ports:
+      - "${APP_PORT:-9199}:80"
+    networks:
+      - erugo
+
+networks:
+  erugo:
+    driver: bridge
