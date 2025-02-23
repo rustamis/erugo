@@ -1,6 +1,6 @@
 # erugo
 
-erugo is a secure, self-hosted alternative to WeTransfer, built with Go and Vue.js. It combines powerful file-sharing capabilities with a sleek user interface, all packaged in a single, easy-to-deploy binary.
+erugo is a secure, self-hosted alternative to WeTransfer, built with PHP and Laravel with a Vue.js frontend. It combines powerful file-sharing capabilities with a sleek user interface.
 
 ## Screenshots
 
