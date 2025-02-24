@@ -56,5 +56,6 @@ Route::get('/logo', function () {
 
 Route::get('/test-email', function () {
     $share = Share::find(1);
-    sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);
+    // sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);
+    return view('emails.share-downloaded', ['share' => $share]);
 });

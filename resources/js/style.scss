@@ -10,6 +10,7 @@
 
   --accent-color-light-transparent: color-mix(in srgb, var(--accent-color-light) 90%, rgba(255, 255, 255, 0) 10%);
   --accent-color-light-transparent-2: color-mix(in srgb, var(--accent-color-light) 70%, rgba(255, 255, 255, 0) 30%);
+
 }
 
 body {
@@ -162,6 +163,8 @@ body {
     input,
     textarea {
       border-radius: 0 !important;
+      border: none;
+      border-bottom: 1px solid color-mix(in srgb, var(--secondary-color), transparent 93%);
     }
   }
 
