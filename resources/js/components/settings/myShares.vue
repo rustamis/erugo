@@ -190,9 +190,8 @@ const enableDownloadButton = (share) => {
               <CalendarPlus />
               Extend
             </button>
-            <button @click="downloadShare(share)" class="secondary" title="Download all files" :disabled="!enableDownloadButton(share)">
+            <button @click="downloadShare(share)" class="secondary icon-only" title="Download all files" :disabled="!enableDownloadButton(share)">
               <HardDriveDownload style="margin-right: 0" />
-              &nbsp;
             </button>
           </td>
         </tr>

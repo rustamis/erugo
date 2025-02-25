@@ -168,7 +168,7 @@ defineExpose({
   <div class="container-fluid">
     <div class="row">
       <div class="col-2 d-none d-md-block">
-        <ul class="settings-nav">
+        <ul class="settings-nav pt-5">
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('background-images')">
               <Images />
@@ -181,12 +181,7 @@ defineExpose({
               Logo
             </a>
           </li>
-          <li>
-            <a href="#" @click.prevent="handleNavItemClicked('application-name')">
-              <Tag />
-              Application Name
-            </a>
-          </li>
+         
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('other-ui-settings')">
               <Dice5 />
@@ -201,7 +196,7 @@ defineExpose({
           </li>
         </ul>
       </div>
-      <div class="col-12 col-md-8">
+      <div class="col-12 col-md-8 pt-5">
         <div class="row mb-5">
           <!-- backgrounds -->
           <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
@@ -299,35 +294,6 @@ defineExpose({
                 height will adjust automatically to maintain aspect ratio. Use a source image at least as wide as your
                 display width to ensure quality.
               </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row mb-5">
-          <!-- Application name -->
-          <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
-            <div class="setting-group" id="application-name">
-              <div class="setting-group-header">
-                <h3>
-                  <Tag />
-                  Application Name
-                </h3>
-                <div class="settings-group-info">
-                  <p>Change the name of your erugo instance.</p>
-                </div>
-              </div>
-
-              <div class="setting-group-body">
-                <div class="setting-group-body-item">
-                  <input type="text" v-model="settings.application_name" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="d-none d-md-block col ps-0">
-            <div class="section-help">
-              <h5>Application name</h5>
-              <p>Customise the displayed name of the application in places like title bars and dialogues.</p>
             </div>
           </div>
         </div>

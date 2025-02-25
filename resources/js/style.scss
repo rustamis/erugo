@@ -2,15 +2,114 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+@import './styles/buttons.scss';
+@import './styles/tables.scss';
+@import './styles/inputs.scss';
+
 :root {
-  --primary-color: rgb(238, 193, 84);
-  --secondary-color: rgb(34, 34, 34);
-  --accent-color: rgb(27, 199, 177);
-  --accent-color-light: rgb(238, 238, 238);
+  /* Button Colors */
+  --primary-button-background-color: rgb(138, 208, 242);
+  --primary-button-text-color: rgb(37, 37, 37);
+  
+  --primary-button-background-color-hover: rgb(70, 154, 196);
+  --primary-button-text-color-hover: white;
+  
+  --primary-button-background-color-disabled: rgba(100, 100, 100, 0.566);
+  --primary-button-text-color-disabled: rgba(255, 255, 255, 0.579);
+  
+  --secondary-button-background-color: rgb(255, 255, 255);
+  --secondary-button-text-color: rgb(34, 34, 34);
+  
+  --secondary-button-background-color-hover: rgb(238, 238, 238);
+  --secondary-button-text-color-hover: rgb(34, 34, 34);
+  
+  --secondary-button-background-color-disabled: rgba(100, 100, 100, 0.566);
+  --secondary-button-text-color-disabled: rgba(255, 255, 255, 0.579);
 
-  --accent-color-light-transparent: color-mix(in srgb, var(--accent-color-light) 90%, rgba(255, 255, 255, 0) 10%);
-  --accent-color-light-transparent-2: color-mix(in srgb, var(--accent-color-light) 70%, rgba(255, 255, 255, 0) 30%);
+  /* Panel Colors */
+  --panel-background-color: rgba(221, 221, 221, 1);
+  --panel-text-color: rgb(34, 34, 34);
+  
+  --panel-item-background-color: rgb(215, 215, 215);
+  --panel-item-text-color: rgb(34, 34, 34);
+  --panel-item-background-color-hover: rgb(238, 238, 238);
+  --panel-item-text-color-hover: rgb(34, 34, 34);
+  
+  --panel-item-action-hover-background-color-from: rgba(238, 238, 238, 0.42);
+  --panel-item-action-hover-background-color-to: rgb(238, 238, 238);
+  
+  --panel-header-background-color: rgba(80, 175, 223, 0.8);
+  --panel-header-text-color: rgb(34, 34, 34);
+  
+  --panel-subheader-background-color: linear-gradient(to bottom, rgb(236, 236, 236) 0%, rgb(241, 241, 241) 100%);
+  --panel-subheader-text-color: rgb(34, 34, 34);
+  
+  --tabs-bar-background-color: rgb(221, 221, 221);
+  
+  --tabs-tab-background-color: rgb(211, 211, 211);
+  --tabs-tab-text-color: rgb(53, 53, 53);
+  
+  --tabs-tab-background-color-hover: rgba(80, 175, 223, 0.8);
+  --tabs-tab-text-color-hover: rgb(244, 244, 244);
+  
+  --tabs-tab-background-color-active: rgba(80, 175, 223, 0.8);
+  --tabs-tab-text-color-active: rgb(244, 244, 244);
 
+  --panel-nav-item-background-color: rgb(211, 211, 211);
+  --panel-nav-item-text-color: rgb(53, 53, 53);
+
+  --panel-nav-item-background-color-hover: rgba(80, 175, 223, 0.8);
+  --panel-nav-item-text-color-hover: rgb(244, 244, 244);
+
+  --panel-section-background-color: rgb(211, 211, 211);
+  --panel-section-text-color: rgb(53, 53, 53);
+
+  --panel-section-background-color-alt: rgb(206, 206, 206);
+  --panel-section-text-color-alt: rgb(53, 53, 53);
+  
+  
+
+  /* table colors */
+  --table-background-color: rgb(221, 221, 221);
+  --table-text-color: rgb(34, 34, 34);
+
+  --table-header-background-color: rgba(80, 175, 223,1);
+  --table-header-text-color: rgb(255, 255, 255);
+
+  --table-row-background-color: rgb(238, 238, 238);
+  --table-row-text-color: rgb(34, 34, 34);
+
+  --table-row-background-color-alt: rgb(241, 241, 241);
+  --table-row-text-color-alt: rgb(34, 34, 34);
+
+  /* input colors */
+  --input-background-color: rgb(236, 236, 236);
+  --input-text-color: rgb(34, 34, 34);
+  --input-border-color: rgb(222, 222, 222);
+  --input-border-color-hover: rgb(205, 205, 205);
+  --input-border-color-focus: rgb(80, 175, 223);
+  --input-placeholder-color: rgb(164, 164, 164);
+
+  --checkbox-background-color: rgb(236, 236, 236);
+
+  --checkbox-checked-background-color: rgb(80, 175, 223);
+  --checkbox-checked-check-color: rgb(255, 255, 255);
+
+  
+  --label-text-color: rgb(34, 34, 34);
+
+  /* Overlay */
+
+  --overlay-background-color: rgba(255, 255, 255, 0.2);
+
+  /* Button dimensions */
+  --button-height: 50px;
+  --button-width: 100%;
+  --icon-only-button-width: 50px;
+
+  /* Settings dimensions */
+  --settings-width: 100vw;
+  --settings-height: 100vh;
 }
 
 body {
@@ -108,7 +207,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--accent-color-light-transparent);
+  background-color: var(--panel-header-background-color);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 10px 10px 0 0;
@@ -125,19 +224,13 @@ body {
 
   .max-size-label {
     margin-top: 10px;
-    color: var(--secondary-color);
+    color: var(--panel-text-color);
     font-size: 0.8rem;
-    &.under-limit {
-      color: #0dac25;
-    }
-    &.over-limit {
-      color: #ee7354;
-    }
   }
 }
 
 .upload-basket {
-  background-color: var(--accent-color-light-transparent-2);
+  background-color: var(--panel-background-color);
   backdrop-filter: blur(5px);
   border-radius: 0;
   width: 100%;
@@ -164,7 +257,7 @@ body {
     textarea {
       border-radius: 0 !important;
       border: none;
-      border-bottom: 1px solid color-mix(in srgb, var(--secondary-color), transparent 93%);
+      border-bottom: 1px solid color-mix(in srgb, var(--panel-text-color), transparent 93%);
     }
   }
 
@@ -179,7 +272,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--accent-color-light-transparent);
+    background-color: var(--panel-item-background-color);
     padding: 10px 20px;
     border-radius: 3px;
     margin-bottom: 3px;
@@ -188,7 +281,7 @@ body {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--secondary-color);
+      color: var(--panel-text-color);
     }
     .meta {
       display: flex;
@@ -196,7 +289,7 @@ body {
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
+      color: color-mix(in srgb, var(--panel-text-color) , transparent 30%);
       font-size: 0.8rem;
     }
     .hover-actions {
@@ -214,34 +307,17 @@ body {
       transition: opacity 0.3s ease-in-out;
       pointer-events: none;
       padding-right: 10px;
-      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 50%, var(--accent-color-light-transparent));
+      background-image: linear-gradient(to right, var(--panel-item-action-hover-background-color-from) 50%, var(--panel-item-action-hover-background-color-to));
       border-radius: 0 5px 5px 0;
       button {
-        background-color: transparent;
         border: none;
         cursor: pointer;
-        background-color: var(--accent-color-light);
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        padding: 0;
-        &:hover {
-          color: var(--secondary-color);
-          background-color: var(--primary-color);
-        }
-        svg {
-          color: var(--secondary-color);
-          width: 16px;
-          height: 16px;
-          margin: 0;
-        }
+        width: var(--icon-only-button-width);
+        height: var(--icon-only-button-width);
       }
     }
     &:hover {
-      background-color: rgba(40, 40, 40, 0.1);
       .hover-actions {
         opacity: 1;
         pointer-events: all;
@@ -256,7 +332,7 @@ body {
     width: 100%;
     height: 100%;
     .upload-basket-empty-text {
-      color: var(--secondary-color);
+      color: color-mix(in srgb, var(--panel-text-color), transparent 40%);
       font-size: 0.8rem;
       display: flex;
       flex-direction: row;
@@ -281,56 +357,10 @@ body {
   justify-content: center;
   margin-top: 0px;
   padding: 10px 20px;
-  background-color: var(--accent-color-light-transparent);
+  background-color: var(--panel-background-color);
   backdrop-filter: blur(5px);
   z-index: 100;
-  .upload-button {
-    position: relative;
-    padding: 10px;
-    width: 100%;
-    border-radius: 5px;
-    border: none;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    white-space: nowrap;
-    margin-top: 0px;
-    width: fit-content;
-    z-index: 100;
-    display: block;
 
-    .loader {
-      svg {
-        width: 16px;
-        height: 16px;
-        animation: spin 1s linear infinite;
-      }
-    }
-
-    &:hover {
-      background-color: var(--secondary-color);
-      color: var(--primary-color);
-    }
-    &:disabled {
-      background-color: var(--secondary-color);
-      color: var(--primary-color);
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    svg {
-      margin-right: 10px;
-      margin-top: -3px;
-    }
-
-    &.uploading {
-      background-color: var(--secondary-color);
-      color: var(--primary-color);
-      opacity: 1 !important;
-    }
-  }
 }
 
 .version-info {
@@ -580,40 +610,14 @@ body {
   }
 }
 
-.upload-files,
-.upload-folder,
-.upload-button,
-.download-button,
-.login-button {
-  padding: 10px;
-  width: 100%;
-  border-radius: 5px;
-  border: none;
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  white-space: nowrap;
 
-  &:hover {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-  }
-
-  svg {
-    margin-right: 10px;
-    margin-top: -3px;
-  }
-}
 
 .auth-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--accent-color-light-transparent);
+  background-color: var(--panel-background-color);
   backdrop-filter: blur(10px);
   z-index: 101;
   padding: 20px;
@@ -629,287 +633,6 @@ body {
     h1 {
       margin-bottom: 20px;
       font-size: 1.7rem;
-    }
-  }
-}
-
-button {
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
-  margin-right: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  transition: all 0.2s ease-in-out;
-
-  &:last-child {
-    margin-right: 0;
-  }
-  &:hover {
-    background-color: var(--secondary-color);
-    color: var(--accent-color);
-  }
-  svg {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-    margin-top: -3px;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    pointer-events: none;   
-    position: relative;
-
-  }
-
-  &.clear-button {
-    background-color: var(--accent-color-light-transparent);
-    backdrop-filter: blur(10px);
-    color: var(--secondary-color);
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.1));
-    &:hover {
-      background-color: var(--secondary-color);
-      color: var(--primary-color);
-    }
-  }
-  &.secondary {
-    background-color: var(--accent-color);
-    color: #fff;
-    &:hover {
-      background-color: var(--secondary-color);
-      color: var(--accent-color);
-    }
-  }
-}
-
-button.logout,
-button.settings-button,
-button.close-settings-button {
-  display: flex;
-  position: absolute;
-  bottom: 20px;
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 102;
-  svg {
-    color: var(--secondary-color);
-    width: 20px;
-    height: 20px;
-    margin-right: 0px;
-    margin-top: 0px;
-  }
-  &:hover {
-    background-color: var(--secondary-color);
-    color: var(--accent-color);
-    svg {
-      color: var(--accent-color);
-    }
-  }
-}
-
-button.logout {
-  right: 20px;
-}
-
-button.settings-button {
-  right: 70px;
-}
-
-button.close-settings-button {
-  right: 20px;
-  top: 20px;
-  bottom: unset;
-  background-color: var(--secondary-color);
-  color: var(--primary-color);
-  svg {
-    color: var(--accent-color);
-  }
-  &:hover {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    svg {
-      color: var(--secondary-color);
-    }
-  }
-}
-
-button {
-  &:focus {
-    outline: 2px solid var(--secondary-color);
-  }
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead {
-    color: var(--secondary-color);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    th {
-      background-color: var(--primary-color);
-      padding: 10px;
-      text-align: left;
-      svg {
-        width: 16px;
-        height: 16px;
-        margin-top: -2px;
-        margin-left: 10px;
-        cursor: pointer;
-      }
-    }
-  }
-  tbody {
-    background-color: var(--accent-color-light-transparent);
-    tr {
-      background-color: var(--accent-color-light-transparent);
-      &:nth-child(even) {
-        background-color: var(--accent-color-light-transparent-2);
-      }
-    }
-    td {
-      padding: 10px;
-      text-align: left;
-      border: 1px solid rgba(175, 175, 175, 0.2);
-      color: var(--secondary-color);
-    }
-  }
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 3px;
-  border: none;
-  background-color: var(--accent-color-light);
-  color: var(--secondary-color);
-  margin-bottom: 10px;
-  border: 1px solid color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 80%);
-  transition: all 0.3s ease-in-out;
-  outline: none;
-  resize: none;
-
-  &:not(textarea) {
-    height: 50px;
-  }
-
-  //placeholder
-  &::placeholder {
-    color: color-mix(in srgb, var(--secondary-color) 60%, rgba(255, 255, 255, 0) 40%);
-  }
-
-  &:focus {
-    border: 1px solid color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 20%);
-    outline: none;
-  }
-  &.error {
-    border: 1px solid red;
-  }
-}
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 30px;
-}
-
-.input-container {
-  position: relative;
-  width: 100%;
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 0.8rem;
-    color: var(--secondary-color);
-    font-weight: bold;
-  }
-  .error-message {
-    position: absolute;
-    color: rgb(169, 86, 86);
-    font-size: 0.8rem;
-    top: 16px;
-    right: 10px;
-  }
-}
-
-.checkbox-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr;
-  padding-right: 20px;
-
-  &.disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  input {
-    display: none;
-  }
-  label {
-    font-size: 1rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-
-    &::before {
-      font-family: "Material Icons";
-      content: "";
-      width: 20px;
-      height: 20px;
-      background-color: color-mix(in srgb, var(--primary-color) 50%, rgba(255, 255, 255, 0) 50%);
-      color: transparent;
-      border-radius: 5px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      overflow: hidden;
-    }
-  }
-  input:checked + label {
-    &::before {
-      content: "check";
-      background-color: var(--primary-color);
-      color: var(--secondary-color);
-    }
-  }
-  p.help-text {
-    margin-left: 30px;
-    width: 100%;
-    font-size: 0.8rem;
-    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
-    svg {
-      width: 16px;
-      height: 16px;
-      margin-right: 5px;
-      margin-top: -2px;
     }
   }
 }
@@ -932,7 +655,7 @@ select {
   justify-content: flex-start;
   gap: 10px;
   height: 100%;
-  background: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 97%);
+  background: var(--panel-section-background-color);
   border-radius: 5px 0 0 5px;
 
   .setting-group-header {
@@ -1022,7 +745,8 @@ select {
       padding: 5px;
       padding-right: 10px;
       border-radius: 5px;
-      border: 1px solid color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 80%);
+      border: 1px solid var(--input-border-color);
+      background: var(--input-background-color);
       margin-bottom: 5px;
       img {
         width: 50px;
@@ -1032,7 +756,7 @@ select {
       }
       .name {
         font-size: 0.8rem;
-        color: var(--secondary-color);
+        color: var(--input-text-color);
       }
       button {
         width: 40px;
@@ -1055,7 +779,7 @@ select {
 .section-help {
   height: 100%;
   margin-top: 0px;
-  background: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+  background: var(--panel-section-background-color-alt);
   padding: 20px;
   border-radius: 0 5px 5px 0;
   h5 {
@@ -1232,21 +956,21 @@ h6 {
   padding: 0;
   margin: 0;
   position: sticky;
-  top: 20px;
+  top: 0px;
   li {
     a {
       display: block;
       padding: 10px 20px;
-      background-color: var(--accent-color-light);
-      color: var(--secondary-color);
+      background-color: var(--panel-nav-item-background-color);
+      color: var(--panel-nav-item-text-color);
       text-decoration: none;
       font-size: 1rem;
       font-weight: bold;
       border-radius: 5px;
       margin-bottom: 5px;
       &:hover {
-        background-color: var(--accent-color-light-transparent);
-        color: var(--primary-color);
+        background-color: var(--panel-nav-item-background-color-hover);
+        color: var(--panel-nav-item-text-color-hover);
       }
       svg {
         width: 20px;

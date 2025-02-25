@@ -89,7 +89,7 @@ defineExpose({
   <div class="container-fluid">
     <div class="row mb-5">
       <div class="col-2 d-none d-md-block">
-        <ul class="settings-nav">
+        <ul class="settings-nav pt-5">
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('general')">General</a>
           </li>
@@ -104,7 +104,7 @@ defineExpose({
           </li>
         </ul>
       </div>
-      <div class="col-12 col-md-8">
+      <div class="col-12 col-md-8 pt-5">
         <div class="row mb-5">
           <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
             <div class="setting-group" id="general">
