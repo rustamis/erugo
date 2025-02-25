@@ -99,6 +99,15 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
   }
+
+  h1 {
+    span {
+      font-size: 0.8rem;
+      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
+      display: block;
+      margin-top: 5px;
+    }
+  }
 }
 
 .upload-form {
@@ -508,12 +517,14 @@ body {
     margin-bottom: 10px;
   }
   .total-size,
-  .share-expires {
+  .share-expires,
+  .file-count {
     margin-top: 10px;
     color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
     font-size: 0.8rem;
     margin-bottom: 10px;
-    &.share-expires {
+    &.share-expires,
+    &.file-count {
       margin-top: -10px;
       margin-bottom: 20px;
     }
@@ -576,6 +587,23 @@ body {
         height: 16px;
         margin-top: -1px;
       }
+    }
+  }
+
+  .share-message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: color-mix(in srgb, var(--accent-color-light), transparent 30%);
+    border-radius: 2px;
+    width: 100%;
+    margin-bottom: 10px;
+    h6 {
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    pre {
+      margin: 0;
     }
   }
 }
