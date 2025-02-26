@@ -158,3 +158,28 @@ erugo is released under the MIT License, ensuring maximum flexibility for both p
 ---
 
 🚀 **Ready to start? Download erugo and begin sharing files securely in minutes!**
+
+## Disclaimer
+
+### Intended Use
+erugo is designed for legitimate file-sharing purposes such as transferring work assets, design files, media content, and other non-sensitive data between trusted parties. It is not intended for sharing illegal, harmful, or unauthorized content.
+
+### Administrator Responsibility
+As a self-hosted application, administrators who deploy erugo are solely responsible for:
+- Compliance with all applicable local, national, and international laws
+- Proper configuration and security of their instance
+- Monitoring and moderating the content shared through their instance
+- Implementing appropriate terms of service for their users
+
+### No Warranty
+ERUGO IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+### Recommended Practices
+We strongly recommend that administrators:
+- Implement access controls to limit who can create shares
+- Configure appropriate file size limits
+- Set reasonable expiration periods for shares
+- Regularly review system logs
+- Consider implementing additional monitoring if deploying in production environments
+
+By downloading, installing, or using erugo, you acknowledge that you have read and understood this disclaimer.
