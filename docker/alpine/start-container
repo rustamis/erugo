@@ -6,7 +6,8 @@ export ASSET_URL=/
 # First time setup check
 if [ ! -f /var/www/html/storage/.setup-lock ]; then
     echo "[First time setup] Copying storage skeleton contents..."
-    cp -rn /var/www/html/storage_skell/* /var/www/html/storage/
+    rm -rf /var/www/html/storage/*
+    cp -r /var/www/html/storage_skell/* /var/www/html/storage/
     chown -R erugo:erugo /var/www/html/storage
     touch /var/www/html/storage/.setup-lock
 else
@@ -31,7 +32,7 @@ if [ -f /var/www/html/storage/jwt.secret ]; then
     export JWT_SECRET=$(cat /var/www/html/storage/jwt.secret)
 else
     echo "Generating JWT secret..."
-    su-exec erugo php -r "echo base64_encode(random_bytes(32));" > /var/www/html/storage/jwt.secret
+    su-exec erugo php -r "echo base64_encode(random_bytes(32));" >/var/www/html/storage/jwt.secret
     echo "JWT secret generated, loading..."
     export JWT_SECRET=$(cat /var/www/html/storage/jwt.secret)
 fi
