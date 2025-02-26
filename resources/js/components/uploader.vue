@@ -270,7 +270,7 @@ const copyShareUrl = () => {
       <div class="sharePanel-title">Share URL</div>
       <div class="sharePanel-url">
         {{ shareUrl }}
-        <button class="sharePanel-copy-button" @click="copyShareUrl">
+        <button class="sharePanel-copy-button icon-only" @click="copyShareUrl">
           <Check v-if="showCopySuccess" />
           <Copy v-else />
         </button>
@@ -284,7 +284,7 @@ const copyShareUrl = () => {
   margin-top: -20px;
   // width: 300px;
   // height: 30px;
-  background-color: var(--accent-color-light);
+  background-color: var(--panel-item-background-color);
   border-radius: 5px;
   display: flex;
   flex-direction: row;
@@ -307,9 +307,9 @@ const copyShareUrl = () => {
   .progress-bar {
     height: 100%;
     width: 100%;
-    background: transparent;
+    background: var(--progress-bar-background-color);
     .progress-bar-fill {
-      background-color: var(--primary-color);
+      background-color: var(--progress-bar-fill-color);
       border-radius: 5px;
       transition: all 0.1s linear;
       height: 100%;
@@ -317,7 +317,7 @@ const copyShareUrl = () => {
   }
   .progress-bar-text {
     font-size: 24px;
-    color: var(--secondary-color);
+    color: var(--progress-bar-text-color);
     font-weight: 600;
     position: absolute;
     left: 0;
@@ -331,7 +331,7 @@ const copyShareUrl = () => {
     flex-direction: column;
     .progress-bar-text-sub {
       font-size: 10px;
-      color: var(--secondary-color);
+      color: var(--progress-bar-text-color);
       font-weight: 400;
     }
   }

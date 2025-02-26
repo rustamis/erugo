@@ -48,7 +48,7 @@ button {
   border: none;
   cursor: pointer;
 
-  border-radius: 5px;
+  border-radius: var(--button-border-radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;

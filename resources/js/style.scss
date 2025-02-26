@@ -7,6 +7,12 @@
 @import './styles/inputs.scss';
 
 :root {
+  /* link colors */
+  --link-color: rgb(57, 115, 144);
+  --link-color-hover: rgb(70, 154, 196);
+  --link-color-active: rgb(70, 154, 196);
+  --link-color-disabled: rgba(190, 190, 190, 0.566);
+
   /* Button Colors */
   --primary-button-background-color: rgb(138, 208, 242);
   --primary-button-text-color: rgb(37, 37, 37);
@@ -25,6 +31,16 @@
   
   --secondary-button-background-color-disabled: rgba(100, 100, 100, 0.566);
   --secondary-button-text-color-disabled: rgba(255, 255, 255, 0.579);
+
+  /* Uploader Colors */
+  --uploader-background-color: rgba(255, 255, 255, 0.769);
+  --uploader-text-color: rgb(71, 71, 71);
+
+  --uploader-header-background-color: rgba(255, 255, 255, 0.8);
+  --uploader-header-text-color: rgb(39, 39, 39);
+
+  --uploader-item-background-color: rgba(255, 255, 255, 0.8);
+  --uploader-item-text-color: rgb(39, 39, 39);
 
   /* Panel Colors */
   --panel-background-color: rgba(221, 221, 221, 1);
@@ -67,8 +83,6 @@
   --panel-section-background-color-alt: rgb(206, 206, 206);
   --panel-section-text-color-alt: rgb(53, 53, 53);
   
-  
-
   /* table colors */
   --table-background-color: rgb(221, 221, 221);
   --table-text-color: rgb(34, 34, 34);
@@ -98,6 +112,10 @@
   
   --label-text-color: rgb(34, 34, 34);
 
+  --progress-bar-background-color: rgb(211, 211, 211);
+  --progress-bar-fill-color: rgb(80, 175, 223);
+  --progress-bar-text-color: rgb(34, 34, 34);
+
   /* Overlay */
 
   --overlay-background-color: rgba(255, 255, 255, 0.2);
@@ -107,6 +125,12 @@
   --button-width: 100%;
   --icon-only-button-width: 50px;
 
+  /* Button border radius */
+  --button-border-radius: 10px;
+
+  /* Tabs border radius */
+  --tabs-border-radius: 5px 5px 0 0;
+
   /* Settings dimensions */
   --settings-width: 100vw;
   --settings-height: 100vh;
@@ -114,12 +138,12 @@
 
 body {
   font-family: "Inter", sans-serif;
-  background-color: var(--accent-color-light);
+  background-color: var(--panel-background-color);
   a {
-    color: var(--primary-color);
+    color: var(--link-color);
     text-decoration: none;
     &:hover {
-      color: var(--secondary-color);
+      color: var(--link-color-hover);
     }
   }
 }
@@ -179,21 +203,109 @@ body {
   z-index: 100;
   padding-bottom: 15px;
 }
+.download-panel-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--panel-background-color);
+  backdrop-filter: blur(10px);
+  width: 400px;
+  h1 {
+    color: var(--panel-text-color);
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .total-size,
+  .share-expires {
+    margin-top: 10px;
+    color: var(--panel-text-color);
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    &.share-expires {
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+  }
+  z-index: 101;
+  .file-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: var(--panel-item-background-color);
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    .size {
+      color: var(--panel-text-color);
+      opacity: 0.8;
+      font-size: 0.8rem;
+    }
+    .type {
+      color: var(--panel-text-color);
+      opacity: 0.8;
+      font-size: 0.8rem;
+    }
+    &.more-files {
+      margin-top: 10px;
+      background-color: var(--panel-item-background-color);
+    }
+    .file-name {
+      color: var(--panel-text-color);
+      font-size: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      //nowrap
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &.more-files {
+        color: var(--panel-text-color);
+        font-size: 0.8rem;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+        margin-top: -1px;
+      }
+    }
+  }
+}
 
 .download-panel-content {
-  position: relative;
+
   width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--panel-background-color);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
   .download-panel-title {
-    color: var(--secondary-color);
+    color: var(--panel-text-color);
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -207,7 +319,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--panel-header-background-color);
+  background-color: var(--uploader-header-background-color);
+  color: var(--uploader-header-text-color);
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 10px 10px 0 0;
@@ -224,13 +337,13 @@ body {
 
   .max-size-label {
     margin-top: 10px;
-    color: var(--panel-text-color);
+    color: var(--uploader-header-text-color);
     font-size: 0.8rem;
   }
 }
 
 .upload-basket {
-  background-color: var(--panel-background-color);
+  background-color: var(--uploader-background-color);
   backdrop-filter: blur(5px);
   border-radius: 0;
   width: 100%;
@@ -272,7 +385,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    background-color: var(--panel-item-background-color);
+    background-color: var(--uploader-item-background-color);
     padding: 10px 20px;
     border-radius: 3px;
     margin-bottom: 3px;
@@ -281,7 +394,7 @@ body {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--panel-text-color);
+      color: var(--uploader-item-text-color);
     }
     .meta {
       display: flex;
@@ -289,7 +402,7 @@ body {
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      color: color-mix(in srgb, var(--panel-text-color) , transparent 30%);
+      color: var(--uploader-item-text-color);
       font-size: 0.8rem;
     }
     .hover-actions {
@@ -332,7 +445,8 @@ body {
     width: 100%;
     height: 100%;
     .upload-basket-empty-text {
-      color: color-mix(in srgb, var(--panel-text-color), transparent 40%);
+      color: var(--uploader-text-color);
+      opacity: 0.7;
       font-size: 0.8rem;
       display: flex;
       flex-direction: row;
@@ -357,29 +471,29 @@ body {
   justify-content: center;
   margin-top: 0px;
   padding: 10px 20px;
-  background-color: var(--panel-background-color);
+  background-color: var(--uploader-background-color);
   backdrop-filter: blur(5px);
   z-index: 100;
 
 }
 
 .version-info {
-  background-color: var(--accent-color-light-transparent);
+  background-color: var(--panel-background-color);
   position: absolute;
   bottom: 0;
   left: 0;
   text-align: center;
-  color: var(--secondary-color);
+  color: var(--panel-text-color);
   padding: 10px 20px;
   font-size: 0.9rem;
   transform: translateX(-50%);
   left: 50%;
   border-radius: 10px 10px 0 0;
   a {
-    color: var(--secondary-color);
+    color: var(--link-color);
     text-decoration: none;
     &:hover {
-      color: var(--primary-color);
+      color: var(--link-color-hover);  
     }
   }
 }
@@ -445,7 +559,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--accent-color-light-transparent-2);
+  background-color: var(--overlay-background-color);
   backdrop-filter: blur(10px);
   z-index: 101;
   opacity: 0;
@@ -456,7 +570,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--accent-color);
+    background-color: var(--panel-background-color);
     padding: 20px;
     border-radius: 10px;
     width: calc(100% - 10px);
@@ -464,43 +578,31 @@ body {
       width: 500px;
     }
     .sharePanel-title {
-      color: var(--secondary-color);
+      color: var(--panel-text-color);
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: 10px;
     }
     .sharePanel-url {
-      color: var(--secondary-color);
+      color: var(--input-text-color);
       font-size: 0.8rem;
       padding: 10px;
+      padding-right: 0;
       border-radius: 5px;
-      background-color: var(--accent-color-light);
+      background-color: var(--input-background-color);
       width: 100%;
       height:50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .sharePanel-copy-button {
-      background-color: var(--primary-color);
-      color: var(--secondary-color);
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
 
-      svg {
-        width: 16px;
-        height: 16px;
-        margin: 0 !important;
-      }
-    }
     .sharePanel-close {
       position: absolute;
       top: 10px;
       right: 10px;
       cursor: pointer;
-      color: var(--secondary-color);
+      color: var(--panel-text-color);
       padding: 0;
       svg {
         width: 20px;
@@ -524,91 +626,7 @@ body {
   }
 }
 
-.download-panel-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--accent-color-light-transparent-2);
-  backdrop-filter: blur(10px);
-  h1 {
-    color: var(--secondary-color);
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .total-size,
-  .share-expires {
-    margin-top: 10px;
-    color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
-    font-size: 0.8rem;
-    margin-bottom: 10px;
-    &.share-expires {
-      margin-top: -10px;
-      margin-bottom: 20px;
-    }
-  }
-  z-index: 101;
-  .file-list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .file-item {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    background-color: var(--accent-color-light);
-    padding: 10px;
-    border-radius: 5px;
-    width: 100%;
-    margin-bottom: 4px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
 
-    .size {
-      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
-      font-size: 0.8rem;
-    }
-    .type {
-      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
-      font-size: 0.8rem;
-    }
-    &.more-files {
-      margin-top: 10px;
-      background-color: color-mix(in srgb, var(--accent-color-light) 90%, white 10%);
-    }
-    .file-name {
-      color: var(--secondary-color);
-      font-size: 1rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
-      //nowrap
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      &.more-files {
-        color: var(--secondary-color);
-        font-size: 0.8rem;
-      }
-      svg {
-        width: 16px;
-        height: 16px;
-        margin-top: -1px;
-      }
-    }
-  }
-}
 
 
 
@@ -831,7 +849,7 @@ h6 {
     align-items: center;
     justify-content: center;
     h1 {
-      color: var(--primary-color);
+      color: var(--panel-text-color);
       font-size: 2rem;
       display: flex;
       flex-direction: row;
@@ -847,7 +865,7 @@ h6 {
       }
     }
     p {
-      color: var(--accent-color-light);
+      color: var(--panel-text-color);
       font-size: 1rem;
     }
   }

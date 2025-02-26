@@ -262,6 +262,7 @@ const getSettingsTitle = () => {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+
   }
 
   &.active {
@@ -320,10 +321,10 @@ const getSettingsTitle = () => {
     background-color: var(--tabs-tab-background-color);
     margin-top: 10px;
     padding: 10px;
-    border-radius: 5px 5px 0 0;
+    border-radius: var(--tabs-border-radius);
     box-shadow: inset 0 -5px 2px 0 rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: all 100ms ease-in-out;
+    transition: all 300ms ease-in-out;
 
     h2 {
       font-size: 16px;
@@ -365,6 +366,7 @@ const getSettingsTitle = () => {
   flex-grow: 1;
   width: 100%;
   border-radius: 5px;
+  background-color: var(--panel-background-color);
 
   .settings-tab-content {
     position: absolute;
