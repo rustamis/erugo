@@ -118,8 +118,8 @@ class BackgroundsController extends Controller
         $manager = new ImageManager(new Driver());
         $image = $manager->read($fullPath);
 
-        $image->scale(width: 1920);
-        $encoded = $image->toWebp(80);
+        $image->scale(width: 2000);
+        $encoded = $image->toJpeg(90);
 
         //save the encoded image to the public/backgrounds/cache folder
         Storage::disk('public')->put('backgrounds/cache/' . $file, $encoded);
