@@ -310,6 +310,15 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
   }
+
+  h1 {
+    span {
+      font-size: 0.8rem;
+      color: color-mix(in srgb, var(--secondary-color) 60%, white 40%);
+      display: block;
+      margin-top: 5px;
+    }
+  }
 }
 
 .upload-form {

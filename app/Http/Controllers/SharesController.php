@@ -23,7 +23,7 @@ class SharesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => ['string', 'max:255'],
-            'description' => ['max:255'],
+            'description' => ['max:500'],
             'expires_at' => ['date'],
             'files' => ['required', 'array']
         ]);
@@ -102,7 +102,7 @@ class SharesController extends Controller
 
     public function read($shareId)
     {
-        $share = Share::where('long_id', $shareId)->with('files')->first();
+        $share = Share::where('long_id', $shareId)->with(['files','user'])->first();
         if (!$share) {
             return response()->json([
                 'status' => 'error',
