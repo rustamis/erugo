@@ -33,10 +33,10 @@
   --secondary-button-text-color-disabled: rgba(255, 255, 255, 0.579);
 
   /* Uploader Colors */
-  --uploader-background-color: rgba(255, 255, 255, 0.769);
+  --uploader-background-color: rgba(240, 240, 240, 0.769);
   --uploader-text-color: rgb(71, 71, 71);
 
-  --uploader-header-background-color: rgba(255, 255, 255, 0.8);
+  --uploader-header-background-color: rgba(245, 245, 245, 0.5);
   --uploader-header-text-color: rgb(39, 39, 39);
 
   --uploader-item-background-color: rgba(255, 255, 255, 0.8);
@@ -538,19 +538,6 @@ body {
     }
   }
 
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    backdrop-filter: blur(10px);
-    background-size: 15px 15px;
-    background-image: repeating-linear-gradient(45deg, #a9a9a9 0, #ffffff 1.8px, #ffffff00 0, #ffffff00 50%);
-    opacity: 0.04;
-  }
 }
 
 .sharePanel {
