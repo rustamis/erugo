@@ -30,6 +30,12 @@ _Manage shares with ease, including share expiration, maximum downloads, and mor
 - **Modern Interface**: Clean, intuitive web UI
 - **Open Source**: MIT licensed and ready for white-labeling
 
+## Star History
+
+Give this repository a star to keep track of releases and updates. Stars are also great for motivating me to keep adding features!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=DeanWard/erugo&type=Date)](https://star-history.com/#DeanWard/erugo&Date)
+
 ## Quick Start
 
 You can use the example docker-compose.yaml below to run erugo in a container.
