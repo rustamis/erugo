@@ -157,10 +157,10 @@
   .profile-card {
     width: 450px;
     border-radius: 10px;
-    background-color: var(--panel-item-background-color);
+    background: var(--panel-item-background-color);
 
     .profile-card-header {
-      background-color: var(--panel-header-background-color);
+      background: var(--panel-header-background-color);
       border-radius: 8px 8px 0 0;
       padding-left: 20px;
       padding-right: 20px;
@@ -185,7 +185,7 @@
 
     .profile-card-tags {
       padding: 20px;
-      background-color: var(--panel-item-background-color);
+      background: var(--panel-item-background-color);
       border-radius: 8px 8px 0 0;
       margin-bottom: 0px;
       margin-right: 5px;
@@ -198,7 +198,7 @@
         font-size: 14px;
         font-weight: 600;
         color: var(--panel-text-color);
-        background-color: var(--panel-background-color);
+        background: var(--panel-background-color);
         padding: 5px 10px;
         border-radius: 5px;
       }
@@ -206,7 +206,7 @@
 
     .profile-card-profile-item {
       padding: 10px 20px;
-      background-color: var(--panel-background-color);
+      background: var(--panel-background-color);
       h2 {
         font-size: 16px;
         font-weight: 600;
@@ -245,7 +245,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--overlay-background-color);
+    background: var(--overlay-background-color);
     backdrop-filter: blur(10px);
     z-index: 230;
     opacity: 0;
@@ -272,7 +272,7 @@
       left: 50%;
       transform: translate(-50%, 100%);
       width: 500px;
-      background-color: var(--panel-background-color);
+      background: var(--panel-background-color);
       color: var(--panel-text-color);
       padding: 20px;
       border-radius: 10px 10px 0 0;

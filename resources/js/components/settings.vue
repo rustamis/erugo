@@ -266,7 +266,7 @@ const getSettingsTitle = () => {
   }
 
   &.active {
-    background-color: var(--overlay-background-color);
+    background: var(--overlay-background-color);
     pointer-events: auto;
     transition-delay: 0s;
     backdrop-filter: blur(10px);
@@ -279,7 +279,7 @@ const getSettingsTitle = () => {
 }
 
 .settings-header {
-  background-color: var(--panel-header-background-color);
+  background: var(--panel-header-background-color);
   border-radius: 5px 5px 0 0;
   display: flex;
   justify-content: space-between;
@@ -315,10 +315,10 @@ const getSettingsTitle = () => {
   gap: 5px;
   padding-left: 20px;
   padding-right: 20px;
-  background-color: var(--tabs-bar-background-color);
+  background: var(--tabs-bar-background-color);
   width: 100%;
   .settings-tab {
-    background-color: var(--tabs-tab-background-color);
+    background: var(--tabs-tab-background-color);
     margin-top: 10px;
     padding: 10px;
     border-radius: var(--tabs-border-radius);
@@ -346,14 +346,14 @@ const getSettingsTitle = () => {
     }
 
     &.active {
-      background-color: var(--tabs-tab-background-color-active);
+      background: var(--tabs-tab-background-color-active);
       h2 {
         color: var(--tabs-tab-text-color-active);
       }
     }
 
     &:hover {
-      background-color: var(--tabs-tab-background-color-hover);
+      background: var(--tabs-tab-background-color-hover);
       h2 {
         color: var(--tabs-tab-text-color-hover);
       }
@@ -366,7 +366,7 @@ const getSettingsTitle = () => {
   flex-grow: 1;
   width: 100%;
   border-radius: 5px;
-  background-color: var(--panel-background-color);
+  background: var(--panel-background-color);
 
   .settings-tab-content {
     position: absolute;
@@ -379,7 +379,7 @@ const getSettingsTitle = () => {
     align-items: flex-start;
     justify-content: flex-start;
 
-    background-color: var(--panel-background-color);
+    background: var(--panel-background-color);
 
     .tab-content-header {
       display: flex;

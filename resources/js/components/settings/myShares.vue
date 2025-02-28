@@ -209,23 +209,23 @@ const enableDownloadButton = (share) => {
   .file {
     display: flex;
     flex-direction: column;
-    background-color: color-mix(in srgb, var(--primary-color), rgba(255, 255, 255, 0) 95%);
+    background: var(--panel-section-background-color-alt);
     border-radius: 5px;
     padding: 5px 10px;
     gap: 1px;
     .file-name {
       font-size: 0.85rem;
       font-weight: bold;
-      color: var(--secondary-color);
+      color: var(--panel-section-text-color);
     }
     .file-size {
       font-size: 0.7rem;
-      color: var(--secondary-color);
+      color: var(--panel-section-text-color);
     }
   }
   .some-more {
     font-size: 0.7rem;
-    color: var(--secondary-color);
+    color: var(--panel-section-text-color);
     margin-left: 10px;
     height: 100%;
     display: flex;
@@ -239,14 +239,14 @@ const enableDownloadButton = (share) => {
   flex-direction: column;
   gap: 5px;
   .date {
-    background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+    background: var(--panel-section-background-color);
     border-radius: 5px;
     padding: 5px 10px;
     gap: 5px;
     span {
       display: inline-block;
       font-weight: bold;
-      background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+      background: var(--panel-section-background-color-alt);
       border-radius: 5px;
       padding: 5px 10px;
       margin-left: -10px;
@@ -262,7 +262,7 @@ const enableDownloadButton = (share) => {
 .share_long_id {
   display: block;
   font-size: 1rem;
-  color: var(--primary-color);
+  color: var(--panel-section-text-color);
   text-decoration: none;
   font-weight: bold;
 
@@ -271,24 +271,24 @@ const enableDownloadButton = (share) => {
     height: 1rem;
     margin-right: 5px;
     margin-top: -2px;
-    color: var(--secondary-color);
+    color: var(--panel-section-text-color);
   }
 }
 
 .file-count {
-  background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+  background: var(--panel-section-background-color-alt);
   margin-left: -10px;
   margin-top: -10px;
   margin-right: -10px;
   padding: 5px 10px;
 
-  color: var(--secondary-color);
+  color: var(--panel-section-text-color-alt);
   font-weight: 500;
 }
 
 td {
   a {
-    color: var(--primary-color);
+    color: var(--panel-section-text-color);
     text-decoration: none;
     cursor: pointer;
     font-size: 0.75rem;
@@ -305,7 +305,7 @@ td {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+  background: var(--panel-section-background-color-alt);
   height: var(--height);
   border-radius: 5px;
   .download_count {
@@ -317,10 +317,10 @@ td {
     padding-right: 10px;
     border-radius: 3px;
     border: none;
-    color: var(--secondary-color);
+    color: var(--panel-section-text-color);
     outline: none;
     height: var(--height);
-    background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 95%);
+    background: var(--panel-section-background-color-alt);
     font-weight: bold;
     width: 90px;
     padding-bottom: 6px!important;
@@ -357,11 +357,13 @@ td {
       font-size: 0.5rem;
       font-weight: normal;
       padding-bottom: 1.5px;
+      color: var(--panel-section-text-color);
+      z-index: 1;
     }
   }
   .download_limit_input {
     position: relative!important;
-    background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 100%);
+    background: var(--panel-section-background-color-alt);
     height: var(--height);
     border: none;
     border-radius: 0 3px 3px 0;

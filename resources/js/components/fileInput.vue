@@ -74,7 +74,7 @@ input[type='file'] {
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: var(--input-background-color);
+  background: var(--input-background-color);
   color: var(--input-text-color);
   margin-bottom: 10px;
   border: 1px solid var(--input-border-color);

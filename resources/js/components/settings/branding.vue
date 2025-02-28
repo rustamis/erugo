@@ -1,20 +1,27 @@
 <script setup>
-import { ref, onMounted, watch, defineExpose } from 'vue'
+import { ref, onMounted, watch, defineExpose, onBeforeUnmount } from 'vue'
 import { Pipette, Image, Ruler, Tag, X, Dice5, Images } from 'lucide-vue-next'
-import { ColorPicker } from 'vue-color-kit'
+import injectThemeVariables from '../../lib/injectThemeVariables'
+
 import {
   getSettingsByGroup,
   saveSettingsById,
   saveLogo,
   getBackgroundImages,
   saveBackgroundImage,
-  deleteBackgroundImage
+  deleteBackgroundImage,
+  getThemes,
+  setActiveTheme,
+  getActiveTheme
 } from '../../api'
 import FileInput from '../fileInput.vue'
+import ThemeEditor from './themeEditor.vue'
 import { useToast } from 'vue-toastification'
 import { niceFileName, mapSettings } from '../../utils'
-
 const toast = useToast()
+
+const themeEditor = ref(null)
+const showThemeEditor = ref(false)
 
 const settings = ref({
   logo: null,
@@ -53,9 +60,26 @@ const loadSettings = async () => {
   }
 
   loadBackgroundImages()
+  loadThemes()
 }
 
+const themes = ref(null)
+const activeTheme = ref(null)
+const loadThemes = async () => {
+  themes.value = await getThemes()
+}
 
+watch(themes, () => {
+  themes.value.forEach((theme) => {
+    if (theme.active) {
+      activeTheme.value = theme
+    }
+  })
+})
+
+watch(activeTheme, () => {
+  injectThemeVariables('body', activeTheme.value.theme)
+})
 
 const loadBackgroundImages = async () => {
   getBackgroundImages().then((data) => {
@@ -67,13 +91,16 @@ const saveSettings = async () => {
   console.log('saving settings')
   saving.value = true
   try {
-
     if (settings.value.logo instanceof File) {
       saveLogo(settings.value.logo)
     }
 
     await saveSettingsById(settings.value)
+
+    await setActiveTheme(activeTheme.value.name)
+
     applySettingsWithoutRefresh()
+
 
     saving.value = false
     toast.success('Settings saved successfully')
@@ -159,6 +186,14 @@ const handleNavItemClicked = (item) => {
   emit('navItemClicked', item)
 }
 
+onBeforeUnmount(async () => {
+  const activeTheme = await getActiveTheme()
+  console.log('activeTheme', activeTheme)
+  if (activeTheme) {
+    injectThemeVariables('body', activeTheme.theme)
+  }
+})
+
 //define exposed methods
 defineExpose({
   saveSettings
@@ -181,7 +216,7 @@ defineExpose({
               Logo
             </a>
           </li>
-         
+
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('other-ui-settings')">
               <Dice5 />
@@ -191,7 +226,7 @@ defineExpose({
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('ui-colours')">
               <Pipette />
-              UI Colours
+              Theme
             </a>
           </li>
         </ul>
@@ -336,65 +371,34 @@ defineExpose({
               <div class="setting-group-header">
                 <h3>
                   <Pipette />
-                  UI Colours
+                  Theme
                 </h3>
                 <div class="settings-group-info">
-                  <p>Customize the UI colours to match your brand.</p>
+                  <p>Customize the UI &amp;colours to match your brand.</p>
                 </div>
               </div>
 
               <div class="setting-group-body" v-if="settingsLoaded">
-                <div class="row">
-                  <div class="col-auto">
-                    <h6>Primary Colour</h6>
-                    <ColorPicker
-                      theme="light"
-                      :color="settings.css_primary_color"
-                      :sucker-hide="false"
-                      @changeColor="settings.css_primary_color = $event.hex"
-                    />
-                  </div>
-                  <div class="col-auto">
-                    <h6>Secondary Colour</h6>
-                    <ColorPicker
-                      theme="light"
-                      :color="settings.css_secondary_color"
-                      :sucker-hide="false"
-                      @changeColor="settings.css_secondary_color = $event.hex"
-                    />
-                  </div>
+                <div class="setting-group-body-item">
+                  <label for="theme">Theme</label>
+                  <select v-model="activeTheme" class="block" style="width: 100%">
+                    <option v-for="theme in themes" :key="theme.id" :value="theme">{{ theme.name }}</option>
+                  </select>
                 </div>
-                <div class="row mt-4">
-                  <div class="col-auto">
-                    <h6>Accent Colour Light</h6>
-                    <ColorPicker
-                      theme="light"
-                      :color="settings.css_accent_color_light"
-                      :sucker-hide="false"
-                      @changeColor="settings.css_accent_color_light = $event.hex"
-                    />
-                  </div>
-                  <div class="col-auto">
-                    <h6>Accent Colour</h6>
-                    <ColorPicker
-                      theme="light"
-                      :color="settings.css_accent_color"
-                      :sucker-hide="false"
-                      @changeColor="settings.css_accent_color = $event.hex"
-                    />
-                  </div>
+
+                <div class="setting-group-body-item mt-3">
+                  <label for="theme">Edit selected theme</label> <br>
+                  <button @click="showThemeEditor = true">Open Theme Editor</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h5>UI colours</h5>
+              <h5>Theme</h5>
+              <p>The theme editor allows you to customize the colours of the UI to match your brand.</p>
               <p>
-                Customize the colours of the UI to match your brand. The primary colour is used for buttons, links, and
-                other primary elements. The secondary colour is used for secondary elements and text. The accent colour
-                is used for accents and highlights. The easiest way to figure out what each colour does it to experiment
-                with them.
+                Alternatively, browse the theme marketplace for additional pre-made themes made by the erugo community.
               </p>
             </div>
           </div>
@@ -402,4 +406,5 @@ defineExpose({
       </div>
     </div>
   </div>
+  <ThemeEditor ref="themeEditor" v-if="showThemeEditor" @close="showThemeEditor = false" :currentTheme="activeTheme" />
 </template>

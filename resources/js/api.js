@@ -467,6 +467,83 @@ export const getShare = async (id) => {
   return data.data.share
 }
 
+// Theme Methods
+export const getThemes = async () => {
+  const response = await fetchWithAuth(`${apiUrl}/api/themes`, {
+    method: 'GET',
+    headers: {
+      ...addJsonHeader()
+    }
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data.data.themes
+}
+
+export const saveTheme = async (theme) => {
+  const response = await fetchWithAuth(`${apiUrl}/api/themes`, {
+    method: 'POST',
+    headers: {
+      ...addJsonHeader()
+    },
+    body: JSON.stringify(theme)
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data.data.theme
+}
+
+export const deleteTheme = async (name) => {
+  const response = await fetchWithAuth(`${apiUrl}/api/themes/${name}`, {
+    method: 'DELETE',
+    headers: {
+      ...addJsonHeader()
+    }
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data.data.theme
+}
+
+  export const setActiveTheme = async (name) => {
+  const response = await fetchWithAuth(`${apiUrl}/api/themes/set-active`, {
+    method: 'POST',
+    headers: {
+      ...addJsonHeader()
+    },
+    body: JSON.stringify({
+      name
+    })
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return true
+}
+
+export const getActiveTheme = async () => {
+  const response = await fetch(`${apiUrl}/api/themes/active`, {
+    method: 'GET',
+    headers: {
+      ...addJsonHeader()
+    }
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data.data.theme
+}
+
+
+
 //misc methods
 export const getHealth = async () => {
   const response = await fetch(`${apiUrl}/api/health`)

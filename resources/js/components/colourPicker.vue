@@ -1,112 +1,147 @@
 <script setup>
-  import { ref, computed, getCurrentInstance, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ColorPicker as cp } from 'vue-color-kit'
+import { Palette } from 'lucide-vue-next'
+// set it up so we can use v-model
+const props = defineProps({
+  modelValue: {
+    type: String,
+    required: true
+  }
+})
 
-  const props = defineProps({
-    modelValue: {
-      type: [String, Object],
-      required: true
-    },
-    label: {
-      type: String,
-      required: true
-    }
-  })
+const showPicker = ref(false)
 
-  const emit = defineEmits(['update:modelValue'])
-  const colourPickerInput = ref(null)
-  const colourRaw = ref(props.modelValue)
-  const opacity = ref(1)
+const emit = defineEmits(['update:modelValue'])
 
-  const componentId = computed(() => {
-    const instance = getCurrentInstance()
-    return instance.uid
-  })
-
-  const colour = computed(() => {
-    let hex = colourRaw.value + ''
-    hex = hex.toUpperCase()
-    return {
-      hex: hex,
-      rgb: hexToRgb(hex)
-    }
-  })
-
-  watch(colour, (newVal) => {
-    emit('update:modelValue', newVal.rgb)
-  })
-
-  function hexToRgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result
-      ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16)
+const showHidePopup = () => {
+  showPicker.value = !showPicker.value
+  if (showPicker.value) {
+    setTimeout(() => {
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.cp-popup') && !e.target.closest('.cp-popup-trigger')) {
+          showPicker.value = false
         }
-      : null
+      })
+    }, 100)
+  } else {
+    setTimeout(() => {
+      document.removeEventListener('click', (e) => {
+        if (!e.target.closest('.cp-popup')) {
+          showPicker.value = false
+        }
+      })
+    }, 100)
   }
+}
 
-  function openColourPicker() {
-    colourPickerInput.value.click()
-  }
+const handleChangeColor = (color) => {
+  let rgbaValues = color.rgba
+  let rgbaString = `rgba(${rgbaValues.r}, ${rgbaValues.g}, ${rgbaValues.b}, ${rgbaValues.a})`
+  emit('update:modelValue', rgbaString)
+}
 </script>
 
 <template>
   <div class="colour-picker">
-    <div class="input-container" @click="openColourPicker">
-      <label :for="componentId">{{ label }}</label>
-      <div class="colour-display">
-        <div class="colour-display-swatch" :style="{ backgroundColor: colour.hex }"></div>
-        <div class="colour-display-label">
-          <div class="colour-display-label-hex">{{ colour.hex }}</div>
-          <div class="colour-display-label-rgb">rgb({{ colour.rgb.r }}, {{ colour.rgb.g }}, {{ colour.rgb.b }})</div>
-        </div>
+    <div class="colour-picker-button" @click="triggerColourPicker">
+      <div class="colour-picker-label">{{ modelValue }}</div>
+      <div class="swatch" :class="{ show: showPicker }" @click="showHidePopup">
+        <div class="swatch-colour" :style="{ backgroundColor: modelValue }"></div>
       </div>
-      <div class="colour-display-opacity">
-        <div class="colour-display-opacity-label">Opacity</div>
-        <div class="colour-display-opacity-slider">
-          <input type="range" min="0" max="1" step="0.01" v-model="opacity" />
-        </div>
-      </div>
-      <input type="color" :id="componentId" v-model="colourRaw" ref="colourPickerInput" />
+      <button @click="showHidePopup" class="cp-popup-trigger">
+        <Palette />
+      </button>
+    </div>
+    <div class="cp-popup" :class="{ show: showPicker }">
+      <cp theme="light" :color="modelValue" :sucker-hide="false" @changeColor="handleChangeColor" />
     </div>
   </div>
 </template>
 
 <style scoped>
-  .colour-picker {
-    position: relative;
+.colour-picker {
+  position: relative;
+}
 
-    input[type="color"] {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .colour-display {
-      border-radius: 50%;
-      border: 1px solid var(--accent-colour-light-transparent);
-      cursor: pointer;
-      border: none;
-      outline: none;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      .colour-display-label {
-        margin-left: 10px;
-        font-size: 0.8rem;
-        font-weight: 300;
-        color: var(--secondary-colour);
-      }
-      .colour-display-swatch {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-      }
+.colour-picker-button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background: var(--input-background-color);
+  color: var(--input-text-color);
+  margin-bottom: 10px;
+  border: 1px solid var(--input-border-color);
+  transition: all 0.3s ease-in-out;
+  outline: 2px solid transparent;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .colour-picker-label {
+    flex: 1;
+    font-style: italic;
+    padding-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 45px;
+  }
+  button {
+    height: 40px;
+    width: 40px;
+    padding: 0;
+    svg {
+      width: 20px;
+      height: 20px;
+      margin: 0;
     }
   }
+}
+
+.swatch {
+  position: absolute;
+  left: 0px;
+  top: 0;
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s ease-in-out;
+
+  border-radius: 5px;
+
+  --swatch-background-color: #dedede;
+  --swatch-checker-size: 10px;
+  --half-checker-size: calc(var(--swatch-checker-size) / 2);
+  background-image: linear-gradient(45deg, var(--swatch-background-color) 25%, transparent 25%),
+    linear-gradient(135deg, var(--swatch-background-color) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--swatch-background-color) 75%),
+    linear-gradient(135deg, transparent 75%, var(--swatch-background-color) 75%);
+  background-size: var(--swatch-checker-size) var(--swatch-checker-size); /* Must be a square */
+  background-position: 0 0, var(--half-checker-size) 0, var(--half-checker-size) calc(var(--half-checker-size) * -1), 0px var(--half-checker-size); /* Must be half of one side of the square */
+  .swatch-colour {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+}
+
+.cp-popup {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 230;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease-in-out;
+  &.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
 </style>

@@ -1,15 +1,16 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--table-background-color);
+  background: var(--table-background-color);
 
   thead {
     color: var(--table-header-text-color);
     position: sticky;
     top: 0;
     z-index: 10;
+    background: var(--table-header-background-color);
     th {
-      background-color: var(--table-header-background-color);
+      
       padding: 10px;
       text-align: left;
       svg {
@@ -22,11 +23,11 @@ table {
     }
   }
   tbody {
-    background-color: var(--table-background-color);
+    background: var(--table-background-color);
     tr {
-      background-color: var(--table-row-background-color);
+      background: var(--table-row-background-color);
       &:nth-child(even) {
-        background-color: var(--table-row-background-color-alt);
+        background: var(--table-row-background-color-alt);
       }
     }
     td {

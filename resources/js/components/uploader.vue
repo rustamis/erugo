@@ -284,7 +284,7 @@ const copyShareUrl = () => {
   margin-top: -20px;
   // width: 300px;
   // height: 30px;
-  background-color: var(--panel-item-background-color);
+  background: var(--panel-item-background-color);
   border-radius: 5px;
   display: flex;
   flex-direction: row;
@@ -309,7 +309,7 @@ const copyShareUrl = () => {
     width: 100%;
     background: var(--progress-bar-background-color);
     .progress-bar-fill {
-      background-color: var(--progress-bar-fill-color);
+      background: var(--progress-bar-fill-color);
       border-radius: 5px;
       transition: all 0.1s linear;
       height: 100%;
