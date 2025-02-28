@@ -65,6 +65,23 @@ const handleNavItemClicked = (item) => {
     })
   }
 }
+
+const getSettingsTitle = () => {
+  switch (activeTab.value) {
+    case 'branding':
+      return 'Branding &amp; UI'
+    case 'system':
+      return 'System Settings'
+    case 'users':
+      return 'Users'
+    case 'myProfile':
+      return 'My Profile'
+    case 'myShares':
+      return 'My Shares'
+    default:
+      return 'erugo Settings' 
+  }
+}
 </script>
 
 <template>
@@ -73,9 +90,9 @@ const handleNavItemClicked = (item) => {
       <div class="settings-header">
         <h1>
           <Settings />
-          erugo Settings
+           <span>Manage <span v-html="getSettingsTitle()" /></span>
         </h1>
-        <button class="close-settings-button" @click="closeSettings">
+        <button class="close-settings-button icon-only" @click="closeSettings">
           <CircleX />
         </button>
       </div>
@@ -220,7 +237,7 @@ const handleNavItemClicked = (item) => {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
   width: 100%;
   height: 100%;
   z-index: 210;
@@ -229,16 +246,15 @@ const handleNavItemClicked = (item) => {
   transition-delay: 300ms;
 
   .settings-container {
-    --settings-width: calc(100vw);
-    --settings-height: calc(100vh - 10px);
+
     position: absolute;
     bottom: 0;
     left: 0;
     transform: translateX(calc(50vw - var(--settings-width) / 2)) translateY(100%);
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px 10px 0 0;
+
     width: var(--settings-width);
     height: var(--settings-height);
+
     transition: all 300ms ease-in-out;
     transition-delay: 0s;
 
@@ -246,10 +262,11 @@ const handleNavItemClicked = (item) => {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+
   }
 
   &.active {
-    background-color: var(--accent-color-light-transparent-2);
+    background: var(--overlay-background-color);
     pointer-events: auto;
     transition-delay: 0s;
     backdrop-filter: blur(10px);
@@ -257,13 +274,12 @@ const handleNavItemClicked = (item) => {
     .settings-container {
       transform: translateX(calc(50vw - var(--settings-width) / 2)) translateY(0);
       transition-delay: 100ms;
-      box-shadow: 0 -10px 30px 0 rgba(0, 0, 0, 0.5);
     }
   }
 }
 
 .settings-header {
-  background-color: var(--primary-color);
+  background: var(--panel-header-background-color);
   border-radius: 5px 5px 0 0;
   display: flex;
   justify-content: space-between;
@@ -273,7 +289,7 @@ const handleNavItemClicked = (item) => {
   h1 {
     font-size: 20px;
     font-weight: 600;
-    color: var(--secondary-color);
+    color: var(--panel-header-text-color);
     padding-left: 20px;
     display: flex;
     align-items: center;
@@ -299,25 +315,26 @@ const handleNavItemClicked = (item) => {
   gap: 5px;
   padding-left: 20px;
   padding-right: 20px;
-  background-color: color-mix(in srgb, var(--accent-color-light-transparent) 85%, var(--primary-color));
+  background: var(--tabs-bar-background-color);
   width: 100%;
   .settings-tab {
-    background-color: var(--accent-color-light-transparent);
+    background: var(--tabs-tab-background-color);
     margin-top: 10px;
     padding: 10px;
-    border-radius: 5px 5px 0 0;
+    border-radius: var(--tabs-border-radius);
     box-shadow: inset 0 -5px 2px 0 rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 300ms ease-in-out;
 
     h2 {
       font-size: 16px;
       font-weight: 600;
-      color: var(--secondary-color);
+      color: var(--tabs-tab-text-color);
       margin: 0;
       display: flex;
       align-items: center;
       gap: 10px;
+      transition: all 100ms ease-in-out;
       svg {
         width: 20px;
         height: 20px;
@@ -329,9 +346,16 @@ const handleNavItemClicked = (item) => {
     }
 
     &.active {
-      background-color: var(--primary-color);
+      background: var(--tabs-tab-background-color-active);
       h2 {
-        color: var(--secondary-color);
+        color: var(--tabs-tab-text-color-active);
+      }
+    }
+
+    &:hover {
+      background: var(--tabs-tab-background-color-hover);
+      h2 {
+        color: var(--tabs-tab-text-color-hover);
       }
     }
   }
@@ -341,8 +365,8 @@ const handleNavItemClicked = (item) => {
   position: relative;
   flex-grow: 1;
   width: 100%;
-  background-color: var(--accent-color-light-transparent);
   border-radius: 5px;
+  background: var(--panel-background-color);
 
   .settings-tab-content {
     position: absolute;
@@ -355,6 +379,8 @@ const handleNavItemClicked = (item) => {
     align-items: flex-start;
     justify-content: flex-start;
 
+    background: var(--panel-background-color);
+
     .tab-content-header {
       display: flex;
       justify-content: flex-end;
@@ -362,12 +388,12 @@ const handleNavItemClicked = (item) => {
         justify-content: space-between;
       }
       align-items: center;
-      background-color: color-mix(in srgb, var(--accent-color-light-transparent) 70%, var(--primary-color));
+      background: var(--panel-subheader-background-color);
       padding: 20px;
       width: 100%;
       h2 {
         font-size: 1.4rem;
-        color: var(--secondary-color);
+        color: var(--panel-subheader-text-color);
         margin: 0;
         display: flex;
         align-items: center;
@@ -379,13 +405,13 @@ const handleNavItemClicked = (item) => {
         small {
           display: block;
           font-size: 0.8rem;
-          color: var(--secondary-color);
+          color: var(--panel-subheader-text-color);
           margin: 0;
         }
       }
       p {
         font-size: 1rem;
-        color: var(--secondary-color);
+        color: var(--panel-subheader-text-color);
         margin: 0;
       }
     }

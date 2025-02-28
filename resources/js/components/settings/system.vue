@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, defineExpose } from 'vue'
-import { Pipette, Image, Ruler, Tag, X, Dice5, Images } from 'lucide-vue-next'
+import { Settings, Tag, Share2, Send, AtSign } from 'lucide-vue-next'
 import { ColorPicker } from 'vue-color-kit'
 import {
   getSettingsByGroup,
@@ -89,28 +89,40 @@ defineExpose({
   <div class="container-fluid">
     <div class="row mb-5">
       <div class="col-2 d-none d-md-block">
-        <ul class="settings-nav">
+        <ul class="settings-nav pt-5">
           <li>
-            <a href="#" @click.prevent="handleNavItemClicked('general')">General</a>
+            <a href="#" @click.prevent="handleNavItemClicked('general')">
+              <Settings />
+              General
+            </a>
           </li>
           <li>
-            <a href="" @click.prevent="handleNavItemClicked('shares')">Shares</a>
+            <a href="" @click.prevent="handleNavItemClicked('shares')">
+              <Share2 />
+              Shares
+            </a>
           </li>
           <li>
-            <a href="" @click.prevent="handleNavItemClicked('emails')">Emails</a>
+            <a href="" @click.prevent="handleNavItemClicked('emails')">
+              <Send />
+              Emails
+            </a>
           </li>
           <li>
-            <a href="#" @click.prevent="handleNavItemClicked('smtp')">SMTP</a>
+            <a href="#" @click.prevent="handleNavItemClicked('smtp')">
+              <AtSign />
+              SMTP
+            </a>
           </li>
         </ul>
       </div>
-      <div class="col-12 col-md-8">
+      <div class="col-12 col-md-8 pt-5">
         <div class="row mb-5">
           <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
             <div class="setting-group" id="general">
               <div class="setting-group-header">
                 <h3>
-                  <Tag />
+                  <Settings />
                   General settings
                 </h3>
               </div>
@@ -157,7 +169,7 @@ defineExpose({
             <div class="setting-group" id="shares">
               <div class="setting-group-header">
                 <h3>
-                  <Tag />
+                  <Share2 />
                   Share settings
                 </h3>
               </div>
@@ -228,7 +240,7 @@ defineExpose({
             <div class="setting-group" id="emails">
               <div class="setting-group-header">
                 <h3>
-                  <Tag />
+                  <Send />
                   Emails
                 </h3>
               </div>
@@ -251,9 +263,7 @@ defineExpose({
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
               <h6>Share downloaded emails</h6>
-              <p>
-                Enable or disable the emails that are sent to share owner when a share is downloaded.
-              </p>
+              <p>Enable or disable the emails that are sent to share owner when a share is downloaded.</p>
             </div>
           </div>
         </div>
@@ -263,7 +273,7 @@ defineExpose({
             <div class="setting-group" id="smtp">
               <div class="setting-group-header">
                 <h3>
-                  <Tag />
+                  <AtSign />
                   SMTP settings
                 </h3>
               </div>

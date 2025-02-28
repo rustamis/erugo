@@ -133,7 +133,7 @@ const saveUser = async () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--primary-color);
+  background: var(--primary-color);
   z-index: 230;
   display: flex;
   justify-content: center;
@@ -141,7 +141,7 @@ const saveUser = async () => {
   backdrop-filter: blur(10px);
 
   .setup-inner {
-    background-color: var(--accent-color-light-transparent);
+    background: var(--accent-color-light-transparent);
     padding: 20px;
     border-radius: 0 0 10px 10px;
     width: 30%;

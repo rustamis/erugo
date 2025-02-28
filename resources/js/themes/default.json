@@ -1,0 +1,46 @@
+{
+  "links": {
+    "default": "rgb(57, 115, 144)",
+    "hover": "rgb(27, 162, 230)",
+    "active": "rgb(70, 154, 196)",
+    "disabled": "rgba(190, 190, 190, 0.566)"
+  },
+  "buttons": {
+    "primary": {
+      "default": {
+        "background": "rgb(138, 208, 242)",
+        "text": "rgb(37, 37, 37)"
+      },
+      "hover": {
+        "background": "rgb(70, 154, 196)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "active": {
+        "background": "rgb(70, 154, 196)",
+        "text": "rgb(255, 255, 255)"
+      },
+      "disabled": {
+        "background": "rgba(100, 100, 100, 0.566)",
+        "text": "rgba(255, 255, 255, 0.579)"
+      }
+    },
+    "secondary": {
+      "default": {
+        "background": "rgb(255, 255, 255)",
+        "text": "rgb(34, 34, 34)"
+      },
+      "hover": {
+        "background": "rgb(238, 238, 238)",
+        "text": "rgb(34, 34, 34)"
+      },
+      "active": {
+        "background": "rgb(238, 238, 238)",
+        "text": "rgb(34, 34, 34)"
+      },
+      "disabled": {
+        "background": "rgba(100, 100, 100, 0.566)",
+        "text": "rgba(255, 255, 255, 0.579)"
+      }
+    }
+  }
+}

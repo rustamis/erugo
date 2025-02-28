@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Mail\shareDownloadedMail;
 use App\Jobs\sendEmail;
 use App\Models\Share;
+use App\Models\Theme;
 
 Route::get('/', function () {
     $settings = Setting::whereLike('group', 'ui%')->get();
@@ -23,7 +24,10 @@ Route::get('/', function () {
     $appURL = env('APP_URL');
     $indexedSettings['api_url'] = $appURL;
 
-    return view('app', ['settings' => $indexedSettings]);
+    $theme = Theme::where('active', true)->first();
+    
+
+    return view('app', ['settings' => $indexedSettings, 'theme' => $theme]);
 });
 
 Route::get('/shares/{share}', function () {
@@ -41,7 +45,9 @@ Route::get('/shares/{share}', function () {
     $appURL = env('APP_URL');
     $indexedSettings['api_url'] = $appURL;
 
-    return view('app', ['settings' => $indexedSettings]);
+    $theme = Theme::where('active', true)->first();
+
+    return view('app', ['settings' => $indexedSettings, 'theme' => $theme]);
 });
 
 

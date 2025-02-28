@@ -119,7 +119,7 @@ class BackgroundsController extends Controller
         $image = $manager->read($fullPath);
 
         $image->scale(width: 2000);
-        $encoded = $image->toJpeg(90);
+        $encoded = $image->toJpeg(95);
 
         //save the encoded image to the public/backgrounds/cache folder
         Storage::disk('public')->put('backgrounds/cache/' . $file, $encoded);

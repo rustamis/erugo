@@ -57,9 +57,15 @@
     <div class="auth-container-inner">
       <h1>Welcome</h1>
       <p>{{ loginMessage }}</p>
-      <input type="text" v-model="email" placeholder="Email" @keyup.enter="moveToPassword" />
-      <input type="password" v-model="password" placeholder="Password" @keyup.enter="attemptLogin" ref="passwordInput" />
-      <button @click="attemptLogin" class="login-button mt-4"><KeyRound /> Login</button>
+      <div class="input-container">
+        <label for="email">Email</label>
+        <input type="text" v-model="email" placeholder="Email" @keyup.enter="moveToPassword" />
+      </div>
+      <div class="input-container">
+        <label for="password">Password</label>
+        <input type="password" v-model="password" placeholder="Password" @keyup.enter="attemptLogin" ref="passwordInput" />
+      </div>
+      <button @click="attemptLogin"><KeyRound /> Login</button>
     </div>
   </div>
 </template>

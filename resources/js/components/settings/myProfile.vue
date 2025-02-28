@@ -157,11 +157,10 @@
   .profile-card {
     width: 450px;
     border-radius: 10px;
-    border: 2px solid var(--primary-color);
-    background-color: var(--primary-color);
+    background: var(--panel-item-background-color);
 
     .profile-card-header {
-      background-color: var(--primary-color);
+      background: var(--panel-header-background-color);
       border-radius: 8px 8px 0 0;
       padding-left: 20px;
       padding-right: 20px;
@@ -172,21 +171,21 @@
       h1 {
         font-size: 24px;
         font-weight: 600;
-        color: var(--secondary-color);
+        color: var(--panel-text-color);
         display: flex;
         align-items: center;
         gap: 10px;
         svg {
           width: 24px;
           height: 24px;
-          color: var(--secondary-color);
+          color: var(--panel-text-color);
         }
       }
     }
 
     .profile-card-tags {
       padding: 20px;
-      background-color: var(--accent-color-light);
+      background: var(--panel-item-background-color);
       border-radius: 8px 8px 0 0;
       margin-bottom: 0px;
       margin-right: 5px;
@@ -198,8 +197,8 @@
       .profile-card-tag {
         font-size: 14px;
         font-weight: 600;
-        color: var(--accent-color);
-        background-color: var(--secondary-color);
+        color: var(--panel-text-color);
+        background: var(--panel-background-color);
         padding: 5px 10px;
         border-radius: 5px;
       }
@@ -207,17 +206,16 @@
 
     .profile-card-profile-item {
       padding: 10px 20px;
-      background-color: color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 0) 6%);
-      border-bottom: 1px dashed color-mix(in srgb, var(--secondary-color), rgba(255, 255, 255, 1) 20%);
+      background: var(--panel-background-color);
       h2 {
         font-size: 16px;
         font-weight: 600;
-        color: var(--accent-color-light);
+        color: var(--panel-text-color);
       }
       p {
         font-size: 19px;
         font-weight: 400;
-        color: var(--primary-color);
+        color: var(--panel-text-color);
         padding: 0;
         margin: 0;
       }
@@ -247,7 +245,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--accent-color-light-transparent-2);
+    background: var(--overlay-background-color);
     backdrop-filter: blur(10px);
     z-index: 230;
     opacity: 0;
@@ -257,7 +255,7 @@
     h2 {
       margin-bottom: 10px;
       font-size: 24px;
-      color: var(--secondary-color);
+      color: var(--panel-text-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -274,8 +272,8 @@
       left: 50%;
       transform: translate(-50%, 100%);
       width: 500px;
-      background-color: var(--accent-color-light-transparent);
-      color: var(--secondary-color);
+      background: var(--panel-background-color);
+      color: var(--panel-text-color);
       padding: 20px;
       border-radius: 10px 10px 0 0;
       box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);

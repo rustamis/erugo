@@ -294,7 +294,7 @@
   }
   .you-tag {
     display: inline-block;
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: var(--secondary-color);
     font-size: 12px;
     padding: 2px 5px;
@@ -304,7 +304,7 @@
 
   .admin-tag {
     display: inline-block;
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     color: #fff;
     font-size: 12px;
     padding: 2px 5px;
@@ -314,7 +314,7 @@
 
   .must-change-password-tag {
     display: inline-block;
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: var(--secondary-color);
     font-size: 12px;
     padding: 2px 5px;
@@ -329,7 +329,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--accent-color-light-transparent-2);
+    background: var(--accent-color-light-transparent-2);
     backdrop-filter: blur(10px);
     z-index: 230;
     opacity: 0;
@@ -356,7 +356,7 @@
       left: 50%;
       transform: translate(-50%, 100%);
       width: 500px;
-      background-color: var(--accent-color-light-transparent);
+      background: var(--accent-color-light-transparent);
       color: var(--secondary-color);
       padding: 20px;
       border-radius: 10px 10px 0 0;

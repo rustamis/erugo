@@ -1,0 +1,126 @@
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 3px;
+  border: none;
+  background: var(--input-background-color);
+  color: var(--input-text-color);
+  margin-bottom: 10px;
+  border: 1px solid var(--input-border-color);
+  transition: all 0.3s ease-in-out;
+  outline: none;
+  resize: none;
+
+  &:not(textarea) {
+    height: 50px;
+  }
+
+  //placeholder
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
+
+  &:focus {
+    border: 1px solid var(--input-border-color-focus);
+    outline: none;
+  }
+  &.error {
+    border: 1px solid red;
+  }
+}
+
+select {
+  appearance: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"), var(--input-background-color);
+  background-repeat: no-repeat, repeat;
+  background-position: right 10px center;
+  background-size: 16px, 10px;
+  padding-right: 30px;
+  color: var(--input-text-color);
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    color: var(--label-text-color);
+    font-weight: bold;
+  }
+  .error-message {
+    position: absolute;
+    color: rgb(169, 86, 86);
+    font-size: 0.8rem;
+    top: 16px;
+    right: 10px;
+  }
+}
+
+.checkbox-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  padding-right: 20px;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  input {
+    display: none;
+  }
+  label {
+    font-size: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--label-text-color);
+    cursor: pointer;
+
+    &::before {
+      font-family: "Material Icons";
+      content: "";
+      width: 20px;
+      height: 20px;
+      background: var(--input-background-color);
+      color: transparent;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      overflow: hidden;
+    }
+  }
+  input:checked + label {
+    &::before {
+      content: "check";
+      background: var(--checkbox-checked-background-color);
+      color: var(--checkbox-checked-check-color);
+    }
+  }
+  p.help-text {
+    margin-left: 30px;
+    width: 100%;
+    font-size: 0.8rem;
+    color: var(--label-text-color);
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      margin-top: -2px;
+    }
+  }
+}
