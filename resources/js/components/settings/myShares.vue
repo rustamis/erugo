@@ -328,6 +328,7 @@ td {
       position: absolute;
       left: 86.5px;
       opacity: 0.3;
+      z-index: 10;
     }
     .count_label {
       position: absolute;

@@ -110,8 +110,9 @@ Route::group([], function ($router) {
     Route::group(['prefix' => 'themes', 'middleware' => ['auth', Admin::class]], function ($router) {
         Route::post('/', [ThemesController::class, 'saveTheme'])->name('themes.save');
         Route::get('/', [ThemesController::class, 'getThemes'])->name('themes.list');
-        Route::delete('/{name}', [ThemesController::class, 'deleteTheme'])->name('themes.delete');
+        Route::delete('/', [ThemesController::class, 'deleteTheme'])->name('themes.delete');
         Route::post('/set-active', [ThemesController::class, 'setActiveTheme'])->name('themes.setActive');
+        Route::post('/install', [ThemesController::class, 'installCustomTheme'])->name('themes.install');
     });
 
     //read active theme [public]

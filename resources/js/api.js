@@ -307,6 +307,22 @@ export const saveLogo = async (logoFile) => {
   return data.data
 }
 
+export const installCustomTheme = async (name, file) => {
+  const formData = new FormData()
+  formData.append('name', name)
+  formData.append('file', file)
+
+  const response = await fetchWithAuth(`${apiUrl}/api/themes/install`, {
+    method: 'POST',
+    body: formData
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data.data.theme
+}
+
 export const getBackgroundImages = async () => {
   const response = await fetch(`${apiUrl}/api/backgrounds`, {
     method: 'GET',
@@ -497,9 +513,13 @@ export const saveTheme = async (theme) => {
   return data.data.theme
 }
 
+
 export const deleteTheme = async (name) => {
-  const response = await fetchWithAuth(`${apiUrl}/api/themes/${name}`, {
+  const response = await fetchWithAuth(`${apiUrl}/api/themes/`, {
     method: 'DELETE',
+    body: JSON.stringify({
+      name
+    }),
     headers: {
       ...addJsonHeader()
     }
@@ -508,7 +528,7 @@ export const deleteTheme = async (name) => {
   if (!response.ok) {
     throw new Error(data.message)
   }
-  return data.data.theme
+  return data.data
 }
 
   export const setActiveTheme = async (name) => {

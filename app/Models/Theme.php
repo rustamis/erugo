@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Theme extends Model
 {
-  protected $fillable = ['name', 'theme', 'active'];
+  protected $fillable = ['name', 'theme', 'active', 'category'];
 
   protected $casts = [
     'theme' => 'object',
@@ -14,7 +14,7 @@ class Theme extends Model
 
   public function getThemeAttribute($value)
   {
-
+    
     // Make sure we're working with a proper object
     $rawTheme = $this->attributes['theme'] ?? '{}';
 

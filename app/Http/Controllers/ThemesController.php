@@ -46,9 +46,47 @@ class ThemesController extends Controller
         ]);
     }
 
+    public function installCustomTheme(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'file' => ['required', 'file'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'data' => [
+                    'errors' => $validator->errors(),
+                ],
+            ], 422);
+        }
+
+        $themeName = $request->input('name');
+        $themeFile = $request->file('file');
+
+        $theme = Theme::where('name', $themeName)->first();
+        if ($theme) {
+            $themeName = $themeName . ' (custom)';
+        }
+
+        $theme = Theme::create([
+            'name' => $themeName,
+            'category' => 'custom',
+            'theme' => json_decode(file_get_contents($themeFile), true),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Theme installed successfully',
+            'data' => $theme,
+        ]);
+    }
+
     public function getThemes()
     {
-        $themes = Theme::all();
+        $themes = Theme::orderBy('category', 'desc')->orderBy('bundled', 'desc')->get();
         return response()->json([
             'status' => 'success',
             'message' => 'Themes fetched successfully',
@@ -75,6 +113,12 @@ class ThemesController extends Controller
         }
 
         $theme = Theme::where('name', $request->input('name'))->first();
+        if ($theme->active) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cannot delete active theme',
+            ], 400);
+        }
         $theme->delete();
 
         return response()->json([

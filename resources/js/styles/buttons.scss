@@ -82,56 +82,10 @@ button {
 button.logout,
 button.settings-button,
 button.close-settings-button {
-  display: flex;table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--table-background-color);
-  
-    thead {
-      color: var(--table-header-text-color);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      th {
-        background: var(--table-header-background-color);
-        padding: 10px;
-        text-align: left;
-        svg {
-          width: 16px;
-          height: 16px;
-          margin-top: -2px;
-          margin-left: 10px;
-          cursor: pointer;
-        }
-      }
-    }
-    tbody {
-      background: var(--table-background-color);
-      tr {
-        background: var(--table-row-background-color);
-        &:nth-child(even) {
-          background: var(--table-row-background-color-alt);
-        }
-      }
-      td {
-        padding: 10px;
-        text-align: left;
-        border: 1px solid rgba(175, 175, 175, 0.2);
-        color: var(--table-row-text-color);
-      }
-    }
-  }
+  display: flex;
   position: absolute;
   bottom: 20px;
   z-index: 102;
-
-  &:hover {
-    background: var(--secondary-color);
-    color: var(--accent-color);
-    svg {
-      color: var(--accent-color);
-    }
-  }
 }
 
 button.logout {
