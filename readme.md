@@ -1,3 +1,9 @@
+![Docker Pulls](https://img.shields.io/docker/pulls/wardy784/erugo) ![GitHub Repo stars](https://img.shields.io/github/stars/deanward/erugo) ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/deanward/erugo) ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed/deanward/erugo) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/deanward/erugo/latest)
+
+
+
+
+
 # erugo
 
 erugo is a powerful, self-hosted file-sharing platform built with PHP and Laravel with a Vue.js frontend. It offers secure, customizable file-transfer capabilities through an elegant user interface, giving you complete control over your data while providing a seamless experience for both senders and recipients.
@@ -29,6 +35,12 @@ _Manage shares with ease, including share expiration, maximum downloads, and mor
 - **Interactive Setup**: User-friendly first-run configuration when the web interface is first loaded
 - **Modern Interface**: Clean, intuitive web UI
 - **Open Source**: MIT licensed and ready for white-labeling
+
+## Star History
+
+Give this repository a star to keep track of releases and updates. Stars are also great for motivating me to keep adding features!
+
+[![Star History Chart](https://api.star-history.com/svg?repos=DeanWard/erugo&type=Date)](https://star-history.com/#DeanWard/erugo&Date)
 
 ## Quick Start
 
