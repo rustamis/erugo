@@ -381,6 +381,7 @@ body {
   justify-content: flex-start;
 
   .upload-basket-details {
+    position: relative;
     margin-top: 10px;
     width: 100%;
     margin-left: -9px;
@@ -911,7 +912,6 @@ body {
 
 .help-tip {
   position: fixed;
-  backdrop-filter: blur(10px);
   z-index: 150;
   padding: 0px;
   border-radius: 10px;

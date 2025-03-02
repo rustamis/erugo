@@ -110,7 +110,7 @@
       password_confirmation: '',
       name: '',
       admin: false,
-      must_change_password: true
+      must_change_password: false
     }
   }
 </script>
@@ -123,8 +123,8 @@
           <th>ID</th>
           <th>Email</th>
           <th>Full Name</th>
-          <th>Is Admin</th>
-          <th>Created At</th>
+          <th>Account</th>
+          <th>Created</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -140,14 +140,14 @@
             </div>
           </td>
           <td>{{ user.name }}</td>
-          <td>{{ user.admin ? 'Yes' : 'No' }}</td>
+          <td>{{ user.admin ? 'Admin' : 'User' }}</td>
           <td>{{ niceDate(user.created_at) }}</td>
           <td width="1" style="white-space: nowrap">
             <button :disabled="user.id === store.userId" @click="handleEditUserClick(user)">
               <UserPen />
               Edit
             </button>
-            <button :disabled="user.id === store.userId" @click="handleDeleteUserClick(user.id)">
+            <button class="secondary" :disabled="user.id === store.userId" @click="handleDeleteUserClick(user.id)">
               <Trash />
               Delete
             </button>
@@ -163,6 +163,7 @@
         <UserPlus />
         Add User
       </h2>
+      <p>We'll send an email to the user with a link to set their&nbsp;password.</p>
       <div class="input-container">
         <label for="new_user_email">Email</label>
         <input type="email" v-model="newUser.email" id="new_user_email" placeholder="Email" required :class="{ error: errors.email }" />
@@ -178,21 +179,7 @@
         </div>
       </div>
       
-      <div class="input-container">
-        <label for="new_user_password">Password</label>
-        <input type="password" v-model="newUser.password" id="new_user_password" placeholder="Password" required :class="{ error: errors.password }" />
-        <div class="error-message" v-if="errors.password">
-          {{ errors.password[0] }}
-        </div>
-      </div>
-
-      <div class="input-container">
-        <label for="new_user_password_confirmation">Password Confirmation</label>
-        <input type="password" v-model="newUser.password_confirmation" id="new_user_password_confirmation" placeholder="Password Confirmation" required :class="{ error: errors.password_confirmation || errors.password }" />
-        <div class="error-message" v-if="errors.password_confirmation">
-          {{ errors.password_confirmation[0] }}
-        </div>
-      </div>
+    
 
       <div class="checkbox-container">
         <input type="checkbox" v-model="newUser.admin" id="admin" />
@@ -203,11 +190,7 @@
           User will have the privelges as you.
         </p>
       </div>
-      <div class="checkbox-container">
-        <input type="checkbox" v-model="newUser.must_change_password" id="must_change_password" />
-        <label for="must_change_password">Must change password</label>
-        <p class="help-text">Force the user to change their password on next login.</p>
-      </div>
+      
       <div class="button-bar">
         <button @click="saveUser">
           <UserPlus />
@@ -242,22 +225,6 @@
         </div>
       </div>
       
-      <div class="input-container">
-        <label for="edit_user_password">Password</label>
-        <input type="password" v-model="editUser.password" id="edit_user_password" placeholder="Password" required :class="{ error: errors.password }" />
-        <div class="error-message" v-if="errors.password">
-          {{ errors.password }}
-        </div>
-      </div>
-
-      <div class="input-container">
-        <label for="edit_user_password_confirmation">Password Confirmation</label>
-        <input type="password" v-model="editUser.password_confirmation" id="edit_user_password_confirmation" placeholder="Password Confirmation" required :class="{ error: errors.password_confirmation || errors.password }" />
-        <div class="error-message" v-if="errors.password_confirmation">
-          {{ errors.password_confirmation[0] }}
-        </div>
-      </div>
-
       <div class="checkbox-container">
         <input type="checkbox" v-model="editUser.admin" id="edit_user_admin" />
         <label for="edit_user_admin">Admin</label>
@@ -267,11 +234,7 @@
           User will have the privelges as you.
         </p>
       </div>
-      <div class="checkbox-container">
-        <input type="checkbox" v-model="editUser.must_change_password" id="edit_user_must_change_password" />
-        <label for="edit_user_must_change_password">Must change password</label>
-        <p class="help-text">Force the user to change their password on next login.</p>
-      </div>
+   
       <div class="button-bar">
         <button @click="saveUser">
           <UserRoundCheck />
@@ -294,8 +257,8 @@
   }
   .you-tag {
     display: inline-block;
-    background: var(--primary-color);
-    color: var(--secondary-color);
+    background: var(--primary-button-background-color);
+    color: var(--primary-button-text-color);
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
@@ -304,23 +267,14 @@
 
   .admin-tag {
     display: inline-block;
-    background: var(--accent-color);
-    color: #fff;
+    background: var(--secondary-button-background-color);
+    color: var(--secondary-button-text-color);
     font-size: 12px;
     padding: 2px 5px;
     border-radius: 5px;
     transform: translateY(-1px);
   }
 
-  .must-change-password-tag {
-    display: inline-block;
-    background: var(--primary-color);
-    color: var(--secondary-color);
-    font-size: 12px;
-    padding: 2px 5px;
-    border-radius: 5px;
-    transform: translateY(-1px);
-  }
 
   .user-form-overlay {
     border-radius: 10px 10px 0 0;

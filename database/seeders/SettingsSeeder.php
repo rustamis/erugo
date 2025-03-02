@@ -111,6 +111,22 @@ class SettingsSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
+                'key' => 'expiry_warning_days',
+                'value' => '3',
+                'previous_value' => null,
+                'group' => 'system.shares',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'key' => 'deletion_warning_days',
+                'value' => '7',
+                'previous_value' => null,
+                'group' => 'system.shares',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
                 'key' => 'max_share_size',
                 'value' => '2',
                 'previous_value' => null,
@@ -197,8 +213,39 @@ class SettingsSeeder extends Seeder
                 'group' => 'system.emails',
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'key' => 'emails_share_expiry_warning_enabled',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system.emails',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'key' => 'emails_share_expired_warning_enabled',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system.emails',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'key' => 'emails_share_deletion_warning_enabled',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system.emails',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'key' => 'emails_share_deleted_enabled',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system.emails',
+                'created_at' => now(),
+                'updated_at' => now()
             ]
-
-        ], ['key']);
+        ]);
     }
 }

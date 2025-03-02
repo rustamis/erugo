@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { CircleSlash2, FilePlus, FolderPlus, Upload, Trash, Copy, X, Loader, Check } from 'lucide-vue-next'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { CircleSlash2, FilePlus, FolderPlus, Upload, Trash, Copy, X, Loader, Check, Plus } from 'lucide-vue-next'
 import { niceFileSize, niceFileType, simpleUUID } from '../utils'
 import { createShare, getHealth, getMyProfile } from '../api'
+import Recipient from './recipient.vue'
 
 const fileInput = ref(null)
 const sharePanelVisible = ref(false)
@@ -16,9 +17,13 @@ const totalBytes = ref(0)
 const shareName = ref('')
 const shareDescription = ref('')
 
+const recipientRefs = ref([])
+
 const errors = ref({
   shareName: null
 })
+
+const recipients = ref([])
 
 onMounted(async () => {
   const health = await getHealth()
@@ -88,6 +93,7 @@ const uploadFiles = async () => {
       uploadBasket.value,
       shareName.value,
       shareDescription.value,
+      recipients.value,
       uploadId,
       (progress) => {
         uploadProgress.value = progress.percentage
@@ -130,6 +136,20 @@ const copyShareUrl = () => {
   setTimeout(() => {
     showCopySuccess.value = false
   }, 10)
+}
+
+const removeRecipient = (recipient) => {
+  console.log('remove recipient', recipient)
+  recipients.value = recipients.value.filter((item) => item.email !== recipient.email)
+}
+
+const addRecipient = () => {
+  const recipient = {
+    email: null,
+    name: null,
+    showPopover: true
+  }
+  recipients.value.push(recipient)
 }
 </script>
 
@@ -201,6 +221,31 @@ const copyShareUrl = () => {
     </div>
 
     <div class="upload-basket-details">
+      <div class="recipients">
+        <div class="button-outside-label uploader-add-recipient">
+          <button class="icon-only round" @click="addRecipient">
+            <Plus />
+          </button>
+          <div class="button-outside-label-text">Add Recipient</div>
+        </div>
+        <div class="recipient-list">
+          <template v-if="recipients.length > 0">
+            <Recipient
+              v-for="recipient in recipients"
+              :key="recipient.id"
+              :recipient="recipient"
+              @remove="removeRecipient"
+              :ref="`recipient-${recipient.email}`"
+            />
+          </template>
+          <template v-else>
+            <div class="recipient-list-empty">
+              No recipients <br />
+              <small>We'll provide you with a link instead.</small>
+            </div>
+          </template>
+        </div>
+      </div>
       <div class="input-container mb-0">
         <input
           type="text"
@@ -333,6 +378,47 @@ const copyShareUrl = () => {
       font-size: 10px;
       color: var(--progress-bar-text-color);
       font-weight: 400;
+    }
+  }
+}
+.recipients {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  background: var(--input-background-color);
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  .recipient-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-grow: 1;
+    min-height: 30px;
+  }
+
+  .recipient-list-empty {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.7rem;
+    color: var(--panel-text-color);
+    width: 100%;
+    flex-grow: 1;
+    font-style: italic;
+    svg {
+      width: 13px;
+      height: 13px;
     }
   }
 }

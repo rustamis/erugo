@@ -15,8 +15,10 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Download;
 use App\Mail\shareDownloadedMail;
+use App\Mail\shareCreatedMail;
 use App\Jobs\sendEmail;
 use App\Services\SettingsService;
+
 class SharesController extends Controller
 {
     public function create(Request $request)
@@ -91,6 +93,27 @@ class SharesController extends Controller
         //dispatch the job to create the zip file
         CreateShareZip::dispatch($share);
 
+        //are there any recipients?
+        if ($request->has('recipients')) {
+            $recipients = $request->input('recipients');
+
+            // If using the indexed approach from the frontend, Laravel will automatically parse it
+            foreach ($recipients as $recipient) {
+                // For indexed approach, recipient will be an array with name and email keys
+                // Laravel handles the parsing of recipients[0][name], recipients[0][email], etc.
+                if (is_array($recipient) && isset($recipient['name']) && isset($recipient['email'])) {
+                    $this->sendShareCreatedEmail($share, $recipient);
+                }
+                // For the JSON.stringify approach (optional fallback)
+                else if (is_string($recipient)) {
+                    $recipientData = json_decode($recipient, true);
+                    if ($recipientData && isset($recipientData['name']) && isset($recipientData['email'])) {
+                        $this->sendShareCreatedEmail($share, $recipientData);
+                    }
+                }
+            }
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Files uploaded successfully',
@@ -100,9 +123,17 @@ class SharesController extends Controller
         ]);
     }
 
+    private function sendShareCreatedEmail(Share $share, $recipient)
+    {
+        $user = Auth::user();
+        if ($recipient) {
+            sendEmail::dispatch($recipient['email'], shareCreatedMail::class, ['user' => $user, 'share' => $share, 'recipient' => $recipient]);
+        }
+    }
+
     public function read($shareId)
     {
-        $share = Share::where('long_id', $shareId)->with(['files','user'])->first();
+        $share = Share::where('long_id', $shareId)->with(['files', 'user'])->first();
         if (!$share) {
             return response()->json([
                 'status' => 'error',
@@ -153,7 +184,7 @@ class SharesController extends Controller
         //if there is only one file, download it directly
         if ($share->file_count == 1) {
             if (file_exists($share->path . '/' . $share->files[0]->name)) {
-               
+
                 $this->createDownloadRecord($share);
 
                 return response()->download($share->path . '/' . $share->files[0]->name);
@@ -176,7 +207,7 @@ class SharesController extends Controller
             //does the file exist?
             if (file_exists($filename)) {
                 $this->createDownloadRecord($share);
-                
+
                 return response()->download($filename);
             } else {
                 //something went wrong, show the failed view
@@ -239,7 +270,7 @@ class SharesController extends Controller
                 'message' => 'Share not found'
             ], 404);
         }
-        if($share->user_id != $user->id) {
+        if ($share->user_id != $user->id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized'
@@ -274,7 +305,7 @@ class SharesController extends Controller
                 'message' => 'Share not found'
             ], 404);
         }
-        if($share->user_id != $user->id) {
+        if ($share->user_id != $user->id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized'
@@ -307,13 +338,13 @@ class SharesController extends Controller
                 'message' => 'Share not found'
             ], 404);
         }
-        if($share->user_id != $user->id) {
+        if ($share->user_id != $user->id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized'
             ], 401);
         }
-        if($request->amount == -1) {
+        if ($request->amount == -1) {
             $share->download_limit = null;
         } else {
             $share->download_limit = $request->amount;
@@ -363,7 +394,8 @@ class SharesController extends Controller
         return $indexedSettings;
     }
 
-    private function createDownloadRecord(Share $share) {
+    private function createDownloadRecord(Share $share)
+    {
         $ipAddress = request()->ip();
         $userAgent = request()->userAgent();
         $download = Download::create([
@@ -373,7 +405,7 @@ class SharesController extends Controller
         ]);
         $download->save();
 
-        if($share->download_count == 0) {
+        if ($share->download_count == 0) {
             $this->sendShareDownloadedEmail($share);
         }
 
@@ -382,10 +414,11 @@ class SharesController extends Controller
         return $download;
     }
 
-    private function sendShareDownloadedEmail(Share $share) {
+    private function sendShareDownloadedEmail(Share $share)
+    {
         $settingsService = new SettingsService();
         $sendEmail = $settingsService->get('emails_share_downloaded_enabled');
-        if($sendEmail == 'true') {
+        if ($sendEmail == 'true') {
             sendEmail::dispatch($share->user->email, shareDownloadedMail::class, ['share' => $share]);
         }
     }

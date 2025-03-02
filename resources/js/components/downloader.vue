@@ -76,7 +76,7 @@ const splitFullName = (fullName) => {
           <div class="file-name more-files">and {{ share.files.length - showFilesCount }} more</div>
         </div>
       </div>
-      <div class="share-message" v-if="share.description">
+      <div class="share-message mt-3" v-if="share.description">
         <h6>Message from {{ splitFullName(share.user.name) }}</h6>
         {{ share.description }}
       </div>

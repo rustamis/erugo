@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Setting;
-
+use App\Mail\shareDeletedWarningMail;
+use App\Jobs\sendEmail;
+use App\Services\SettingsService;
 class Share extends Model
 {
 
@@ -57,7 +59,19 @@ class Share extends Model
 
   function getDeletesAtAttribute()
   {
-    return $this->expires_at->addDays(30);
+    $cleanFilesAfterDays = Setting::where('key', 'clean_files_after_days')->first();
+
+    if (!$cleanFilesAfterDays) {
+      $cleanFilesAfterDays = 30;
+    } else {
+      $cleanFilesAfterDays = (int) $cleanFilesAfterDays->value;
+    }
+
+    if ($cleanFilesAfterDays == 0) {
+      $cleanFilesAfterDays = 30;
+    }
+
+    return $this->expires_at->addDays($cleanFilesAfterDays);
   }
 
   function getDeletedAttribute()
@@ -68,14 +82,14 @@ class Share extends Model
   public function scopeReadyForCleaning($query)
   {
     $cleanFilesAfterDays = Setting::where('key', 'clean_files_after_days')->first();
-   
-    if(!$cleanFilesAfterDays) {
+
+    if (!$cleanFilesAfterDays) {
       $cleanFilesAfterDays = 30;
     } else {
       $cleanFilesAfterDays = (int) $cleanFilesAfterDays->value;
     }
 
-    if($cleanFilesAfterDays == 0) {
+    if ($cleanFilesAfterDays == 0) {
       $cleanFilesAfterDays = 30;
     }
 
@@ -104,12 +118,19 @@ class Share extends Model
       if (is_file($filePath . '.zip')) {
         unlink($filePath . '.zip');
       }
-      
+
       $this->status = 'deleted';
       $this->save();
 
-      return true;
+      $settingsService = new SettingsService();
 
+      $shouldSend = $settingsService->get('emails_share_deleted_enabled') ?? true;
+
+      if ($shouldSend) {
+        sendEmail::dispatch($this->user->email, shareDeletedWarningMail::class, ['share' => $this]);
+      }
+
+      return true;
     } catch (\Exception $e) {
       Log::error('Error cleaning files for share ' . $this->id . ': ' . $e->getMessage());
       return false;

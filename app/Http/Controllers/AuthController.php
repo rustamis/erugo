@@ -5,8 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\passwordResetMail;
+use App\Jobs\sendEmail;
+use Illuminate\Auth\Events\PasswordReset;
+
 
 class AuthController extends Controller
 {
@@ -101,5 +108,88 @@ class AuthController extends Controller
                 'expires_in' => Auth::factory()->getTTL() * 60,
             ]
         ])->withCookie($cookie);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'data' => [
+                    'errors' => $validator->errors()
+                ]
+            ], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // just respond with success so we don't leak information
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password reset email sent'
+            ]);
+        }
+
+        $token = Password::createToken($user);
+
+        sendEmail::dispatch($user->email, passwordResetMail::class, ['token' => $token, 'user' => $user]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password reset email sent'
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required|string',
+            'email' => 'required|string|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'data' => [
+                    'errors' => $validator->errors()
+                ]
+            ], 422);
+        }
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        $twentyFourHours = 60 * 60 * 24;
+        if ($status === Password::PASSWORD_RESET) {
+            $user = User::where('email', $request->email)->first();
+            $refreshToken = Auth::setTTL($twentyFourHours)->tokenById($user->id);
+            $cookie = cookie('refresh_token', $refreshToken, $twentyFourHours, null, null, false, true);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password reset successfully'
+            ])->withCookie($cookie);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Password reset failed'
+        ], 400);
     }
 }

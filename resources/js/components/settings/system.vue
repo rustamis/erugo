@@ -255,15 +255,69 @@ defineExpose({
                       v-model="settings.emails_share_downloaded_enabled"
                     />
                     <label for="emails_share_downloaded_enabled">Enable share downloaded emails</label>
+                    <p>Sent the first time a share is downloaded.</p>
                   </div>
                 </div>
+
+                <div class="setting-group-body-item">
+                  <label for="emails_share_expiry_warning_enabled">Share expiry warning emails</label>
+                  <div class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      id="emails_share_expiry_warning_enabled"
+                      v-model="settings.emails_share_expiry_warning_enabled"
+                    />
+                    <label for="emails_share_expiry_warning_enabled">Enable share expiry warning emails</label>
+                    <p>Sent when a share is about to expire.</p>
+                  </div>
+                </div>
+
+                <div class="setting-group-body-item">
+                  <label for="emails_share_expired_warning_enabled">Share expired warning emails</label>
+                  <div class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      id="emails_share_expired_warning_enabled"
+                      v-model="settings.emails_share_expired_warning_enabled"
+                    />
+                    <label for="emails_share_expired_warning_enabled">Enable share expired warning emails</label>
+                    <p>Sent when a share has expired.</p>
+                  </div>
+                </div>
+
+                <div class="setting-group-body-item">
+                  <label for="emails_share_deletion_warning_enabled">Share deletion warning emails</label>
+                  <div class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      id="emails_share_deletion_warning_enabled"
+                      v-model="settings.emails_share_deletion_warning_enabled"
+                    />
+                    <label for="emails_share_deletion_warning_enabled">Enable share deletion warning emails</label>
+                    <p>Sent when a share is about to be deleted.</p>
+                  </div>
+                </div>
+
+                <div class="setting-group-body-item">
+                  <label for="emails_share_deleted_enabled">Share deleted emails</label>
+                  <div class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      id="emails_share_deleted_enabled"
+                      v-model="settings.emails_share_deleted_enabled"
+                    />
+                    <label for="emails_share_deleted_enabled">Enable share deleted emails</label>
+                    <p>Sent when a share is deleted.</p>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h6>Share downloaded emails</h6>
-              <p>Enable or disable the emails that are sent to share owner when a share is downloaded.</p>
+              <h6>Share notifications</h6>
+              <p>Decide whether to send emails to share owners when a share is downloaded, expired or deleted.</p>
             </div>
           </div>
         </div>

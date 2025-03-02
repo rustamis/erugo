@@ -30,6 +30,28 @@ Route::get('/', function () {
     return view('app', ['settings' => $indexedSettings, 'theme' => $theme]);
 });
 
+Route::get('/reset-password/{token}', function ($token) {
+    $settings = Setting::whereLike('group', 'ui%')->get();
+    $indexedSettings = [];
+    foreach ($settings as $setting) {
+        $indexedSettings[$setting->key] = $setting->value;
+    }
+
+    //have we any users in the database?
+    $userCount = User::count();
+    $indexedSettings['setup_needed'] = $userCount > 0 ? 'false' : 'true';
+
+    //grab the app url from env
+    $appURL = env('APP_URL');
+    $indexedSettings['api_url'] = $appURL;
+    $indexedSettings['token'] = $token;
+
+    $theme = Theme::where('active', true)->first();
+
+
+    return view('app', ['settings' => $indexedSettings, 'theme' => $theme]);
+});
+
 Route::get('/shares/{share}', function () {
     $settings = Setting::whereLike('group', 'ui%')->get();
     $indexedSettings = [];
@@ -62,6 +84,7 @@ Route::get('/logo', function () {
 
 Route::get('/test-email', function () {
     $share = Share::find(1);
-    // sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);
-    return view('emails.share-downloaded', ['share' => $share]);
+    sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);
+    return 'Email sent';
+    // return view('emails.shareDownloadedMail', ['share' => $share]);
 });

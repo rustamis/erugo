@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Password as PasswordFacade;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\accountCreatedMail;
+use App\Jobs\sendEmail;
+use Illuminate\Support\Str;
 
 class UsersController extends Controller
 {
@@ -104,12 +108,9 @@ class UsersController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'password' => ['required', 'confirmed', Password::min(8)],
             'email' => ['required', 'email', 'unique:users,email'],
             'name' => ['required', 'string', 'max:255'],
-            'admin' => ['boolean'],
-            'active' => ['boolean'],
-            'must_change_password' => ['boolean'],
+            'admin' => ['boolean']
         ]);
 
         if ($validator->fails()) {
@@ -126,7 +127,18 @@ class UsersController extends Controller
         }
 
         try {
-            $user = User::create($validator->validated());
+            $user = User::create([
+                'email' => $request->email,
+                'name' => $request->name,
+                'admin' => $request->admin,
+                'password' => Hash::make(Str::random(20)),
+                'active' => true,
+                'must_change_password' => false,
+            ]);
+
+            $token = PasswordFacade::createToken($user);
+
+            sendEmail::dispatch($user->email, accountCreatedMail::class, ['token' => $token, 'user' => $user]);
 
             return response()->json([
                 'status' => 'success',

@@ -12,7 +12,24 @@ class SettingsService
     if (!$setting) {
       return null;
     }
-    return $setting->value;
+    return $this->convertToCorrectType($setting->value);
+  }
+
+  private function convertToCorrectType($value)
+  {
+    if ($value === 'true') {
+      return true;
+    }
+    if ($value === 'false') {
+      return false;
+    }
+    if (is_numeric($value)) {
+      return (int)$value;
+    }
+    if (is_float($value)) {
+      return (float)$value;
+    }
+    return $value;
   }
 
   public function getMany($keys)

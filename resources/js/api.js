@@ -90,6 +90,43 @@ const fetchWithAuth = async (url, options = {}) => {
 }
 
 // Auth Methods (these don't use fetchWithAuth since they handle auth directly)
+
+export const resetPassword = async (token, email, password, password_confirmation) => {
+  const response = await fetch(`${apiUrl}/api/auth/reset-password`, {
+    method: 'POST',
+    headers: {
+      ...addJsonHeader()
+    },
+    body: JSON.stringify({
+      token,
+      email,
+      password,
+      password_confirmation
+    })
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data
+}
+
+export const forgotPassword = async (email) => {
+  const response = await fetch(`${apiUrl}/api/auth/forgot-password`, {
+    method: 'POST',
+    headers: {
+      ...addJsonHeader()
+    },
+    body: JSON.stringify({
+      email
+    })
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data.message)
+  }
+  return data
+}
 export const login = async (email, password) => {
   const response = await fetch(`${apiUrl}/api/auth/login`, {
     method: 'POST',
@@ -256,7 +293,6 @@ export const saveSettingsById = async (settings) => {
   const settingsArray = []
   const keys = Object.keys(settings)
   for (const key of keys) {
-
     //if the value is a file, convert it to a string
     if (settings[key] instanceof File) {
       settings[key] = settings[key].name
@@ -364,7 +400,7 @@ export const deleteBackgroundImage = async (file) => {
 }
 
 // Share Methods
-export const createShare = async (files, name, description, uploadId, onProgress) => {
+export const createShare = async (files, name, description, recipients, uploadId, onProgress) => {
   const formData = new FormData()
   files.forEach((file) => {
     formData.append('files[]', file)
@@ -372,6 +408,12 @@ export const createShare = async (files, name, description, uploadId, onProgress
   formData.append('name', name)
   formData.append('description', description)
   formData.append('upload_id', uploadId)
+  if (recipients.length > 0) {
+    recipients.forEach((recipient, index) => {
+      formData.append(`recipients[${index}][name]`, recipient.name)
+      formData.append(`recipients[${index}][email]`, recipient.email)
+    })
+  }
 
   const xhr = new XMLHttpRequest()
 
@@ -513,7 +555,6 @@ export const saveTheme = async (theme) => {
   return data.data.theme
 }
 
-
 export const deleteTheme = async (name) => {
   const response = await fetchWithAuth(`${apiUrl}/api/themes/`, {
     method: 'DELETE',
@@ -531,7 +572,7 @@ export const deleteTheme = async (name) => {
   return data.data
 }
 
-  export const setActiveTheme = async (name) => {
+export const setActiveTheme = async (name) => {
   const response = await fetchWithAuth(`${apiUrl}/api/themes/set-active`, {
     method: 'POST',
     headers: {
@@ -561,8 +602,6 @@ export const getActiveTheme = async () => {
   }
   return data.data.theme
 }
-
-
 
 //misc methods
 export const getHealth = async () => {
