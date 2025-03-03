@@ -1,5 +1,6 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/wardy784/erugo) ![GitHub Repo stars](https://img.shields.io/github/stars/deanward/erugo) ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/deanward/erugo) ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-closed/deanward/erugo) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/deanward/erugo/latest)
 
+[![Discord Banner 2](https://discord.com/api/guilds/1346116394038722602/widget.png?style=banner3)](https://discord.gg/M74X2wmqY8)
 
 
 
