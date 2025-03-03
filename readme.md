@@ -14,6 +14,8 @@ Check out a sample share on our demo site at [demo.erugo.app/shares/tight-silenc
 
 Please note we're running the demo on a very cheap VPS so it may take a few seconds to load. This isn't an indication of the performance of the software, just our budget ;).
 
+<a href='https://ko-fi.com/B0B11BF8EC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 ## Screenshots
 
 ![Upload Interface](.github/images/erugo-uploader-screenshot.png)
