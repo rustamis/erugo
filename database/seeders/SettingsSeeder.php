@@ -245,6 +245,22 @@ class SettingsSeeder extends Seeder
                 'group' => 'system.emails',
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'key' => 'default_language',
+                'value' => 'en',
+                'previous_value' => null,
+                'group' => 'system',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'key' => 'show_language_selector',
+                'value' => 'true',
+                'previous_value' => null,
+                'group' => 'system',
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ]);
     }

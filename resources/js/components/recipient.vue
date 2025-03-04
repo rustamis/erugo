@@ -80,8 +80,8 @@ defineExpose({
     <div class="recipient-popover" :class="{ active: isPopoverOpen }" ref="recipientPopoverRef">
       <div class="recipient-popover-content">
         <div>
-          <input type="text" v-model="recipient.name" placeholder="Full Name" @keyup.enter="moveFocusToEmail" />
-          <input type="text" v-model="recipient.email" placeholder="Email" ref="emailInput" @keyup.enter="togglePopover" />
+          <input type="text" v-model="recipient.name" :placeholder="$t('full_name')" @keyup.enter="moveFocusToEmail" />
+          <input type="text" v-model="recipient.email" :placeholder="$t('email')" ref="emailInput" @keyup.enter="togglePopover" />
         </div>
         <div class="button-container">
           <div class="button-outside-label">

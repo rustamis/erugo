@@ -1,5 +1,6 @@
 
 import {domData} from './domData.js'
+import { useTolgee } from '@tolgee/vue'
 
 const simpleUUID = () => {
   //this isn't cryptographically secure, but it's good enough for our purposes
@@ -42,7 +43,11 @@ const timeUntilExpiration = date => {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
   const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60))
-  return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes`
+  return {
+    days: diffDays,
+    hours: diffHours,
+    minutes: diffMinutes
+  }
 }
 
 const getApiUrl = () => {

@@ -1,0 +1,123 @@
+{
+  "Add Files": "Add files",
+  "Add Folders": "Add Folders",
+  "Add Recipient": "Add Recipient",
+  "Message to share recipients (optional)": "Message to share recipients (optional)",
+  "No files added yet": "No files added yet",
+  "No recipients": "No recipients",
+  "Powered by": "Powered by",
+  "Share Name": "Share Name",
+  "Share URL": "Share URL",
+  "We'll provide you with a link instead": {
+    "": "We'll provide you with a link instead"
+  },
+  "confirm_delete_user": "Are you sure you want to delete this user?",
+  "download": {
+    "files": "{value, plural, one {Download # file} other {Download {value} files}}"
+  },
+  "limit": "Limit",
+  "message": {
+    "from": "Message from {name}"
+  },
+  "settings": {
+    "button": {
+      "branding": {
+        "save": "Save Branding Settings"
+      },
+      "myShares": {
+        "create": "Create Share"
+      },
+      "system": {
+        "save": "Save System Settings"
+      },
+      "users": {
+        "add": "Add User"
+      }
+    },
+    "close": "Close",
+    "description": {
+      "branding": "Customise the UI of your erugo instance and add your own branding.",
+      "myProfile": "Manage your profile.",
+      "myShares": "Manage your shares.",
+      "system": "Manage the behaviour of your Erugo instance.",
+      "users": "Manage your users."
+    },
+    "help": {
+      "downloadLimit": {
+        "description": "You can set the download limit for any share by clicking the right-side number and typing in the new limit. Clear the box to remove the limit.",
+        "description2": "Changes will be saved automatically when you click outside the box.",
+        "title": "Download Limit Help"
+      }
+    },
+    "table": {
+      "actions": "Actions",
+      "dates": "Dates",
+      "downloads": "Downloads",
+      "files": "Files",
+      "name": "Name"
+    },
+    "title": {
+      "branding": "Branding & UI",
+      "manage": "Manage",
+      "myProfile": "My Profile",
+      "myShares": "My Shares",
+      "system": "System settings",
+      "users": "Users",
+      "users.edit": "Edit {name}"
+    },
+    "users": {
+      "account": "Account Type",
+      "actions": "Actions",
+      "add": "Add User",
+      "add_user_description": "We'll send an email to the user with a link to set their&nbsp;password.",
+      "admin": "Admin",
+      "admin_help_text": "Make the user an admin.",
+      "admin_help_text_2": "User will have the privileges as you.\n",
+      "cannot_delete_yourself": "You cannot delete yourself",
+      "created": "Created",
+      "delete": "Delete",
+      "edit": "Edit",
+      "email": "Email",
+      "failed_to_create_user": "Failed to create user",
+      "failed_to_delete_user": "Failed to delete user",
+      "failed_to_update_user": "Failed to update user",
+      "id": "ID",
+      "name": "Name",
+      "save_changes": "Save changes",
+      "user": "User",
+      "user_created_successfully": "User created successfully",
+      "user_deleted_successfully": "The user was deleted successfully",
+      "user_updated_successfully": "User updated successfully",
+      "you": "You"
+    }
+  },
+  "share": {
+    "button": {
+      "expireNow": "Expire Now",
+      "extend": "Extend"
+    },
+    "contains": {
+      "count": "{value, plural, one {Contains: # file} other {Contains: {value} files}}"
+    },
+    "created": "Created",
+    "data_loading": "Loading...",
+    "deletes": "Deletes",
+    "download_limit_reached": "Download limit reached",
+    "download_limit_reached.message": "The share you are trying to download has reached its download limit. Please ask the share creator to increase the download limit.",
+    "expired": "Share expired",
+    "expired.message": "The share you are trying to download has expired. Please ask the share creator to create a new share.",
+    "expires": "Expires",
+    "expires.in": "Expires in {days} {days, plural, one {day} other {days}}, {hours} {hours, plural, one {hour} other {hours}}, {minutes} {minutes, plural, one {minute} other {minutes}}",
+    "files": {
+      "count": "{value, plural, one {# file} other {# files}}",
+      "including": "including:"
+    }
+  },
+  "total_size": "Total Size",
+  "upload": {
+    "files": "{value, plural, one {Upload # file} other {Upload # files}}"
+  },
+  "uploading": {
+    "files": "{value, plural, one {Uploading # file} other {Uploading # files}}"
+  }
+}

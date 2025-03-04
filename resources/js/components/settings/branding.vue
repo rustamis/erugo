@@ -271,26 +271,27 @@ defineExpose({
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('background-images')">
               <Images />
-              Background Images
+              {{ $t('settings.branding.background_images') }}
             </a>
           </li>
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('logo-settings')">
               <Image />
-              Logo
+              {{ $t('settings.branding.logo') }}
+            </a>
+          </li>
+
+          <li>
+            <a href="#" @click.prevent="handleNavItemClicked('ui-colours')">
+              <Pipette />
+              {{ $t('settings.branding.theme') }}
             </a>
           </li>
 
           <li>
             <a href="#" @click.prevent="handleNavItemClicked('other-ui-settings')">
               <Dice5 />
-              Other UI Settings
-            </a>
-          </li>
-          <li>
-            <a href="#" @click.prevent="handleNavItemClicked('ui-colours')">
-              <Pipette />
-              Theme
+              {{ $t('settings.branding.other_ui_settings') }}
             </a>
           </li>
         </ul>
@@ -303,11 +304,8 @@ defineExpose({
               <div class="setting-group-header">
                 <h3>
                   <Images />
-                  Background Images
+                  {{ $t('settings.branding.background_images') }}
                 </h3>
-                <div class="settings-group-info">
-                  <p>Manage your background images.</p>
-                </div>
               </div>
 
               <div class="setting-group-body">
@@ -327,18 +325,13 @@ defineExpose({
                   <FileInput
                     v-model="newBackgroundImage"
                     accept="image/png, image/jpeg, image/webp"
-                    label="Upload Background Image"
-                    class="mt-3"
+                    :label="$t('settings.branding.upload_background_image')"
+                    class="mt-3 mb-4"
                   />
 
                   <div class="checkbox-container" :class="{ disabled: backgroundImages.length === 0 }">
                     <input type="checkbox" v-model="settings.use_my_backgrounds" id="useMyBackgrounds" />
-                    <label for="useMyBackgrounds">Use my backgrounds</label>
-                    <p class="help-text">
-                      Use the backgrounds you have uploaded.
-                      <br />
-                      If not checked, Unsplash backgrounds will be used.
-                    </p>
+                    <label for="useMyBackgrounds">{{ $t('settings.branding.use_my_backgrounds') }}</label>
                   </div>
                 </div>
               </div>
@@ -346,11 +339,11 @@ defineExpose({
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h5>Background images</h5>
-              <p>
-                Upload custom background images to replace Unsplash defaults. Images rotate randomly every 3 minutes to
-                create dynamic branding.
-              </p>
+              <h6>{{ $t('settings.branding.background_images') }}</h6>
+              <p>{{ $t('settings.branding.background_images_description') }}</p>
+
+              <h6>{{ $t('settings.branding.use_my_backgrounds') }}</h6>
+              <p>{{ $t('settings.branding.use_my_backgrounds_description') }}</p>
             </div>
           </div>
         </div>
@@ -362,23 +355,20 @@ defineExpose({
               <div class="setting-group-header">
                 <h3>
                   <Image />
-                  Logo
+                  {{ $t('settings.branding.logo') }}
                 </h3>
-                <div class="settings-group-info">
-                  <p>Modify the logo that is displayed throughout erugo.</p>
-                </div>
               </div>
 
               <div class="setting-group-body">
                 <div class="setting-group-body-item">
-                  <label for="logoFile">Logo Image</label>
+                  <label for="logoFile">{{ $t('settings.branding.logo_image') }}</label>
                   <FileInput v-model="settings.logo" accept="image/png" />
                 </div>
 
                 <div class="setting-group-body-item">
                   <label for="logoWidth">
-                    Logo Width
-                    <small>(in pixels)</small>
+                    {{ $t('settings.branding.logo_width') }}
+                    <small>({{ $t('settings.branding.in_pixels') }})</small>
                   </label>
                   <input type="number" v-model="settings.logo_width" />
                 </div>
@@ -387,42 +377,9 @@ defineExpose({
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h5>Logo</h5>
+              <h6>{{ $t('settings.branding.logo') }}</h6>
               <p>
-                Display your company logo in PNG format in the top left corner. Set your desired width in pixels -
-                height will adjust automatically to maintain aspect ratio. Use a source image at least as wide as your
-                display width to ensure quality.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row mb-5">
-          <!-- Other UI settings -->
-          <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
-            <div class="setting-group" id="other-ui-settings">
-              <div class="setting-group-header">
-                <h3>
-                  <Dice5 />
-                  Other UI Settings
-                </h3>
-                <div class="settings-group-info">
-                  <p>Miscellaneous settings for the UI.</p>
-                </div>
-              </div>
-
-              <div class="checkbox-container">
-                <input type="checkbox" v-model="settings.show_powered_by" id="showPoweredBy" />
-                <label for="showPoweredBy">Show Powered By erugo</label>
-              </div>
-            </div>
-          </div>
-          <div class="d-none d-md-block col ps-0">
-            <div class="section-help">
-              <h5>Show or hide powered by text</h5>
-              <p>
-                Show or hide the "Powered by erugo" text on the bottom of the page. This text allows erugo to be
-                discovered by other users and helps us to grow, however, you can hide it if you wish.
+                {{ $t('settings.branding.logo_description') }}
               </p>
             </div>
           </div>
@@ -435,13 +392,13 @@ defineExpose({
               <div class="setting-group-header">
                 <h3>
                   <Pipette />
-                  Theme
+                  {{ $t('settings.branding.theme') }}
                 </h3>
               </div>
 
               <div class="setting-group-body" v-if="settingsLoaded">
                 <div class="setting-group-body-item">
-                  <label for="theme">Theme</label>
+                  <label for="theme">{{ $t('settings.branding.select_theme') }}</label>
                   <select v-model="activeTheme" class="block" style="width: 100%">
                     <optgroup v-for="(category, label) in groupedThemes" :key="category" :label="label">
                       <option v-for="theme in category" :key="theme.id" :value="theme">
@@ -456,15 +413,19 @@ defineExpose({
                     <div class="setting-group-body-item mt-3">
                       <button @click="downloadTheme" class="block">
                         <FileDown />
-                        Download {{ activeTheme?.name }}
+                        {{$t('settings.branding.download')}} {{ activeTheme?.name }}
                       </button>
                     </div>
                   </div>
                   <div class="col-12">
                     <div class="setting-group-body-item mt-3">
-                      <button class="secondary block" @click="handleDeleteTheme" :disabled="activeTheme?.active || activeTheme?.bundled">
+                      <button
+                        class="secondary block"
+                        @click="handleDeleteTheme"
+                        :disabled="activeTheme?.active || activeTheme?.bundled"
+                      >
                         <Trash />
-                        Delete {{ activeTheme?.name }}
+                        {{$t('settings.branding.delete')}} {{ activeTheme?.name }}
                       </button>
                     </div>
                   </div>
@@ -474,17 +435,15 @@ defineExpose({
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h5>Theme</h5>
-              <p>Select from a range of pre-made themes or one one that you have installed.</p>
-              <h6>Download theme</h6>
+              <h6>{{$t('settings.branding.select_theme')}}</h6>
+              <p>{{$t('settings.branding.select_theme_description')}}</p>
+              <h6>{{$t('settings.branding.download_theme')}}</h6>
               <p>
-                Download the selected theme as a JSON file. This can be used to create a new theme or modify an existing
-                one.
+                {{$t('settings.branding.download_theme_description')}}
               </p>
-              <h6>Delete theme</h6>
+              <h6>{{$t('settings.branding.delete_theme')}}</h6>
               <p>
-                Delete the selected theme. This will remove it from the list of themes and you will no longer be able to
-                use it. It is not possible to delete the active theme or bundled themes.
+                {{$t('settings.branding.delete_theme_description')}}
               </p>
             </div>
           </div>
@@ -496,23 +455,23 @@ defineExpose({
               <div class="setting-group-header">
                 <h3>
                   <Pipette />
-                  Install a custom theme
+                  {{$t('settings.branding.install_custom_theme')}}
                 </h3>
               </div>
 
               <div class="setting-group-body" v-if="settingsLoaded">
                 <div class="setting-group-body-item mt-4">
-                  <label for="logoFile">Theme file</label>
+                  <label for="logoFile">{{$t('settings.branding.theme_file')}}</label>
                   <FileInput v-model="customTheme.file" accept="application/json" />
                 </div>
                 <div class="setting-group-body-item mt-3">
-                  <label for="theme_name">Theme name</label>
+                  <label for="theme_name">{{$t('settings.branding.theme_name')}}</label>
                   <input type="text" id="theme_name" v-model="customTheme.name" placeholder="My Custom Theme" />
                 </div>
                 <div class="setting-group-body-item mt-3">
                   <button @click="handleInstallCustomTheme" class="block">
                     <FileUp />
-                    Install Theme
+                    {{$t('settings.branding.install_theme')}}
                   </button>
                 </div>
               </div>
@@ -520,14 +479,39 @@ defineExpose({
           </div>
           <div class="d-none d-md-block col ps-0">
             <div class="section-help">
-              <h5>Install a custom theme</h5>
-              <p>Install a custom theme from a JSON file.</p>
-              <p>This can be a theme you have modified or created yourself or one you have downloaded.</p>
+              <h6>{{$t('settings.branding.install_custom_theme')}}</h6>
+              <p>{{$t('settings.branding.install_custom_theme_description')}}</p>
               <p>
                 <strong>
-                  If you download a theme from the web, please ensure you trust the source and have checked the theme
-                  for malicious code before installing.
+                  {{$t('settings.branding.install_custom_theme_description_2')}}
                 </strong>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-5">
+          <!-- Other UI settings -->
+          <div class="col-12 col-md-6 pe-0 ps-0 ps-md-3">
+            <div class="setting-group" id="other-ui-settings">
+              <div class="setting-group-header">
+                <h3>
+                  <Dice5 />
+                  {{$t('settings.branding.other_ui_settings')}}
+                </h3>
+              </div>
+
+              <div class="checkbox-container">
+                <input type="checkbox" v-model="settings.show_powered_by" id="showPoweredBy" />
+                <label for="showPoweredBy">{{$t('settings.branding.show_powered_by')}}</label>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block col ps-0">
+            <div class="section-help">
+              <h6>{{$t('settings.branding.show_powered_by')}}</h6>
+              <p>
+                {{$t('settings.branding.show_powered_by_description')}}
               </p>
             </div>
           </div>

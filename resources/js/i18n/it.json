@@ -1,0 +1,123 @@
+{
+  "Add Files": "Aggiungi file",
+  "Add Folders": "Aggiungi cartelle",
+  "Add Recipient": "Aggiungi destinatario",
+  "Message to share recipients (optional)": "Messaggio per i destinatari della condivisione (facoltativo)",
+  "No files added yet": "Nessun file aggiunto",
+  "No recipients": "Nessun destinatario",
+  "Powered by": "Offerto da",
+  "Share Name": "Nome Condivisione",
+  "Share URL": "URL per condivisione",
+  "We'll provide you with a link instead": {
+    "": "Vi forniremo invece un link"
+  },
+  "confirm_delete_user": "Siete sicuri di voler eliminare questo utente?",
+  "download": {
+    "files": "{value, plural, one {Scaricare il file.} other {Scaricare i {value} file} }"
+  },
+  "limit": "Limite",
+  "message": {
+    "from": "Messaggio da {name}"
+  },
+  "settings": {
+    "button": {
+      "branding": {
+        "save": "Salvare le impostazioni del marchio"
+      },
+      "myShares": {
+        "create": "Creare la condivisione"
+      },
+      "system": {
+        "save": "Salvare le impostazioni del sistema"
+      },
+      "users": {
+        "add": "Aggiungi utente"
+      }
+    },
+    "close": "Chiudere",
+    "description": {
+      "branding": "Personalizzate l'interfaccia utente della vostra istanza di erugo e aggiungete il vostro marchio.",
+      "myProfile": "Gestire il proprio profilo.",
+      "myShares": "Gestite le vostre azioni.",
+      "system": "Gestire il comportamento della vostra istanza Erugo.",
+      "users": "Gestire gli utenti."
+    },
+    "help": {
+      "downloadLimit": {
+        "description": "È possibile impostare il limite di download per qualsiasi condivisione facendo clic sul numero a destra e digitando il nuovo limite. Deselezionare la casella per rimuovere il limite.",
+        "description2": "Le modifiche verranno salvate automaticamente quando si farà clic al di fuori della casella.",
+        "title": "Scarica la Guida ai limiti"
+      }
+    },
+    "table": {
+      "actions": "Azioni",
+      "dates": "Date",
+      "downloads": "Download",
+      "files": "File",
+      "name": "Nome"
+    },
+    "title": {
+      "branding": "Marchio e interfaccia utente",
+      "manage": "Gestire",
+      "myProfile": "Il mio profilo",
+      "myShares": "Le mie azioni",
+      "system": "Impostazioni del sistema",
+      "users": "Utenti",
+      "users.edit": "Modifica {name}"
+    },
+    "users": {
+      "account": "Tipo di conto",
+      "actions": "Azioni",
+      "add": "Aggiungi utente",
+      "add_user_description": "Invieremo un'e-mail all'utente con un link per impostare la sua password.",
+      "admin": "Admin",
+      "admin_help_text": "Rendere l'utente un amministratore.",
+      "admin_help_text_2": "L'utente avrà gli stessi privilegi dell'utente.\n",
+      "cannot_delete_yourself": "Non è possibile cancellare se stessi",
+      "created": "Creato",
+      "delete": "Cancellare",
+      "edit": "Modifica",
+      "email": "Email",
+      "failed_to_create_user": "Impossibile creare l'utente",
+      "failed_to_delete_user": "Non è stato possibile eliminare l'utente",
+      "failed_to_update_user": "Impossibile aggiornare l'utente",
+      "id": "ID",
+      "name": "Nome",
+      "save_changes": "Salva le modifiche",
+      "user": "Utente",
+      "user_created_successfully": "Utente creato con successo",
+      "user_deleted_successfully": "L'utente è stato eliminato con successo",
+      "user_updated_successfully": "Utente aggiornato con successo",
+      "you": "Tu"
+    }
+  },
+  "share": {
+    "button": {
+      "expireNow": "Scadere ora",
+      "extend": "Estendere"
+    },
+    "contains": {
+      "count": "{value, plural, one {Contiene: 1 File} other {Contiene: {value} File} }"
+    },
+    "created": "Creato",
+    "data_loading": "Caricamento...",
+    "deletes": "Cancella",
+    "download_limit_reached": "Limite di download raggiunto",
+    "download_limit_reached.message": "La condivisione che si sta cercando di scaricare ha raggiunto il limite di download. Chiedere al creatore della condivisione di aumentare il limite di download.",
+    "expired": "Quota scaduta",
+    "expired.message": "La condivisione che si sta cercando di scaricare è scaduta. Chiedere al creatore della condivisione di crearne una nuova.",
+    "expires": "Scadenza",
+    "expires.in": "Scade in {days} {days, plural, one {giorno} other {giorni}}, {hours} {hours, plural, one {ora} other {ore}}, {minutes} {minutes, plural, one {minuto} other {minuti}}",
+    "files": {
+      "count": "{value, plural, other {# files}}",
+      "including": "compreso:"
+    }
+  },
+  "total_size": "Peso totale",
+  "upload": {
+    "files": "{value, plural, other {Caricare # file}}"
+  },
+  "uploading": {
+    "files": "{value, plural, one {Caricamento del file} other {Caricamento di # file} }"
+  }
+}

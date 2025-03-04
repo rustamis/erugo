@@ -1,0 +1,123 @@
+{
+  "Add Files": "Ajouter des fichiers",
+  "Add Folders": "Ajouter des dossiers",
+  "Add Recipient": "Ajouter un destinataire",
+  "Message to share recipients (optional)": "Message au(x) destinataire(s) du partage (facultatif)",
+  "No files added yet": "Aucun fichier n'a encore été ajouté",
+  "No recipients": "Pas de destinataire(s)",
+  "Powered by": "Propulsé par",
+  "Share Name": "Nom du partage",
+  "Share URL": "Partager l'URL",
+  "We'll provide you with a link instead": {
+    "": "Nous vous fournirons un lien à la place"
+  },
+  "confirm_delete_user": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+  "download": {
+    "files": "{value, plural, one {Télécharger le fichier #.} other {Télécharger les fichiers {value}} }"
+  },
+  "limit": "Limite",
+  "message": {
+    "from": "Message de {name}"
+  },
+  "settings": {
+    "button": {
+      "branding": {
+        "save": "Sauvegarder les paramètres de votre identité visuelle."
+      },
+      "myShares": {
+        "create": "Créer un partage"
+      },
+      "system": {
+        "save": "Sauvegarder les paramètres du système"
+      },
+      "users": {
+        "add": "Ajouter un utilisateur"
+      }
+    },
+    "close": "Fermer",
+    "description": {
+      "branding": "Personnalisez l'interface utilisateur et l’identité visuelle de votre instance erugo.",
+      "myProfile": "Gérer votre profil.",
+      "myShares": "Gérez vos partages.",
+      "system": "Gérer le comportement de votre instance Erugo.",
+      "users": "Gérez vos utilisateurs."
+    },
+    "help": {
+      "downloadLimit": {
+        "description": "Vous pouvez définir la limite de téléchargement pour n'importe quel partage en cliquant sur le chiffre de droite et en saisissant la nouvelle limite. Décochez la case pour supprimer la limite.",
+        "description2": "Les modifications seront enregistrées automatiquement lorsque vous cliquerez en dehors de la boîte.",
+        "title": "Aide pour la limite de téléchargement."
+      }
+    },
+    "table": {
+      "actions": "Actions",
+      "dates": "Dates",
+      "downloads": "Téléchargements",
+      "files": "Dossiers",
+      "name": "Nom"
+    },
+    "title": {
+      "branding": "Image de l'identité visuelle et interface utilisateur",
+      "manage": "Gérer",
+      "myProfile": "Mon profil",
+      "myShares": "Mes partages",
+      "system": "Paramètres du système",
+      "users": "Utilisateurs",
+      "users.edit": "Modifier {name}"
+    },
+    "users": {
+      "account": "Type de compte",
+      "actions": "Actions",
+      "add": "Ajouter un utilisateur",
+      "add_user_description": "Nous enverrons un courriel à l'utilisateur avec un lien pour définir son&nbsp;mot de passe.",
+      "admin": "Administrateur",
+      "admin_help_text": "Faire de l'utilisateur un administrateur.",
+      "admin_help_text_2": "L'utilisateur aura les mêmes privilèges que vous.\n",
+      "cannot_delete_yourself": "Vous ne pouvez pas vous supprimer vous-même",
+      "created": "Créée",
+      "delete": "Supprimer",
+      "edit": "Editer",
+      "email": "E-mail",
+      "failed_to_create_user": "Échec de la création de l'utilisateur",
+      "failed_to_delete_user": "Échec de la suppression de l'utilisateur",
+      "failed_to_update_user": "Échec de la mise à jour de l'utilisateur",
+      "id": "ID",
+      "name": "Nom",
+      "save_changes": "Enregistrer les modifications",
+      "user": "Utilisateur",
+      "user_created_successfully": "Utilisateur créé avec succès",
+      "user_deleted_successfully": "L'utilisateur a été supprimé avec succès",
+      "user_updated_successfully": "Mise à jour de l'utilisateur réussie",
+      "you": "Vous"
+    }
+  },
+  "share": {
+    "button": {
+      "expireNow": "Expirer maintenant",
+      "extend": "Prolonger"
+    },
+    "contains": {
+      "count": "{value, plural, one {Contient : fichier} other {Contient : fichiers {value}}}"
+    },
+    "created": "Créé",
+    "data_loading": "Chargement...",
+    "deletes": "Suppression",
+    "download_limit_reached": "Limite de téléchargement atteinte",
+    "download_limit_reached.message": "Le partage que vous essayez de télécharger a atteint sa limite de téléchargement. Veuillez demander au créateur du partage d'augmenter la limite de téléchargement.",
+    "expired": "Partage expiré",
+    "expired.message": "Le partage que vous essayez de télécharger a expiré. Veuillez demander au créateur du partage de créer un nouveau partage.",
+    "expires": "Expiration",
+    "expires.in": "Expire dans {days} {days, plural, one {jour} other {jours}}, {hours} {hours, plural, one {heure} other {heures}}, {minutes} {minutes, plural, one {minute} other {minutes}}",
+    "files": {
+      "count": "{value, plural, one {# fichier} other {# fichiers}}",
+      "including": "y compris :"
+    }
+  },
+  "total_size": "Taille totale",
+  "upload": {
+    "files": "{value, plural, one {Télécharger un fichier #.} other {Télécharger des fichiers #.} }"
+  },
+  "uploading": {
+    "files": "{value, plural, one {Téléchargement du fichier #.} other {Téléchargement des fichiers #.} }"
+  }
+}

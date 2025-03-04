@@ -1,9 +1,19 @@
 import { createApp } from 'vue'
+import { Tolgee, DevTools, VueTolgee } from '@tolgee/vue'
+import { FormatIcu } from '@tolgee/format-icu'
+
 import './style.scss'
 import 'vue-color-kit/dist/vue-color-kit.css'
 import App from './App.vue'
 import Toast, { POSITION } from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import { domData } from './domData'
+
+//import languages
+import en from './i18n/en.json'
+import de from './i18n/de.json'
+import fr from './i18n/fr.json'
+import it from './i18n/it.json'
 
 let clickOutsideEvent = null
 
@@ -13,33 +23,43 @@ const showHelpTip = (event, helpTipId) => {
   if (!helpTip) return
 
   helpTip.classList.add('no-transition')
+  
+  // Calculate initial position
   let top = event.clientY - helpTip.offsetHeight - 10
   let left = event.clientX - helpTip.offsetWidth / 2
 
-  //will this go out of bounds?
+  // Check top boundary - account for the shift amount
   if (top + cssShiftAmount < 0) {
-    top = 0
+    top = -cssShiftAmount // This ensures the tip is at the very top after the shift is applied
   }
+  
+  // Check left boundary
   if (left < 0) {
     left = 0
   }
+  
+  // Check right boundary
   if (left + helpTip.offsetWidth > window.innerWidth) {
     left = window.innerWidth - helpTip.offsetWidth
   }
+  
+  // Check bottom boundary - account for the shift amount
   if (top + cssShiftAmount + helpTip.offsetHeight > window.innerHeight) {
     top = window.innerHeight - helpTip.offsetHeight - cssShiftAmount
   }
 
+  // Apply the position
   helpTip.style.top = `${top}px`
   helpTip.style.left = `${left}px`
 
+  // Make the tooltip visible with a slight delay
   setTimeout(() => {
     helpTip.classList.remove('no-transition')
     helpTip.classList.add('visible')
     helpTip.classList.add('shifted-up')
   }, 1)
 
-  //register click-outside event
+  // Register click-outside event to hide the tooltip
   clickOutsideEvent = document.addEventListener('click', (event) => {
     if (!helpTip.contains(event.target)) {
       hideHelpTip(helpTipId)
@@ -87,10 +107,28 @@ const observer = new MutationObserver((mutations) => {
 
 observer.observe(document.body, { childList: true, subtree: true })
 
+const tolgee = Tolgee().use(DevTools()).use(FormatIcu()).init({
+  language: localStorage.getItem('language') || domData().default_language || 'en',
+
+  // for development
+  apiUrl:  import.meta.env.VITE_APP_TOLGEE_API_URL,
+  apiKey:  import.meta.env.VITE_APP_TOLGEE_API_KEY,
+
+  // for production
+  staticData: {
+    en,
+    de,
+    fr,
+    it
+  }
+})
+
+
 createApp(App)
   .use(Toast, {
     position: POSITION.BOTTOM_RIGHT
   })
+  .use(VueTolgee, { tolgee })
   .provide('showHelpTip', showHelpTip)
   .provide('hideHelpTip', hideHelpTip)
   .mount('#app')

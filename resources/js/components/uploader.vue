@@ -158,11 +158,11 @@ const addRecipient = () => {
     <div class="buttons">
       <button class="upload-files block text-large" @click="showFilePicker">
         <FilePlus />
-        Add Files
+        {{ $t('Add Files') }}
       </button>
       <button class="upload-folder block text-large secondary" @click="showFolderPicker">
         <FolderPlus />
-        Add Folders
+        {{ $t('Add Folders') }}
       </button>
     </div>
     <div class="max-size-label">{{ niceFileSize(totalSize) }} / {{ niceFileSize(maxShareSize) }}</div>
@@ -180,7 +180,7 @@ const addRecipient = () => {
             </div>
           </template>
           <template v-else>
-            Processing uploaded files
+            {{ $t('Processing uploaded files') }}
             <div class="progress-bar-text-sub">
               {{ niceFileSize(uploadedBytes) }} /
               {{ niceFileSize(totalBytes) }}
@@ -215,7 +215,7 @@ const addRecipient = () => {
       <div class="upload-basket-empty" v-else>
         <div class="upload-basket-empty-text">
           <CircleSlash2 />
-          No files added yet
+          {{ $t('No files added yet') }}
         </div>
       </div>
     </div>
@@ -226,7 +226,7 @@ const addRecipient = () => {
           <button class="icon-only round" @click="addRecipient">
             <Plus />
           </button>
-          <div class="button-outside-label-text">Add Recipient</div>
+          <div class="button-outside-label-text">{{ $t('Add Recipient') }}</div>
         </div>
         <div class="recipient-list">
           <template v-if="recipients.length > 0">
@@ -240,8 +240,9 @@ const addRecipient = () => {
           </template>
           <template v-else>
             <div class="recipient-list-empty">
-              No recipients <br />
-              <small>We'll provide you with a link instead.</small>
+              {{ $t('No recipients') }}
+              <br />
+              <small>{{ $t("We'll provide you with a link instead.") }}</small>
             </div>
           </template>
         </div>
@@ -250,7 +251,7 @@ const addRecipient = () => {
         <input
           type="text"
           v-model="shareName"
-          placeholder="Share Name"
+          :placeholder="$t('Share Name')"
           required
           :class="{ error: errors.shareName }"
           class="mb-0"
@@ -266,7 +267,7 @@ const addRecipient = () => {
       <div class="input-container mt-0 mb-0">
         <textarea
           v-model="shareDescription"
-          placeholder="Message to share recipients (optional)"
+          :placeholder="$t('Message to share recipients (optional)')"
           required
           :class="{ error: errors.shareDescription }"
           rows="3"
@@ -290,12 +291,13 @@ const addRecipient = () => {
         <Loader />
       </div>
       <Upload v-else />
-      <template v-if="uploadBasket.length > 0">
-        Upload{{ currentlyUploading ? 'ing' : '' }} {{ uploadBasket.length }} file{{
-          uploadBasket.length > 1 ? 's' : ''
-        }}
+      <template v-if="uploadBasket.length > 0 && currentlyUploading">
+        {{ $t('uploading.files', 'Uploading {value} files', { value: uploadBasket.length }) }}
       </template>
-      <template v-else>No files added yet</template>
+      <template v-if="uploadBasket.length > 0 && !currentlyUploading">
+        {{ $t('upload.files', 'Upload {value} files', { value: uploadBasket.length }) }}
+      </template>
+      <template v-if="uploadBasket.length === 0">{{ $t('No files added yet') }}</template>
     </button>
   </div>
   <input
@@ -312,7 +314,7 @@ const addRecipient = () => {
       <div class="sharePanel-close" @click="sharePanelVisible = false">
         <X />
       </div>
-      <div class="sharePanel-title">Share URL</div>
+      <div class="sharePanel-title">{{ $t('Share URL') }}</div>
       <div class="sharePanel-url">
         {{ shareUrl }}
         <button class="sharePanel-copy-button icon-only" @click="copyShareUrl">

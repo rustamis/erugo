@@ -31,4 +31,4 @@ vendor/**/docs
 vendor/**/.git
 vendor/**/.github
 
-storage
+storage/*

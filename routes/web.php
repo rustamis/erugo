@@ -9,12 +9,17 @@ use App\Jobs\sendEmail;
 use App\Models\Share;
 use App\Models\Theme;
 
-Route::get('/', function () {
-    $settings = Setting::whereLike('group', 'ui%')->get();
+function getSettings() {
+    $settings = Setting::whereLike('group', 'ui%')->orWhere('key', 'default_language')->orWhere('key', 'show_language_selector')->get();
     $indexedSettings = [];
     foreach ($settings as $setting) {
         $indexedSettings[$setting->key] = $setting->value;
     }
+    return $indexedSettings;
+}
+
+Route::get('/', function () {
+    $indexedSettings = getSettings();
 
     //have we any users in the database?
     $userCount = User::count();
@@ -31,11 +36,7 @@ Route::get('/', function () {
 });
 
 Route::get('/reset-password/{token}', function ($token) {
-    $settings = Setting::whereLike('group', 'ui%')->get();
-    $indexedSettings = [];
-    foreach ($settings as $setting) {
-        $indexedSettings[$setting->key] = $setting->value;
-    }
+    $indexedSettings = getSettings();
 
     //have we any users in the database?
     $userCount = User::count();
@@ -53,11 +54,7 @@ Route::get('/reset-password/{token}', function ($token) {
 });
 
 Route::get('/shares/{share}', function () {
-    $settings = Setting::whereLike('group', 'ui%')->get();
-    $indexedSettings = [];
-    foreach ($settings as $setting) {
-        $indexedSettings[$setting->key] = $setting->value;
-    }
+    $indexedSettings = getSettings();
 
     //have we any users in the database?
     $userCount = User::count();

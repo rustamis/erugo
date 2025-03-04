@@ -54,9 +54,19 @@ const splitFullName = (fullName) => {
       <h1>
         {{ share.name }}
       </h1>
-      <div class="total-size">Total size: {{ niceFileSize(share.size) }}</div>
-      <div class="file-count">Contains: {{ share.file_count }} file{{ share.file_count > 1 ? 's' : '' }}</div>
-      <div class="share-expires">Expires in {{ timeUntilExpiration(share.expires_at) }}</div>
+      <div class="total-size">{{ $t('total_size') }}: {{ niceFileSize(share.size) }}</div>
+      <div class="file-count">
+        {{ $t('share.contains.count', 'Contains: {value} files', { value: share.file_count }) }}
+      </div>
+      <div class="share-expires">
+        {{
+          $t('share.expires.in', {
+            days: timeUntilExpiration(share.expires_at).days,
+            hours: timeUntilExpiration(share.expires_at).hours,
+            minutes: timeUntilExpiration(share.expires_at).minutes
+          })
+        }}
+      </div>
       <div class="file-list">
         <div v-for="file in share.files.slice(0, showFilesCount)" :key="file" class="file-item">
           <div class="file-name">
@@ -77,12 +87,12 @@ const splitFullName = (fullName) => {
         </div>
       </div>
       <div class="share-message mt-3" v-if="share.description">
-        <h6>Message from {{ splitFullName(share.user.name) }}</h6>
+        <h6>{{ $t('message.from', { name: splitFullName(share.user.name) }) }}</h6>
         {{ share.description }}
       </div>
       <div class="download-button-container mt-3">
         <button class="download-button" @click="downloadFiles">
-          Download {{ share.file_count }} file{{ share.file_count > 1 ? 's' : '' }}
+          {{ $t('download.files', 'Download {value} files', { value: share.file_count }) }}
         </button>
       </div>
     </template>
@@ -90,21 +100,20 @@ const splitFullName = (fullName) => {
       <template v-if="shareExpired">
         <h1>
           <HeartCrack />
-          Share Expired
+          {{ $t('share.expired') }}
         </h1>
-        <p>The share you are trying to download has expired. Please ask the share creator to create a new share.</p>
+        <p>{{ $t('share.expired.message') }}</p>
       </template>
       <template v-else-if="downloadLimitReached">
         <h1>
           <TrendingDown />
-          Download Limit Reached
+          {{ $t('share.download_limit_reached') }}
         </h1>
         <p>
-          The share you are trying to download has reached its download limit. Please ask the share creator to increase
-          the download limit.
+          {{ $t('share.download_limit_reached.message') }}
         </p>
       </template>
-      <h1 v-else>Loading...</h1>
+      <h1 v-else>{{ $t('share.data_loading') }}</h1>
     </template>
   </div>
 </template>

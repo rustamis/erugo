@@ -26,7 +26,7 @@
   })
 
   const formatDate = date => {
-    return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    return new Date(date).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
   }
 
   const editUserFormClickOutside = e => {
@@ -73,27 +73,25 @@
       </div>
       <div class="profile-card-tags">
         <!-- user is admin -->
-        <span class="profile-card-tag" v-if="profile.admin">Admin</span>
+        <span class="profile-card-tag" v-if="profile.admin">{{ $t('settings.users.admin') }}</span>
         <!-- user is active -->
-        <span class="profile-card-tag" v-if="profile.active">Active</span>
-        <!-- user requires password change -->
-        <span class="profile-card-tag" v-if="profile.must_change_password">Password Change Required</span>
+        <span class="profile-card-tag" v-if="profile.active">{{ $t('settings.users.active') }}</span>
       </div>
 
       <div class="profile-card-profile-item">
-        <h2>Email</h2>
+        <h2>{{ $t('settings.users.email') }}</h2>
         <p>{{ profile.email }}</p>
       </div>
 
       <div class="profile-card-profile-item">
-        <h2>Account Created</h2>
+        <h2>{{ $t('settings.users.created') }}</h2>
         <p>{{ formatDate(profile.created_at) }}</p>
       </div>
 
       <div class="profile-card-footer">
         <button @click="editUserFormActive = true">
           <UserPen />
-          Edit My Profile
+          {{ $t('settings.users.edit_my_profile') }}
         </button>
       </div>
     </div>
@@ -103,50 +101,50 @@
     <div class="user-form">
       <h2>
         <UserRoundPen />
-        Editing my profile
+        {{ $t('settings.users.edit_my_profile') }}
       </h2>
       <div class="input-container">
-        <input type="email" v-model="editUser.email" placeholder="Email" required :class="{ error: errors.email }" />
+        <input type="email" v-model="editUser.email" :placeholder="$t('settings.users.email')" required :class="{ error: errors.email }" />
         <div class="error-message" v-if="errors.email">
           {{ errors.email }}
         </div>
       </div>
       <div class="input-container">
-        <input type="text" v-model="editUser.name" placeholder="Full Name" required :class="{ error: errors.name }" />
+        <input type="text" v-model="editUser.name" :placeholder="$t('settings.users.name')" required :class="{ error: errors.name }" />
         <div class="error-message" v-if="errors.name">
           {{ errors.name }}
         </div>
       </div>
       
-      <label for="password" class="mb-3">Update Password</label>
+      <label for="password" class="mb-3">{{ $t('settings.users.update_password') }}</label>
       <div class="input-container">
-        <input type="password" v-model="editUser.current_password" placeholder="Current Password" required :class="{ error: errors.current_password }" />
+        <input type="password" v-model="editUser.current_password" :placeholder="$t('settings.users.current_password')" required :class="{ error: errors.current_password }" />
         <div class="error-message" v-if="errors.current_password">
           {{ errors.current_password }}
         </div>
       </div>
       <div class="input-container">
-        <input type="password" v-model="editUser.password" placeholder="Password" required :class="{ error: errors.password }" />
+        <input type="password" v-model="editUser.password" :placeholder="$t('settings.users.password')" required :class="{ error: errors.password }" />
         <div class="error-message" v-if="errors.password">
           {{ errors.password }}
         </div>
       </div>
       <div class="input-container">
-        <input type="password" v-model="editUser.password_confirmation" placeholder="Password Confirmation" required :class="{ error: errors.password_confirmation }" />
+        <input type="password" v-model="editUser.password_confirmation" :placeholder="$t('settings.users.password_confirmation')" required :class="{ error: errors.password_confirmation }" />
         <div class="error-message" v-if="errors.password_confirmation">
           {{ errors.password_confirmation }}
         </div>
-        <p class="help-text">Leave blank to keep the same password</p>
+        <p class="help-text">{{ $t('settings.users.leave_blank_to_keep_same_password') }}</p>
       </div>
 
       <div class="button-bar">
         <button @click="saveUser">
           <UserRoundCheck />
-          Save Changes
+          {{ $t('settings.users.save_changes') }}
         </button>
         <button class="secondary close-button" @click="editUserFormActive = false">
           <CircleX />
-          Close
+          {{ $t('settings.users.close') }}
         </button>
       </div>
     </div>

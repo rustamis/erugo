@@ -1,118 +1,127 @@
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import { getUsers, createUser, deleteUser, updateUser } from '../../api'
-  import { UserPen, Trash, UserPlus, CircleX, UserRoundCheck } from 'lucide-vue-next'
-  import { store } from '../../store'
-  import { useToast } from 'vue-toastification'
-  import { niceDate } from '../../utils'
+import { ref, onMounted } from 'vue'
+import { getUsers, createUser, deleteUser, updateUser } from '../../api'
+import { UserPen, Trash, UserPlus, CircleX, UserRoundCheck } from 'lucide-vue-next'
+import { store } from '../../store'
+import { useToast } from 'vue-toastification'
+import { niceDate } from '../../utils'
 
-  const toast = useToast()
-  const users = ref([])
-  const errors = ref({})
+import { useTranslate } from '@tolgee/vue'
 
-  const newUser = ref({})
-  const editUser = ref({})
+const { t } = useTranslate()
 
-  onMounted(async () => {
-    loadUsers()
-    newUser.value = getEmptyUser()
+const toast = useToast()
+const users = ref([])
+const errors = ref({})
+
+const newUser = ref({})
+const editUser = ref({})
+
+onMounted(async () => {
+  loadUsers()
+  newUser.value = getEmptyUser()
+})
+
+const loadUsers = () => {
+  getUsers().then((data) => {
+    users.value = data.users
   })
+}
 
-  const loadUsers = () => {
-    getUsers().then(data => {
-      users.value = data.users
-    })
+const handleDeleteUserClick = (id) => {
+  if (id === store.userId) {
+    toast.error(t.value('settings.users.cannot_delete_yourself'))
+    return
   }
 
-  const handleDeleteUserClick = id => {
-    if (id === store.userId) {
-      toast.error('You cannot delete yourself.')
-      return
-    }
-    if (confirm(`Are you sure you want to delete user ${id}?`)) {
-      deleteUser(id).then(data => {
+
+  if (confirm(t.value('confirm_delete_user'))) {
+    deleteUser(id).then(
+      (data) => {
         loadUsers()
-        toast.success('User deleted successfully')
-      }, error => {
-        toast.error('Failed to delete user')
-      })
-    }
+        toast.success(t.value('settings.users.user_deleted_successfully'))
+      },
+      (error) => {
+        toast.error(t.value('settings.users.failed_to_delete_user'))
+      }
+    )
   }
+}
 
-  const handleEditUserClick = user => {
-    editUser.value = user
-    editUser.value.admin = user.admin == 1
-    editUser.value.must_change_password = user.must_change_password == 1
-    editUserFormActive.value = true
+const handleEditUserClick = (user) => {
+  editUser.value = user
+  editUser.value.admin = user.admin == 1
+  editUser.value.must_change_password = user.must_change_password == 1
+  editUserFormActive.value = true
+}
+
+const addUser = () => {
+  newUserFormActive.value = true
+}
+
+//expose addUser to parent
+defineExpose({
+  addUser
+})
+
+const newUserFormActive = ref(false)
+
+const newUserFormClickOutside = (event) => {
+  if (!event.target.closest('.user-form')) {
+    newUserFormActive.value = false
   }
+}
 
-  const addUser = () => {
-    newUserFormActive.value = true
+const editUserFormActive = ref(false)
+
+const editUserFormClickOutside = (event) => {
+  if (!event.target.closest('.user-form')) {
+    editUserFormActive.value = false
   }
+}
 
-  //expose addUser to parent
-  defineExpose({
-    addUser
-  })
+const saveUser = () => {
+  errors.value = {}
 
-  const newUserFormActive = ref(false)
-
-  const newUserFormClickOutside = event => {
-    if (!event.target.closest('.user-form')) {
-      newUserFormActive.value = false
-    }
+  if (newUserFormActive.value) {
+    createUser(newUser.value).then(
+      (data) => {
+        loadUsers()
+        newUserFormActive.value = false
+        newUser.value = getEmptyUser()
+        toast.success(t.value('settings.users.user_created_successfully'))
+      },
+      (error) => {
+        errors.value = error.data.errors
+        toast.error(t.value('settings.users.failed_to_create_user'))
+      }
+    )
+  } else if (editUserFormActive.value) {
+    updateUser(editUser.value).then(
+      (data) => {
+        loadUsers()
+        editUserFormActive.value = false
+        editUser.value = getEmptyUser()
+        toast.success(t.value('settings.users.user_updated_successfully'))
+      },
+      (error) => {
+        errors.value = error.data.errors
+        toast.error(t.value('settings.users.failed_to_update_user'))
+      }
+    )
   }
+}
 
-  const editUserFormActive = ref(false)
-
-  const editUserFormClickOutside = event => {
-    if (!event.target.closest('.user-form')) {
-      editUserFormActive.value = false
-    }
+const getEmptyUser = () => {
+  return {
+    email: '',
+    password: '',
+    password_confirmation: '',
+    name: '',
+    admin: false,
+    must_change_password: false
   }
-
-  const saveUser = () => {
-    errors.value = {}
-
-    if (newUserFormActive.value) {
-      createUser(newUser.value).then(
-        data => {
-          loadUsers()
-          newUserFormActive.value = false
-          newUser.value = getEmptyUser()
-          toast.success('User created successfully')
-        },
-        error => {
-          errors.value = error.data.errors
-          toast.error('Failed to create user')
-        }
-      )
-    } else if (editUserFormActive.value) {
-      updateUser(editUser.value).then(
-        data => {
-          loadUsers()
-          editUserFormActive.value = false
-          editUser.value = getEmptyUser() 
-          toast.success('User updated successfully')
-        },
-        error => {
-          errors.value = error.data.errors
-          toast.error('Failed to update user')
-        }
-      )
-    }
-  }
-
-  const getEmptyUser = () => {
-    return {
-      email: '',
-      password: '',
-      password_confirmation: '',
-      name: '',
-      admin: false,
-      must_change_password: false
-    }
-  }
+}
 </script>
 
 <template>
@@ -120,12 +129,12 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Email</th>
-          <th>Full Name</th>
-          <th>Account</th>
-          <th>Created</th>
-          <th>Actions</th>
+          <th>{{ $t('settings.users.id') }}</th>
+          <th>{{ $t('settings.users.email') }}</th>
+          <th>{{ $t('settings.users.name') }}</th>
+          <th>{{ $t('settings.users.account') }}</th>
+          <th>{{ $t('settings.users.created') }}</th>
+          <th>{{ $t('settings.users.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -134,22 +143,31 @@
           <td>
             {{ user.email }}
             <div class="tags" v-if="user.id === store.userId || user.admin || user.must_change_password">
-              <span v-if="user.id === store.userId" class="you-tag">You</span>
-              <span v-if="user.admin" class="admin-tag">Admin</span>
-              <span v-if="user.must_change_password" class="must-change-password-tag">Password change required</span>
+              <span v-if="user.id === store.userId" class="you-tag">{{ $t('settings.users.you') }}</span>
+              <span v-if="user.admin" class="admin-tag">{{ $t('settings.users.admin') }}</span>
+              <span v-if="user.must_change_password" class="must-change-password-tag">
+                {{ $t('settings.users.must_change_password') }}
+              </span>
             </div>
           </td>
           <td>{{ user.name }}</td>
-          <td>{{ user.admin ? 'Admin' : 'User' }}</td>
+          <td>
+            <template v-if="user.admin">
+              {{ $t('settings.users.admin') }}
+            </template>
+            <template v-else>
+              {{ $t('settings.users.user') }}
+            </template>
+          </td>
           <td>{{ niceDate(user.created_at) }}</td>
           <td width="1" style="white-space: nowrap">
             <button :disabled="user.id === store.userId" @click="handleEditUserClick(user)">
               <UserPen />
-              Edit
+              {{ $t('settings.users.edit') }}
             </button>
             <button class="secondary" :disabled="user.id === store.userId" @click="handleDeleteUserClick(user.id)">
               <Trash />
-              Delete
+              {{ $t('settings.users.delete') }}
             </button>
           </td>
         </tr>
@@ -161,44 +179,56 @@
     <div class="user-form">
       <h2>
         <UserPlus />
-        Add User
+        {{ $t('settings.users.add') }}
       </h2>
-      <p>We'll send an email to the user with a link to set their&nbsp;password.</p>
+      <p v-html="$t('settings.users.add_user_description')"></p>
       <div class="input-container">
-        <label for="new_user_email">Email</label>
-        <input type="email" v-model="newUser.email" id="new_user_email" placeholder="Email" required :class="{ error: errors.email }" />
+        <label for="new_user_email">{{ $t('settings.users.email') }}</label>
+        <input
+          type="email"
+          v-model="newUser.email"
+          id="new_user_email"
+          :placeholder="$t('settings.users.email')"
+          required
+          :class="{ error: errors.email }"
+        />
         <div class="error-message" v-if="errors.email">
           {{ errors.email[0] }}
         </div>
       </div>
       <div class="input-container">
-        <label for="new_user_name">Full Name</label>
-        <input type="text" v-model="newUser.name" id="new_user_name" placeholder="Full Name" required :class="{ error: errors.name }" />
+        <label for="new_user_name">{{ $t('settings.users.name') }}</label>
+        <input
+          type="text"
+          v-model="newUser.name"
+          id="new_user_name"
+          :placeholder="$t('settings.users.name')"
+          required
+          :class="{ error: errors.name }"
+        />
         <div class="error-message" v-if="errors.name">
           {{ errors.name[0] }}
         </div>
       </div>
-      
-    
 
       <div class="checkbox-container">
         <input type="checkbox" v-model="newUser.admin" id="admin" />
-        <label for="admin">Admin</label>
+        <label for="admin">{{ $t('settings.users.admin') }}</label>
         <p class="help-text">
-          Make the user an admin.
+          {{ $t('settings.users.admin_help_text') }}
           <br />
-          User will have the privelges as you.
+          {{ $t('settings.users.admin_help_text_2') }}
         </p>
       </div>
-      
+
       <div class="button-bar">
         <button @click="saveUser">
           <UserPlus />
-          Add User
+          {{ $t('settings.users.add') }}
         </button>
         <button class="secondary close-button" @click="newUserFormActive = false">
           <CircleX />
-          Close
+          {{ $t('settings.close') }}
         </button>
       </div>
     </div>
@@ -208,41 +238,55 @@
     <div class="user-form">
       <h2>
         <UserPlus />
-        Edit User {{ editUser.name }}
+        {{ $t('settings.title.users.edit', { name: editUser.name }) }}
       </h2>
       <div class="input-container">
-        <label for="edit_user_email">Email</label>
-        <input type="email" v-model="editUser.email" id="edit_user_email" placeholder="Email" required :class="{ error: errors.email }" />
+        <label for="edit_user_email">{{ $t('settings.users.email') }}</label>
+        <input
+          type="email"
+          v-model="editUser.email"
+          id="edit_user_email"
+          :placeholder="$t('settings.users.email')"
+          required
+          :class="{ error: errors.email }"
+        />
         <div class="error-message" v-if="errors.email">
           {{ errors.email }}
         </div>
       </div>
       <div class="input-container">
-        <label for="edit_user_name">Full Name</label>
-        <input type="text" v-model="editUser.name" id="edit_user_name" placeholder="Full Name" required :class="{ error: errors.name }" />
+        <label for="edit_user_name">{{ $t('settings.users.name') }}</label>
+        <input
+          type="text"
+          v-model="editUser.name"
+          id="edit_user_name"
+          :placeholder="$t('settings.users.name')"
+          required
+          :class="{ error: errors.name }"
+        />
         <div class="error-message" v-if="errors.name">
           {{ errors.name }}
         </div>
       </div>
-      
+
       <div class="checkbox-container">
         <input type="checkbox" v-model="editUser.admin" id="edit_user_admin" />
-        <label for="edit_user_admin">Admin</label>
+        <label for="edit_user_admin">{{ $t('settings.users.admin') }}</label>
         <p class="help-text">
-          Make the user an admin.
+          {{ $t('settings.users.admin_help_text') }}
           <br />
-          User will have the privelges as you.
+          {{ $t('settings.users.admin_help_text_2') }}
         </p>
       </div>
-   
+
       <div class="button-bar">
         <button @click="saveUser">
           <UserRoundCheck />
-          Save Changes
+          {{ $t('settings.users.save_changes') }}
         </button>
         <button class="secondary close-button" @click="editUserFormActive = false">
           <CircleX />
-          Close
+          {{ $t('settings.close') }}
         </button>
       </div>
     </div>
@@ -250,90 +294,89 @@
 </template>
 
 <style lang="scss" scoped>
-  .tags {
+.tags {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+.you-tag {
+  display: inline-block;
+  background: var(--primary-button-background-color);
+  color: var(--primary-button-text-color);
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  transform: translateY(-1px);
+}
+
+.admin-tag {
+  display: inline-block;
+  background: var(--secondary-button-background-color);
+  color: var(--secondary-button-text-color);
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  transform: translateY(-1px);
+}
+
+.user-form-overlay {
+  border-radius: 10px 10px 0 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--accent-color-light-transparent-2);
+  backdrop-filter: blur(10px);
+  z-index: 230;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+
+  h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: var(--secondary-color);
     display: flex;
-    gap: 5px;
-    margin-top: 5px;
-  }
-  .you-tag {
-    display: inline-block;
-    background: var(--primary-button-background-color);
-    color: var(--primary-button-text-color);
-    font-size: 12px;
-    padding: 2px 5px;
-    border-radius: 5px;
-    transform: translateY(-1px);
-  }
+    align-items: center;
+    justify-content: center;
 
-  .admin-tag {
-    display: inline-block;
-    background: var(--secondary-button-background-color);
-    color: var(--secondary-button-text-color);
-    font-size: 12px;
-    padding: 2px 5px;
-    border-radius: 5px;
-    transform: translateY(-1px);
+    svg {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
   }
-
-
-  .user-form-overlay {
+  .user-form {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    width: 500px;
+    background: var(--accent-color-light-transparent);
+    color: var(--secondary-color);
+    padding: 20px;
     border-radius: 10px 10px 0 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--accent-color-light-transparent-2);
-    backdrop-filter: blur(10px);
-    z-index: 230;
-    opacity: 0;
-    pointer-events: none;
+    box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
     transition: all 0.3s ease;
-
-    h2 {
-      margin-bottom: 10px;
-      font-size: 24px;
-      color: var(--secondary-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      svg {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-      }
-    }
-    .user-form {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translate(-50%, 100%);
-      width: 500px;
-      background: var(--accent-color-light-transparent);
-      color: var(--secondary-color);
-      padding: 20px;
-      border-radius: 10px 10px 0 0;
-      box-shadow: 0 0 100px 0 rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-      gap: 10px;
-      transition: all 0.3s ease;
-      padding-bottom: 20px;
-      button {
-        display: block;
-        width: 100%;
-      }
-    }
-
-    &.active {
-      opacity: 1;
-      pointer-events: auto;
-      .user-form {
-        transform: translate(-50%, 0%);
-      }
+    padding-bottom: 20px;
+    button {
+      display: block;
+      width: 100%;
     }
   }
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+    .user-form {
+      transform: translate(-50%, 0%);
+    }
+  }
+}
 </style>

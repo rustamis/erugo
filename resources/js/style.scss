@@ -999,3 +999,9 @@ body {
 .text-danger {
   color: #ee7354 !important;
 }
+
+
+.tg-dev-tools {
+  z-index: 9999999 !important; /* Use a value higher than your highest z-index */
+  position: fixed !important;
+}

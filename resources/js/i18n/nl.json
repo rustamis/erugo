@@ -1,0 +1,85 @@
+{
+  "Add Files": "Bestanden toevoegen",
+  "Add Folders": "Mappen toevoegen",
+  "Add Recipient": "Toevoegen Ontvanger",
+  "Message to share recipients (optional)": "Bericht om te delen naar ontvanger",
+  "No files added yet": "Nog geen bestanden toegevoegd",
+  "No recipients": "Geen ontvangers",
+  "Share Name": "Deel naam",
+  "Share URL": "Deel link",
+  "confirm_delete_user": "Weet je zeker dat je deze gebruiker wilt verwijderen?",
+  "download": {
+    "files": "{value, plural, one {Dowload bestand} other {}}"
+  },
+  "limit": "Beperk",
+  "message": {
+    "from": "Bericht van"
+  },
+  "settings": {
+    "button": {
+      "system": {
+        "save": "Bewaar systeem instellingen"
+      },
+      "users": {
+        "add": "Toevoegen gebruiker"
+      }
+    },
+    "close": "Sluit",
+    "description": {
+      "myProfile": "Beheer je profiel",
+      "users": "Beheer je gebruikers"
+    },
+    "table": {
+      "actions": "Akties",
+      "dates": "Datums",
+      "files": "Bestanden",
+      "name": "Naam"
+    },
+    "title": {
+      "manage": "Beheer",
+      "myProfile": "Mijn profiel",
+      "system": "Systeem Instellingen",
+      "users": "Gebruikers",
+      "users.edit": "Bewerk {name}"
+    },
+    "users": {
+      "account": "Type rekening",
+      "actions": "Akties",
+      "add": "Toevoegen gebruiker",
+      "add_user_description": "We sturen een e-mail naar de gebruiker met een link om het&nbsp;wachtwoord in te stellen.",
+      "admin": "Admin",
+      "admin_help_text": "Maak van de gebruiker een beheerder.",
+      "admin_help_text_2": "De gebruiker heeft dezelfde rechten als jij.\n",
+      "cannot_delete_yourself": "Je kunt jezelf niet verwijderen",
+      "created": "Gemaakt",
+      "delete": "Verwijder",
+      "edit": "Bewerk",
+      "email": "E-mail",
+      "failed_to_create_user": "Gebruiker niet aangemaakt",
+      "failed_to_delete_user": "Gebruiker niet verwijderd",
+      "failed_to_update_user": "Gebruiker kon niet worden bijgewerkt",
+      "id": "ID",
+      "name": "Naam",
+      "save_changes": "Wijzigingen opslaan",
+      "user": "Gebruiker",
+      "user_created_successfully": "Gebruiker succesvol aangemaakt",
+      "user_deleted_successfully": "De gebruiker is succesvol verwijderd",
+      "user_updated_successfully": "Gebruiker succesvol bijgewerkt",
+      "you": "U"
+    }
+  },
+  "share": {
+    "button": {
+      "expireNow": "Nu verlopen",
+      "extend": "Verleng"
+    },
+    "created": "Gemaakt",
+    "data_loading": "Laden...",
+    "deletes": "Verwijdert",
+    "expires": "Verloopt op",
+    "files": {
+      "count": "{value, plural, one {# bestand} other {# bestanden}}",
+      "including": "inclusief:"
+    }
+  }
+}

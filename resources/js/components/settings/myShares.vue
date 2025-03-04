@@ -6,7 +6,7 @@ import {
   CalendarPlus,
   CalendarX2,
   HardDriveDownload,
-  MessageCircleQuestion,
+  MessageCircleQuestion
 } from 'lucide-vue-next'
 import { useToast } from 'vue-toastification'
 import { niceFileSize, niceDate, niceFileName, niceNumber } from '../../utils'
@@ -57,7 +57,6 @@ const handleDownloadLimitChange = async (share) => {
     newLimit = parseInt(share.download_limit)
   }
 
-
   if (isNaN(newLimit)) {
     toast.error('Invalid download limit')
     return
@@ -87,29 +86,29 @@ const enableExtendShareButton = (share) => {
 const enableDownloadButton = (share) => {
   return !share.expired && !share.deleted
 }
-
 </script>
 
 <template>
   <div>
-    <HelpTip id="download-limit-help-tip" header="Download Limit Help">
+    <HelpTip id="download-limit-help-tip" :header="$t('settings.help.downloadLimit.title')">
       <p>
-        You can set the download limit for any share by clicking the right-side number and typing in the new limit.
-        Clear the box to remove the limit.
+        {{ $t('settings.help.downloadLimit.description') }}
       </p>
-      <p>Changes will be saved automatically when you click outside the box.</p>
+      <p>
+        {{ $t('settings.help.downloadLimit.description2') }}
+      </p>
     </HelpTip>
     <table v-if="shares.length > 0">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Files</th>
+          <th>{{ $t('settings.table.name') }}</th>
+          <th>{{ $t('settings.table.files') }}</th>
           <th>
-            Downloads
+            {{ $t('settings.table.downloads') }}
             <MessageCircleQuestion @click.stop="showHelpTip($event, '#download-limit-help-tip')" />
           </th>
-          <th>Dates</th>
-          <th>Actions</th>
+          <th>{{ $t('settings.table.dates') }}</th>
+          <th>{{ $t('settings.table.actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -125,8 +124,10 @@ const enableDownloadButton = (share) => {
           </td>
           <td style="vertical-align: top">
             <h6 class="file-count">
-              {{ share.files.length }} file{{ share.files.length > 1 ? 's' : '' }}
-              {{ share.files.maxFilesToShow > 1 ? 'including:' : '' }}
+              {{ $t('share.files.count', { count: share.files.length, value: share.files.length }) }}
+              <template v-if="share.files.length > maxFilesToShow">
+                {{ $t('share.files.including') }}
+              </template>
             </h6>
             <div class="files-container pt-1">
               <div class="file" v-for="file in share.files.slice(0, maxFilesToShow)" :key="file.id">
@@ -142,8 +143,9 @@ const enableDownloadButton = (share) => {
           </td>
           <td width="1" style="white-space: nowrap" class="text-center">
             <div class="download_limit_manager">
+              <div class="limit-label">{{ $t('limit') }}</div>
               <div class="download_count">
-                <label class="count_label">Downloads</label>
+                <label class="count_label">{{ $t('settings.table.downloads') }}</label>
                 {{ niceNumber(share.download_count) }}
                 <span>/</span>
               </div>
@@ -158,22 +160,22 @@ const enableDownloadButton = (share) => {
           <td width="1" style="white-space: nowrap">
             <div class="date-container">
               <div class="date">
-                <span>Created:</span>
+                <span>{{ $t('share.created') }}:</span>
                 {{ niceDate(share.created_at) }}
               </div>
               <div class="date">
-                <span>Expires:</span>
+                <span>{{ $t('share.expires') }}:</span>
                 <template v-if="share.expired">
-                  <strong class="ps-1 text-danger">Expired</strong>
+                  <strong class="ps-1 text-danger">{{ $t('share.expired') }}</strong>
                 </template>
                 <template v-else>
                   {{ niceDate(share.expires_at) }}
                 </template>
               </div>
               <div class="date">
-                <span>Deletes:</span>
+                <span>{{ $t('share.deletes') }}:</span>
                 <template v-if="share.deleted">
-                  <strong class="ps-1 text-danger">Deleted</strong>
+                  <strong class="ps-1 text-danger">{{ $t('share.deleted') }}</strong>
                 </template>
                 <template v-else>
                   {{ niceDate(share.deletes_at) }}
@@ -182,15 +184,28 @@ const enableDownloadButton = (share) => {
             </div>
           </td>
           <td width="1" style="white-space: nowrap">
-            <button @click="handleExpireShareClick(share)" class="clear-button" :disabled="!enableExpireShareButton(share)">
+            <button
+              @click="handleExpireShareClick(share)"
+              class="clear-button"
+              :disabled="!enableExpireShareButton(share)"
+            >
               <CalendarX2 />
-              Expire Now
+              {{ $t('share.button.expireNow') }}
             </button>
-            <button @click="handleExtendShareClick(share)" class="secondary" :disabled="!enableExtendShareButton(share)">
+            <button
+              @click="handleExtendShareClick(share)"
+              class="secondary"
+              :disabled="!enableExtendShareButton(share)"
+            >
               <CalendarPlus />
-              Extend
+              {{ $t('share.button.extend') }}
             </button>
-            <button @click="downloadShare(share)" class="secondary icon-only" title="Download all files" :disabled="!enableDownloadButton(share)">
+            <button
+              @click="downloadShare(share)"
+              class="secondary icon-only"
+              title="Download all files"
+              :disabled="!enableDownloadButton(share)"
+            >
               <HardDriveDownload style="margin-right: 0" />
             </button>
           </td>
@@ -201,6 +216,8 @@ const enableDownloadButton = (share) => {
 </template>
 
 <style lang="scss" scoped>
+
+
 .files-container {
   display: flex;
   flex-direction: row;
@@ -253,7 +270,7 @@ const enableDownloadButton = (share) => {
       margin-bottom: -5px;
       margin-top: -5px;
       height: calc(100% + 10px);
-      width: 100px;
+      min-width: 100px;
       margin-right: 10px;
     }
   }
@@ -301,6 +318,7 @@ td {
 }
 
 .download_limit_manager {
+  position: relative;
   --height: 40px;
   display: flex;
   flex-direction: row;
@@ -308,6 +326,22 @@ td {
   background: var(--panel-section-background-color-alt);
   height: var(--height);
   border-radius: 5px;
+  .limit-label {
+      position: absolute;
+      left: 90px;
+      width: 90px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0.3;
+      font-size: 0.5rem;
+      font-weight: normal;
+      padding-bottom: 1.5px;
+      color: var(--panel-section-text-color);
+      z-index: 1;
+    }
   .download_count {
     position: relative;
     display: flex;
@@ -323,7 +357,7 @@ td {
     background: var(--panel-section-background-color-alt);
     font-weight: bold;
     width: 90px;
-    padding-bottom: 6px!important;
+    padding-bottom: 6px !important;
     span {
       position: absolute;
       left: 86.5px;
@@ -344,26 +378,10 @@ td {
       font-weight: normal;
       padding-bottom: 1.5px;
     }
-    &:after {
-      content: 'Limit';
-      position: absolute;
-      left: 90px;
-      width: 90px;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      opacity: 0.3;
-      font-size: 0.5rem;
-      font-weight: normal;
-      padding-bottom: 1.5px;
-      color: var(--panel-section-text-color);
-      z-index: 1;
-    }
+    
   }
   .download_limit_input {
-    position: relative!important;
+    position: relative !important;
     background: var(--panel-section-background-color-alt);
     height: var(--height);
     border: none;
@@ -371,7 +389,7 @@ td {
     text-align: center;
     margin: 0;
     width: 90px;
-    padding-bottom: 16px!important;
+    padding-bottom: 16px !important;
     &:focus {
       outline: none;
     }

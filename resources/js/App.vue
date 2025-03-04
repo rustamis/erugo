@@ -11,6 +11,8 @@ import { getApiUrl } from './utils'
 import { domData } from './domData'
 import { emitter, store } from './store'
 import { logout, getBackgroundImages } from './api'
+import { TolgeeProvider } from '@tolgee/vue'
+import LanguageSelector from './components/languageSelector.vue'
 
 const apiUrl = getApiUrl()
 
@@ -99,58 +101,61 @@ const openSettings = () => {
 </script>
 
 <template>
-  <div class="backgrounds" v-if="!useMyBackgrounds">
-    <div
-      class="backgrounds-item"
-      v-for="image in unsplashImages"
-      :key="image"
-      :style="{
-        backgroundImage: `url(https://images.unsplash.com/${image.id}?q=80&w=1920&auto=format)`
-      }"
-    >
-      <div class="backgrounds-item-credit" v-html="image.credit"></div>
-    </div>
-  </div>
-
-  <div class="backgrounds" v-else>
-    <div
-      class="backgrounds-item"
-      v-for="image in backgroundImages"
-      :key="image"
-      :style="{ backgroundImage: `url(/api/backgrounds/${image})` }"
-    ></div>
-  </div>
-  <template v-if="store.isLoggedIn()">
-    <button class="logout icon-only" @click="handleLogoutClick"><LogOut /></button>
-    <button class="settings-button icon-only" @click="openSettings">
-      <SettingsIcon />
-    </button>
-  </template>
-
-  <div class="wrapper">
-    <div class="left-panel">
-      <div class="logo-container">
-        <a href="/"><img :src="logoUrl" alt="Erugo" id="logo" :style="{ width: `${logoWidth}px` }" /></a>
-      </div>
-
-      <div class="ui-container">
-        <template v-if="store.mode === 'upload'">
-          <Uploader v-if="store.isLoggedIn()" />
-          <Auth v-show="!store.isLoggedIn()" ref="auth" />
-        </template>
-        <Downloader v-if="store.mode === 'download'" :downloadShareCode="downloadShareCode" />
-        <template v-if="store.mode === 'setup'">
-          <Setup />
-        </template>
+  <TolgeeProvider>
+    <LanguageSelector />
+    <div class="backgrounds" v-if="!useMyBackgrounds">
+      <div
+        class="backgrounds-item"
+        v-for="image in unsplashImages"
+        :key="image"
+        :style="{
+          backgroundImage: `url(https://images.unsplash.com/${image.id}?q=80&w=1920&auto=format)`
+        }"
+      >
+        <div class="backgrounds-item-credit" v-html="image.credit"></div>
       </div>
     </div>
-  </div>
-  <div class="version-info" v-if="showPoweredBy">
-    <div class="version-info-text">
-      Powered by
-      <a href="https://github.com/deanward/erugo">erugo</a>
-      {{ version }}
+
+    <div class="backgrounds" v-else>
+      <div
+        class="backgrounds-item"
+        v-for="image in backgroundImages"
+        :key="image"
+        :style="{ backgroundImage: `url(/api/backgrounds/${image})` }"
+      ></div>
     </div>
-  </div>
-  <Settings ref="settingsPanel" />
+    <template v-if="store.isLoggedIn()">
+      <button class="logout icon-only" @click="handleLogoutClick"><LogOut /></button>
+      <button class="settings-button icon-only" @click="openSettings">
+        <SettingsIcon />
+      </button>
+    </template>
+
+    <div class="wrapper">
+      <div class="left-panel">
+        <div class="logo-container">
+          <a href="/"><img :src="logoUrl" alt="Erugo" id="logo" :style="{ width: `${logoWidth}px` }" /></a>
+        </div>
+
+        <div class="ui-container">
+          <template v-if="store.mode === 'upload'">
+            <Uploader v-if="store.isLoggedIn()" />
+            <Auth v-show="!store.isLoggedIn()" ref="auth" />
+          </template>
+          <Downloader v-if="store.mode === 'download'" :downloadShareCode="downloadShareCode" />
+          <template v-if="store.mode === 'setup'">
+            <Setup />
+          </template>
+        </div>
+      </div>
+    </div>
+    <div class="version-info" v-if="showPoweredBy">
+      <div class="version-info-text">
+        {{ $t('Powered by') }}
+        <a href="https://github.com/deanward/erugo">Erugo</a>
+        {{ version }}
+      </div>
+    </div>
+    <Settings ref="settingsPanel" />
+  </TolgeeProvider>
 </template>

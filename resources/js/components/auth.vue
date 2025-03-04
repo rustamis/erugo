@@ -7,6 +7,10 @@ import { KeyRound, Annoyed } from 'lucide-vue-next'
 import { store } from '../store'
 import { login, refresh, logout, forgotPassword, resetPassword } from '../api'
 
+import { useTranslate } from '@tolgee/vue'
+
+const { t } = useTranslate()
+
 const apiUrl = getApiUrl()
 const toast = useToast()
 const email = ref('')
@@ -31,16 +35,16 @@ onMounted(() => {
 
 const attemptLogin = async () => {
   if (email.value === '' || password.value === '') {
-    toast.error('Please enter an email and password')
+    toast.error(t.value('auth.please_enter_email_and_password'))
     return
   }
 
   try {
     const data = await login(email.value, password.value)
     store.authSuccess(data)
-    toast.success('Login successful')
+    toast.success(t.value('auth.login_successful'))
   } catch (error) {
-    toast.error('Invalid email or password')
+    toast.error(t.value('auth.invalid_email_or_password'))
   }
 }
 
@@ -63,35 +67,38 @@ const moveToPassword = () => {
 }
 
 const attemptForgotPassword = async () => {
-  console.log('attemptForgotPassword', email.value)
+  if (email.value === '') {
+    toast.error(t.value('auth.please_enter_email'))
+    return
+  }
   try {
     await forgotPassword(email.value)
-    toast.success('Password reset email sent')
+    toast.success(t.value('auth.password_reset_email_sent'))
     forgotPasswordMode.value = false
   } catch (error) {
-    toast.error('Failed to send password reset email')
+    toast.error(t.value('auth.failed_to_send_password_reset_email'))
   }
 }
 
 const attemptResetPassword = async () => {
   if (password.value === '' || password_confirmation.value === '') {
-    toast.error('Please enter a password and confirm password')
+    toast.error(t.value('auth.please_enter_password_and_confirm_password'))
     return
   }
   if (password.value !== password_confirmation.value) {
-    toast.error('Passwords do not match')
+    toast.error(t.value('auth.passwords_do_not_match'))
     return
   }
   try {
     await resetPassword(resetToken.value, email.value, password.value, password_confirmation.value)
-    toast.success('Password reset successfully')
+    toast.success(t.value('auth.password_reset_successfully'))
     haveResetToken.value = false
     waitingForRedirect.value = true
     setTimeout(() => {
       window.location.href = '/'
     }, 3000)
   } catch (error) {
-    toast.error('Failed to reset password')
+    toast.error(t.value('auth.failed_to_reset_password'))
   }
 }
 </script>
@@ -100,23 +107,23 @@ const attemptResetPassword = async () => {
   <div class="auth-container" v-if="!haveResetToken && !waitingForRedirect">
     <div class="auth-container-inner">
       <template v-if="!forgotPasswordMode">
-        <h1>Welcome</h1>
+        <h1>{{ $t('auth.welcome') }}</h1>
         <p>{{ loginMessage }}</p>
       </template>
       <template v-else>
-        <h1>Forgot Password</h1>
-        <p>Please enter your email to reset your password</p>
+        <h1>{{ $t('auth.forgot_password') }}</h1>
+        <p>{{ $t('auth.please_enter_email_to_reset_password') }}</p>
       </template>
       <div class="input-container">
-        <label for="email">Email</label>
-        <input type="text" v-model="email" placeholder="Email" @keyup.enter="moveToPassword" />
+        <label for="email">{{ $t('auth.email') }}</label>
+        <input type="text" v-model="email" :placeholder="$t('auth.email')" @keyup.enter="moveToPassword" />
       </div>
       <div class="input-container" v-if="!forgotPasswordMode">
-        <label for="password">Password</label>
+        <label for="password">{{ $t('auth.password') }}</label>
         <input
           type="password"
           v-model="password"
-          placeholder="Password"
+          :placeholder="$t('auth.password')"
           @keyup.enter="attemptLogin"
           ref="passwordInput"
         />
@@ -125,21 +132,21 @@ const attemptResetPassword = async () => {
         <div class="col">
           <button class="block" @click="attemptLogin">
             <KeyRound />
-            Login
+            {{ $t('auth.login') }}
           </button>
         </div>
         <div class="col">
-          <a href="" @click.prevent="forgotPasswordMode = true">Forgot Password?</a>
+          <a href="" @click.prevent="forgotPasswordMode = true">{{ $t('auth.forgot_password') }}</a>
         </div>
       </div>
       <div class="row mt-3 align-items-center" v-if="forgotPasswordMode">
         <div class="col">
           <button class="block" @click="attemptForgotPassword">
-            <KeyRound />Request&nbsp;Reset
+            <KeyRound />{{ $t('auth.request_reset') }}
           </button>
         </div>
         <div class="col">
-          <a href="" @click.prevent="forgotPasswordMode = false">Back to Login</a>
+          <a href="" @click.prevent="forgotPasswordMode = false">{{ $t('auth.back_to_login') }}</a>
         </div>
       </div>
     </div>

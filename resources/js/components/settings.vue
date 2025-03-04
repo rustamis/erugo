@@ -8,6 +8,10 @@ import SystemSettings from './settings/system.vue'
 import MyProfile from './settings/myProfile.vue'
 import MyShares from './settings/myShares.vue'
 
+import { useTranslate } from '@tolgee/vue'
+
+const { t } = useTranslate()
+
 //settings panels
 const usersPanel = ref(null)
 const brandingSettings = ref(null)
@@ -67,19 +71,32 @@ const handleNavItemClicked = (item) => {
 }
 
 const getSettingsTitle = () => {
+  // Check if t.value exists and is a function
+  if (!t.value) {
+    // Fallback if translation function is not ready
+    const fallbackTitles = {
+      branding: 'Branding',
+      system: 'System',
+      users: 'Users',
+      myProfile: 'My Profile',
+      myShares: 'My Shares'
+    }
+    return fallbackTitles[activeTab.value] || 'Erugo'
+  }
+
   switch (activeTab.value) {
     case 'branding':
-      return 'Branding &amp; UI'
+      return t.value('settings.title.branding')
     case 'system':
-      return 'System Settings'
+      return t.value('settings.title.system')
     case 'users':
-      return 'Users'
+      return t.value('settings.title.users')
     case 'myProfile':
-      return 'My Profile'
+      return t.value('settings.title.myProfile')
     case 'myShares':
-      return 'My Shares'
+      return t.value('settings.title.myShares')
     default:
-      return 'erugo Settings' 
+      return t.value('settings.title.erugo')
   }
 }
 </script>
@@ -90,7 +107,10 @@ const getSettingsTitle = () => {
       <div class="settings-header">
         <h1>
           <Settings />
-           <span>Manage <span v-html="getSettingsTitle()" /></span>
+          <span>
+            {{ $t('settings.title.manage') }}
+            <span v-html="getSettingsTitle()" />
+          </span>
         </h1>
         <button class="close-settings-button icon-only" @click="closeSettings">
           <CircleX />
@@ -98,34 +118,49 @@ const getSettingsTitle = () => {
       </div>
       <div class="settings-tabs-wrapper">
         <div class="settings-tabs-container">
-          <div class="settings-tab" :class="{ active: activeTab === 'branding' }" @click="setActiveTab('branding')" v-if="store.isAdmin()">
+          <div
+            class="settings-tab"
+            :class="{ active: activeTab === 'branding' }"
+            @click="setActiveTab('branding')"
+            v-if="store.isAdmin()"
+          >
             <h2>
               <Palette />
-              Branding &amp; UI
+              {{ $t('settings.title.branding') }}
             </h2>
           </div>
-          <div class="settings-tab" :class="{ active: activeTab === 'system' }" @click="setActiveTab('system')" v-if="store.isAdmin()">
+          <div
+            class="settings-tab"
+            :class="{ active: activeTab === 'system' }"
+            @click="setActiveTab('system')"
+            v-if="store.isAdmin()"
+          >
             <h2>
               <Settings />
-              System Settings
+              {{ $t('settings.title.system') }}
             </h2>
           </div>
-          <div class="settings-tab" :class="{ active: activeTab === 'users' }" @click="setActiveTab('users')" v-if="store.isAdmin()">
+          <div
+            class="settings-tab"
+            :class="{ active: activeTab === 'users' }"
+            @click="setActiveTab('users')"
+            v-if="store.isAdmin()"
+          >
             <h2>
               <UsersIcon />
-              Users
+              {{ $t('settings.title.users') }}
             </h2>
           </div>
           <div class="settings-tab" :class="{ active: activeTab === 'myShares' }" @click="setActiveTab('myShares')">
             <h2>
               <Boxes />
-              My Shares
+              {{ $t('settings.title.myShares') }}
             </h2>
           </div>
           <div class="settings-tab" :class="{ active: activeTab === 'myProfile' }" @click="setActiveTab('myProfile')">
             <h2>
               <User />
-              My Profile
+              {{ $t('settings.title.myProfile') }}
             </h2>
           </div>
         </div>
@@ -136,19 +171,23 @@ const getSettingsTitle = () => {
                 <h2 class="d-none d-md-flex">
                   <Palette />
                   <span>
-                    Branding &amp; UI
-                    <small>Customise the UI of your erugo instance and add your own branding.</small>
+                    {{ $t('settings.title.branding') }}
+                    <small>{{ $t('settings.description.branding') }}</small>
                   </span>
                 </h2>
                 <div class="user-actions">
                   <button @click="$refs['brandingSettings'].saveSettings()">
                     <Save />
-                    Save Branding Settings
+                    {{ $t('settings.button.branding.save') }}
                   </button>
                 </div>
               </div>
               <div class="tab-content-body">
-                <BrandingSettings ref="brandingSettings" v-if="store.settingsOpen" @navItemClicked="handleNavItemClicked" />
+                <BrandingSettings
+                  ref="brandingSettings"
+                  v-if="store.settingsOpen"
+                  @navItemClicked="handleNavItemClicked"
+                />
               </div>
             </div>
             <div v-else-if="activeTab === 'system'" class="settings-tab-content" ref="tabContents.system" key="system">
@@ -156,14 +195,14 @@ const getSettingsTitle = () => {
                 <h2 class="d-none d-md-flex">
                   <Settings />
                   <span>
-                    System Settings
-                    <small>Manage the behaviour of your erugo instance.</small>
+                    {{ $t('settings.title.system') }}
+                    <small>{{ $t('settings.description.system') }}</small>
                   </span>
                 </h2>
                 <div class="user-actions">
                   <button @click="$refs['systemSettings'].saveSettings()">
                     <Save />
-                    Save System Settings
+                    {{ $t('settings.button.system.save') }}
                   </button>
                 </div>
               </div>
@@ -176,14 +215,14 @@ const getSettingsTitle = () => {
                 <h2 class="d-none d-md-flex">
                   <UsersIcon />
                   <span>
-                    Users
-                    <small>Manage your users.</small>
+                    {{ $t('settings.title.users') }}
+                    <small>{{ $t('settings.description.users') }}</small>
                   </span>
                 </h2>
                 <div class="user-actions">
                   <button @click="usersPanel.addUser">
                     <UserPlus />
-                    Add User
+                    {{ $t('settings.button.users.add') }}
                   </button>
                 </div>
               </div>
@@ -191,13 +230,18 @@ const getSettingsTitle = () => {
                 <Users ref="usersPanel" v-if="store.settingsOpen" />
               </div>
             </div>
-            <div v-else-if="activeTab === 'myProfile'" class="settings-tab-content" ref="tabContents.myProfile" key="myProfile">
+            <div
+              v-else-if="activeTab === 'myProfile'"
+              class="settings-tab-content"
+              ref="tabContents.myProfile"
+              key="myProfile"
+            >
               <div class="tab-content-header">
                 <h2 class="d-none d-md-flex">
                   <User />
                   <span>
-                    My Profile
-                    <small>Manage your profile.</small>
+                    {{ $t('settings.title.myProfile') }}
+                    <small>{{ $t('settings.description.myProfile') }}</small>
                   </span>
                 </h2>
               </div>
@@ -205,19 +249,24 @@ const getSettingsTitle = () => {
                 <MyProfile ref="myProfilePanel" v-if="store.settingsOpen" />
               </div>
             </div>
-            <div v-else-if="activeTab === 'myShares'" class="settings-tab-content" ref="tabContents.myShares" key="myShares">
+            <div
+              v-else-if="activeTab === 'myShares'"
+              class="settings-tab-content"
+              ref="tabContents.myShares"
+              key="myShares"
+            >
               <div class="tab-content-header">
                 <h2 class="d-none d-md-flex">
                   <Boxes />
                   <span>
-                    My Shares
-                    <small>Manage your shares.</small>
+                    {{ $t('settings.title.myShares') }}
+                    <small>{{ $t('settings.description.myShares') }}</small>
                   </span>
                 </h2>
                 <div class="user-actions">
                   <button @click="createShare">
                     <Plus />
-                    Create Share
+                    {{ $t('settings.button.myShares.create') }}
                   </button>
                 </div>
               </div>
@@ -246,7 +295,6 @@ const getSettingsTitle = () => {
   transition-delay: 300ms;
 
   .settings-container {
-
     position: absolute;
     bottom: 0;
     left: 0;
@@ -262,7 +310,6 @@ const getSettingsTitle = () => {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-
   }
 
   &.active {

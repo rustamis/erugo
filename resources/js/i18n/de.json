@@ -1,0 +1,123 @@
+{
+  "Add Files": "Dateien hinzufügen",
+  "Add Folders": "Ordner hinzufügen",
+  "Add Recipient": "Empfänger hinzufügen",
+  "Message to share recipients (optional)": "Nachricht an die gemeinsamen Empfänger (optional)",
+  "No files added yet": "Noch keine Dateien hinzugefügt",
+  "No recipients": "Keine Empfänger",
+  "Powered by": "Angetrieben durch",
+  "Share Name": "Aktie Name",
+  "Share URL": "URL freigeben",
+  "We'll provide you with a link instead": {
+    "": "Wir stellen Ihnen stattdessen einen Link zur Verfügung"
+  },
+  "confirm_delete_user": "Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?",
+  "download": {
+    "files": "{value, plural, one {Herunterladen der Datei #} other {Herunterladen von {value} Dateien}}"
+  },
+  "limit": "Grenze",
+  "message": {
+    "from": "Nachricht von {name}"
+  },
+  "settings": {
+    "button": {
+      "branding": {
+        "save": "Branding-Einstellungen speichern"
+      },
+      "myShares": {
+        "create": "Anteil erstellen"
+      },
+      "system": {
+        "save": "Systemeinstellungen speichern"
+      },
+      "users": {
+        "add": "Benutzer hinzufügen"
+      }
+    },
+    "close": "Schließen Sie",
+    "description": {
+      "branding": "Passen Sie die Benutzeroberfläche Ihrer erugo-Instanz an und fügen Sie Ihr eigenes Branding hinzu.",
+      "myProfile": "Verwalten Sie Ihr Profil.",
+      "myShares": "Verwalten Sie Ihre Aktien.",
+      "system": "Verwalten Sie das Verhalten Ihrer Erugo-Instanz.",
+      "users": "Verwalten Sie Ihre Benutzer."
+    },
+    "help": {
+      "downloadLimit": {
+        "description": "Sie können das Download-Limit für jede Freigabe festlegen, indem Sie auf die Zahl auf der rechten Seite klicken und das neue Limit eintippen. Deaktivieren Sie das Feld, um das Limit zu entfernen.",
+        "description2": "Die Änderungen werden automatisch gespeichert, wenn Sie außerhalb des Feldes klicken.",
+        "title": "Limit-Hilfe herunterladen"
+      }
+    },
+    "table": {
+      "actions": "Aktionen",
+      "dates": "Daten",
+      "downloads": "Herunterladen",
+      "files": "Dateien",
+      "name": "Name"
+    },
+    "title": {
+      "branding": "Markenbildung & Benutzeroberfläche",
+      "manage": "Verwalten Sie",
+      "myProfile": "Mein Profil",
+      "myShares": "Meine Aktien",
+      "system": "Systemeinstellungen",
+      "users": "Benutzer",
+      "users.edit": "Bearbeiten {name}"
+    },
+    "users": {
+      "account": "Konto-Typ",
+      "actions": "Aktionen",
+      "add": "Benutzer hinzufügen",
+      "add_user_description": "Wir senden dem Benutzer eine E-Mail mit einem Link, über den er sein&nbsp;Passwort festlegen kann.",
+      "admin": "Verwaltung",
+      "admin_help_text": "Machen Sie den Benutzer zu einem Administrator.",
+      "admin_help_text_2": "Der Benutzer hat die gleichen Berechtigungen wie Sie.\n",
+      "cannot_delete_yourself": "Sie können sich nicht selbst löschen",
+      "created": "Erstellt",
+      "delete": "Löschen",
+      "edit": "bearbeiten",
+      "email": "E-Mail",
+      "failed_to_create_user": "Benutzer kann nicht erstellt werden",
+      "failed_to_delete_user": "Benutzer kann nicht gelöscht werden",
+      "failed_to_update_user": "Benutzer kann nicht aktualisiert werden",
+      "id": "ID",
+      "name": "Name",
+      "save_changes": "Änderungen speichern",
+      "user": "Benutzer",
+      "user_created_successfully": "Benutzer erfolgreich angelegt",
+      "user_deleted_successfully": "Der Benutzer wurde erfolgreich gelöscht",
+      "user_updated_successfully": "Benutzer erfolgreich aktualisiert",
+      "you": "Sie"
+    }
+  },
+  "share": {
+    "button": {
+      "expireNow": "Jetzt ablaufen",
+      "extend": "Erweitern Sie"
+    },
+    "contains": {
+      "count": "{value, plural, other {Enthält: {value} Dateien}}"
+    },
+    "created": "Erstellt",
+    "data_loading": "Laden...",
+    "deletes": "Löscht",
+    "download_limit_reached": "Download-Limit erreicht",
+    "download_limit_reached.message": "Die Freigabe, die Sie herunterzuladen versuchen, hat ihr Download-Limit erreicht. Bitte bitten Sie den Ersteller der Freigabe, das Download-Limit zu erhöhen.",
+    "expired": "Anteil verfallen",
+    "expired.message": "Die Freigabe, die Sie herunterladen möchten, ist abgelaufen. Bitte bitten Sie den Ersteller der Freigabe, eine neue Freigabe zu erstellen.",
+    "expires": "Abgelaufen",
+    "expires.in": "Läuft ab in {days} {days, plural, one {Tag} other {Tagen}}, {hours} {hours, plural, one {Stunde} other {Stunden}}, {minutes} {minutes, plural, one {Minute} other {Minuten}}",
+    "files": {
+      "count": "{value, plural, one {{count} Datei} other {{count} Dateien}}",
+      "including": "einschließlich:"
+    }
+  },
+  "total_size": "Gesamtgröße",
+  "upload": {
+    "files": "{value, plural, one {Hochladen der Datei #} other {Hochladen von # Dateien}}"
+  },
+  "uploading": {
+    "files": "{value, plural, one {Hochladen der Datei #} other {Hochladen von # Dateien}}"
+  }
+}
