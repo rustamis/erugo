@@ -11,6 +11,10 @@ import {
 import { useToast } from 'vue-toastification'
 import { niceFileSize, niceDate, niceFileName, niceNumber } from '../../utils'
 import HelpTip from '../helpTip.vue'
+import { useTranslate } from '@tolgee/vue'
+
+const { t } = useTranslate()
+
 
 const showHelpTip = inject('showHelpTip')
 const hideHelpTip = inject('hideHelpTip')
@@ -30,22 +34,22 @@ const loadShares = async () => {
 const handleExpireShareClick = async (share) => {
   expireShare(share.id)
     .then(() => {
-      toast.success('Share expired')
+      toast.success(t.value('settings.success.shareExpired'))
       loadShares()
     })
     .catch((error) => {
-      toast.error('Failed to expire share')
+      toast.error(t.value('settings.error.shareExpired'))
     })
 }
 
 const handleExtendShareClick = async (share) => {
   extendShare(share.id)
     .then(() => {
-      toast.success('Share extended')
+      toast.success(t.value('settings.success.shareExtended'))
       loadShares()
     })
     .catch((error) => {
-      toast.error('Failed to extend share')
+      toast.error(t.value('settings.error.shareExtended'))
     })
 }
 
