@@ -30,6 +30,9 @@ _Comprehensive settings page to configure the application_
 - ["Erugo - Self-Hosted File Sharing Platform" by DB Tech](https://www.youtube.com/watch?v=zqipBHSSPm4)
 - ["Ditch WeTransfer! Self-Host Erugo for Secure File Sharing with Docker" by KeepItTechie](https://www.youtube.com/watch?v=FrcBALXDIRU)
 
+## Community Content
+- [Installer erugo avec Docker (french)](https://belginux.com/installer-erugo-avec-docker/)
+
 ## Key Features
 
 - **Effortless Deployment**: Easy to deploy on Docker with the provided docker-compose file
