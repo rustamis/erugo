@@ -2,9 +2,6 @@
 
 [![Discord Banner 2](https://discord.com/api/guilds/1346116394038722602/widget.png?style=banner3)](https://discord.gg/M74X2wmqY8)
 
-
-
-
 # erugo
 
 erugo is a powerful, self-hosted file-sharing platform built with PHP and Laravel with a Vue.js frontend. It offers secure, customizable file-transfer capabilities through an elegant user interface, giving you complete control over your data while providing a seamless experience for both senders and recipients.
@@ -19,25 +16,33 @@ Please note we're running the demo on a very cheap VPS so it may take a few seco
 
 ## Screenshots
 
-![Upload Interface](.github/images/erugo-uploader-screenshot.png)
-_A clean, intuitive upload interface showing file selection and progress_
+![Upload Interface](.github/images/uploader.jpg)
+_A clean, intuitive upload interface showing file selection and recipient information_
 
-![Share Details](.github/images/erugo-downloader-screenshot.png)
-_Share details view with file listing and expiration information_
+![My Shares](.github/images/my-shares.jpg)
+_My Shares page showing share details and options to manage user's shares_
 
-![Manage Shares](.github/images/erugo-manage-shares-screenshot.png)
-_Manage shares with ease, including share expiration, maximum downloads, and more_
+![Settings](.github/images/settings.jpg)
+_Comprehensive settings page to configure the application_
 
-# Key Features
+## Videos Featuring Erugo
+
+- ["Erugo - Self-Hosted File Sharing Platform" by DB Tech](https://www.youtube.com/watch?v=zqipBHSSPm4)
+- ["Ditch WeTransfer! Self-Host Erugo for Secure File Sharing with Docker" by KeepItTechie](https://www.youtube.com/watch?v=FrcBALXDIRU)
+
+## Key Features
 
 - **Effortless Deployment**: Easy to deploy on Docker with the provided docker-compose file
-- **Human-Friendly Share Links**: Easy-to-read URLs like `https://yourdomain.com/shares/quiet-cloud-shrill-thunder`
+- **Zero-Configuration**: Reasonable defaults out of the box, but easily customised via the web interface
+- **Human-Friendly Share Links**: Easy-to-read URLs like `you.com/shares/quiet-cloud-shrill-thunder`
 - **Secure Access Control**: Only authorized users can create shares, while anyone with a share link can download
 - **Simple Data Management**: SQLite database for efficient metadata storage
 - **Flexible Configuration**: Configure maximum share size, branding, expiry, and more
+- **Easy User Management**: Invite and remove users from the web interface
 - **Interactive Setup**: User-friendly first-run configuration when the web interface is first loaded
 - **Modern Interface**: Clean, intuitive web UI
 - **Open Source**: MIT licensed and ready for white-labeling
+- **Translations**: Erugo is fully translatable and supports multiple languages already
 
 ## Star History
 
@@ -48,12 +53,6 @@ Give this repository a star to keep track of releases and updates. Stars are als
 ## Quick Start
 
 You can use the example docker-compose.yaml below to run erugo in a container.
-
-
-> **⚠️ WARNING: COMING FROM THE GO VERSION? READ THIS ⚠️**
-> 
-> If you are migrating from the Go version of erugo, please be aware that there are significant changes in the architecture and configuration. The new version is built with PHP and Laravel and is entirely incompatible with the Go version. Set this up as a brand new installation.
-
 
 ```
 services:
@@ -80,27 +79,34 @@ docker compose up -d
 
 ## Configuration Options
 
-erugo can be customized via the web interface.
+erugo can be customised via the web interface.
 
 - General settings
   - Application name
+  - Application URL
   - Login message
+  - Default language
+  - Enable language selector
 - Share settings
   - Maximum share size
   - Expiration time
   - Cleanup delay (how long after expiration the share is deleted)
-- Branding
-  - Background images
-  - Custom logo image and size
-  - Hide powered by erugo text
-  - Manage user interface colors
-- SMTP settings _(not implemented yet)_
+- Notifications
+  - Enabale / disable various notifications
+- SMTP settings
   - SMTP host
   - SMTP port
   - SMTP encryption
   - SMTP username
   - SMTP password
   - SMTP from name
+- Branding
+  - Background images
+  - Custom logo image and size
+  - Hide powered by erugo text
+  - Select themes
+  - Manage themes
+
 
 ## Using erugo
 
@@ -133,6 +139,18 @@ As an open-source project, erugo can be tailored to your needs:
 - Modify URL structures and authentication methods
 - Extend functionality through code modifications
 
+## Translations
+
+Currently, the following languages are supported:
+- English
+- French (Thanks to [@zarev](https://github.com/zarevskaya) & [@thibdevan](https://github.com/thibdevan))
+- German
+- Italian
+- Spanish
+- Dutch
+
+Erugo is fully translatable. If you would like to contribute a translation, please join our [Discord server](https://discord.gg/M74X2wmqY8) and drop a message in general channel.
+
 ## Development
 
 erugo is a Laravel application and uses Laravel Sail to run the development environment.
@@ -140,10 +158,12 @@ erugo is a Laravel application and uses Laravel Sail to run the development envi
 Run the following commands to start the server, run migrations, ans start vite in dev mode.
 
 ```sh
+composer install
+npm install
 sail up -d
 sail artisan migrate
 sail artisan db:seed
-npx vite
+npm run dev
 ```
 
 ## Build it yourself
@@ -163,6 +183,7 @@ DOCKER_HUB_USERNAME=<your-docker-hub-username> ./publish-docker-image.sh
 We welcome community contributions! Feel free to:
 
 - Submit bug reports and feature requests
+- Translate erugo to your language
 - Create pull requests
 - Engage in discussions
 
