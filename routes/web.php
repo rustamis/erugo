@@ -79,6 +79,15 @@ Route::get('/logo', function () {
 });
 
 
+Route::get('/get-logo', function () {
+    //grab the logo file data from settings
+    $setting = Setting::where('key', 'logo')->first();
+    $logo = Storage::disk('public')->get($setting->value);
+    // return $setting;
+    return response($logo)->header('Content-Type', 'image/png');
+});
+
+
 Route::get('/test-email', function () {
     $share = Share::find(1);
     sendEmail::dispatch('dean@oveio.io', shareDownloadedMail::class, ['share' => $share]);

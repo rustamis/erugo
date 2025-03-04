@@ -16,7 +16,7 @@ import LanguageSelector from './components/languageSelector.vue'
 
 const apiUrl = getApiUrl()
 
-const logoUrl = `${apiUrl}/logo`
+const logoUrl = `${apiUrl}/get-logo`
 const version = ref()
 const logoWidth = ref(100)
 const useMyBackgrounds = ref(false)
