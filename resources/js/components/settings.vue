@@ -1,7 +1,7 @@
 <script setup>
 import { store } from '../store'
 import { CircleX, Settings, Users as UsersIcon, UserPlus, Save, Palette, User, Boxes, Plus } from 'lucide-vue-next'
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import Users from './settings/users.vue'
 import BrandingSettings from './settings/branding.vue'
 import SystemSettings from './settings/system.vue'
