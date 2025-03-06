@@ -152,7 +152,7 @@ const openSettings = () => {
     <div class="version-info" v-if="showPoweredBy">
       <div class="version-info-text">
         {{ $t('Powered by') }}
-        <a href="https://github.com/deanward/erugo">Erugo</a>
+        <a href="https://github.com/deanward/erugo">Erugoo</a>
         {{ version }}
       </div>
     </div>
